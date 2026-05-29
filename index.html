@@ -1243,6 +1243,45 @@
         .bindPopup(`<b>${name}</b>${detail}`);
     });
 
+    function midpoint(a, b) {
+      return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    }
+
+    function distanceLabel(latlng, text) {
+      return L.marker(latlng, {
+        icon: L.divIcon({
+          className: '',
+          html: `<div style="
+            background:#F2EDE4;
+            border:2px solid #1A1A1A;
+            padding:3px 8px;
+            font-family:'Barlow Condensed',sans-serif;
+            font-size:11px;
+            font-weight:700;
+            letter-spacing:3px;
+            text-transform:uppercase;
+            white-space:nowrap;
+            box-shadow:2px 2px 0 #1A1A1A;
+          ">${text}</div>`,
+          iconAnchor: [30, 12],
+          popupAnchor: [0, 0],
+        }),
+        interactive: false,
+      }).addTo(map);
+    }
+
+    const lineStyle = { color: '#1A1A1A', weight: 2, dashArray: '6 5', opacity: 0.5 };
+
+    const navarro   = LOCATIONS[3].latlng;
+    const marianas  = LOCATIONS[0].latlng;
+    const arbolito  = LOCATIONS[1].latlng;
+
+    L.polyline([navarro, marianas], lineStyle).addTo(map);
+    distanceLabel(midpoint(navarro, marianas), '30 km');
+
+    L.polyline([marianas, arbolito], lineStyle).addTo(map);
+    distanceLabel(midpoint(marianas, arbolito), '15 km');
+
     // ── FORM SUBMIT ────────────────────────────────
     document.getElementById('rsvpForm').addEventListener('submit', function (e) {
       e.preventDefault();
