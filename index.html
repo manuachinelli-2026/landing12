@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CASAMIENTO · 12·12</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:      #F2EDE4;
+      --black:      #1A1A1A;
+      --terracotta: #C4432A;
+      --mustard:    #C9941A;
+      --green-dark: #2D5A2E;
+      --green-mid:  #3D7040;
+      --teal:       #1B5C5C;
+      --rust:       #B85C35;
+      --burgundy:   #8B2020;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--black);
+      font-family: 'Barlow', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ─────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 64px;
+      gap: 48px;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--black);
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(88px, 11vw, 156px);
+      line-height: 0.88;
+      letter-spacing: 2px;
+      margin-top: 12px;
+    }
+
+    .divider {
+      width: 100%;
+      height: 3px;
+      background: var(--black);
+      margin: 36px 0;
+    }
+
+    .hero-info {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+    }
+
+    .hero-location {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 1.25;
+      margin-top: 8px;
+    }
+
+    .swatches {
+      display: flex;
+      gap: 5px;
+      margin-top: 14px;
+    }
+
+    .swatch {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .hero-date {
+      text-align: right;
+    }
+
+    .date-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(56px, 7vw, 96px);
+      line-height: 1;
+      color: var(--terracotta);
+    }
+
+    .date-sub {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 300;
+      font-size: 12px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 16px 40px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--cream);
+      background: var(--black);
+      border: 2px solid var(--black);
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
+      align-self: flex-start;
+    }
+
+    .btn:hover {
+      background: var(--terracotta);
+      border-color: var(--terracotta);
+    }
+
+    /* ── CUBE GRID ───────────────────────────────── */
+    .hero-right {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cube-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      width: 100%;
+      max-width: 480px;
+      aspect-ratio: 4/5;
+    }
+
+    .cube-cell {
+      position: relative;
+      aspect-ratio: 1;
+    }
+
+    .cube-shadow {
+      position: absolute;
+      inset: 8px;
+      background: var(--black);
+      transform: translate(13px, 13px);
+      z-index: 1;
+    }
+
+    .cube-face {
+      position: absolute;
+      inset: 8px;
+      z-index: 2;
+    }
+
+    /* ── FORM SECTION ────────────────────────────── */
+    .form-section {
+      padding: 100px 64px;
+      border-top: 3px solid var(--black);
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(64px, 10vw, 110px);
+      line-height: 0.88;
+      margin-top: 14px;
+      margin-bottom: 64px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px 72px;
+      max-width: 860px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label,
+    .form-group .field-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 300;
+      font-size: 10px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    select,
+    textarea {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid var(--black);
+      padding: 10px 0;
+      font-family: 'Barlow', sans-serif;
+      font-size: 16px;
+      color: var(--black);
+      outline: none;
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+
+    input[type="text"]::placeholder,
+    input[type="email"]::placeholder,
+    textarea::placeholder {
+      color: #999;
+      font-weight: 300;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    select:focus,
+    textarea:focus {
+      border-bottom-color: var(--terracotta);
+    }
+
+    select {
+      appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%231A1A1A'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 2px center;
+    }
+
+    textarea {
+      resize: none;
+      height: 72px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 36px;
+      padding: 6px 0;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      font-size: 16px;
+      user-select: none;
+    }
+
+    .radio-option input[type="radio"] {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--black);
+      cursor: pointer;
+      flex-shrink: 0;
+      position: relative;
+      transition: background 0.12s;
+    }
+
+    .radio-option input[type="radio"]:checked {
+      background: var(--black);
+    }
+
+    .radio-option input[type="radio"]:checked::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      background: var(--cream);
+    }
+
+    .form-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      margin-top: 8px;
+    }
+
+    .btn-submit {
+      padding: 16px 40px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--cream);
+      background: var(--black);
+      border: 2px solid var(--black);
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
+    }
+
+    .btn-submit:hover {
+      background: var(--terracotta);
+      border-color: var(--terracotta);
+    }
+
+    .success-msg {
+      display: none;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      color: var(--green-dark);
+      letter-spacing: 2px;
+    }
+
+    /* ── FOOTER ──────────────────────────────────── */
+    footer {
+      padding: 48px 64px;
+      border-top: 3px solid var(--black);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 3px;
+    }
+
+    .footer-right {
+      text-align: right;
+    }
+
+    .footer-right .swatches {
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 820px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 40px 28px 56px;
+        gap: 40px;
+      }
+
+      .hero-right {
+        order: -1;
+      }
+
+      .cube-grid {
+        max-width: 320px;
+      }
+
+      .hero-info {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .hero-date { text-align: left; }
+      .date-sub  { text-align: left; }
+
+      .form-section {
+        padding: 64px 28px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group.full {
+        grid-column: 1;
+      }
+
+      .form-actions {
+        grid-column: 1;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      footer {
+        padding: 40px 28px;
+        flex-direction: column;
+        gap: 28px;
+        text-align: center;
+      }
+
+      .footer-right { text-align: center; }
+      .footer-right .swatches { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <span class="label">Nos casamos</span>
+      <h1 class="hero-title">CASA<br>MIEN<br>TO</h1>
+      <div class="divider"></div>
+      <div class="hero-info">
+        <div>
+          <span class="label">Dirección</span>
+          <div class="hero-location">Las Marianas,<br>Argentina</div>
+          <div class="swatches">
+            <div class="swatch" style="background:var(--terracotta)"></div>
+            <div class="swatch" style="background:var(--mustard)"></div>
+            <div class="swatch" style="background:var(--green-dark)"></div>
+            <div class="swatch" style="background:var(--burgundy)"></div>
+            <div class="swatch" style="background:var(--green-mid)"></div>
+            <div class="swatch" style="background:var(--teal)"></div>
+            <div class="swatch" style="background:var(--rust)"></div>
+          </div>
+          <span class="label" style="margin-top:8px;display:block">Dress code · Paleta Tierra</span>
+        </div>
+        <div class="hero-date">
+          <div class="date-num">12·12</div>
+          <div class="date-sub">Diciembre 2026</div>
+        </div>
+      </div>
+      <a href="#rsvp" class="btn">Confirmar asistencia</a>
+    </div>
+
+    <div class="hero-right">
+      <div class="cube-grid" id="cubeGrid"></div>
+    </div>
+  </section>
+
+  <!-- RSVP FORM -->
+  <section class="form-section" id="rsvp">
+    <span class="label">Confirmá tu asistencia</span>
+    <h2 class="section-title">RSVP</h2>
+
+    <form id="rsvpForm">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="nombre">Nombre completo</label>
+          <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+        </div>
+
+        <div class="form-group full">
+          <span class="field-label">¿Confirmás asistencia?</span>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="asistencia" value="si" required>
+              Sí, voy
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="asistencia" value="no">
+              No puedo ir
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="personas">Cantidad de personas</label>
+          <select id="personas" name="personas">
+            <option value="1">1 persona</option>
+            <option value="2">2 personas</option>
+            <option value="3">3 personas</option>
+            <option value="4">4 personas</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="menu">Menú</label>
+          <select id="menu" name="menu">
+            <option value="clasico">Clásico</option>
+            <option value="vegetariano">Vegetariano</option>
+            <option value="vegano">Vegano</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label for="comentarios">Comentarios o restricciones alimentarias</label>
+          <textarea id="comentarios" name="comentarios" placeholder="Algo que debamos saber..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">Enviar confirmación</button>
+          <div class="success-msg" id="successMsg">¡Gracias! Te esperamos.</div>
+        </div>
+
+      </div>
+    </form>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-title">CASAMIENTO · 12·12</div>
+    <div class="footer-right">
+      <span class="label">Dress code · Paleta Tierra</span>
+      <div class="swatches">
+        <div class="swatch" style="background:var(--terracotta)"></div>
+        <div class="swatch" style="background:var(--mustard)"></div>
+        <div class="swatch" style="background:var(--green-dark)"></div>
+        <div class="swatch" style="background:var(--burgundy)"></div>
+        <div class="swatch" style="background:var(--green-mid)"></div>
+        <div class="swatch" style="background:var(--teal)"></div>
+        <div class="swatch" style="background:var(--rust)"></div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ── CUBE GRID ──────────────────────────────────
+    const COLORS = [
+      '#C4432A', // terracotta
+      '#C9941A', // mustard
+      '#2D5A2E', // green dark
+      '#3D7040', // green mid
+      '#1B5C5C', // teal
+      '#B85C35', // rust
+      '#8B2020', // burgundy
+    ];
+
+    // 4×5 = 20 cells; null = empty
+    const PATTERN = [
+      0, 1, 2, 3,
+      null, 2, null, 4,
+      5, null, 6, 1,
+      null, 3, 0, null,
+      2, 4, null, 5,
+    ];
+
+    const grid = document.getElementById('cubeGrid');
+
+    PATTERN.forEach(idx => {
+      const cell = document.createElement('div');
+      cell.className = 'cube-cell';
+      if (idx !== null) {
+        const shadow = document.createElement('div');
+        shadow.className = 'cube-shadow';
+        const face = document.createElement('div');
+        face.className = 'cube-face';
+        face.style.background = COLORS[idx % COLORS.length];
+        cell.appendChild(shadow);
+        cell.appendChild(face);
+      }
+      grid.appendChild(cell);
+    });
+
+    // ── FORM SUBMIT ────────────────────────────────
+    document.getElementById('rsvpForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(this));
+      console.log('RSVP data:', data);
+      this.reset();
+      const msg = document.getElementById('successMsg');
+      msg.style.display = 'block';
+      setTimeout(() => { msg.style.display = 'none'; }, 5000);
+    });
+  </script>
+</body>
+</html>
