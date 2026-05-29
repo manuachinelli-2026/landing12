@@ -349,22 +349,37 @@
       font-family: 'Barlow Condensed', sans-serif !important;
       background: #F2EDE4 !important;
     }
-    .leaflet-popup-tip {
-      background: #F2EDE4 !important;
-    }
+    .leaflet-popup-tip { background: #F2EDE4 !important; }
     .leaflet-popup-content b {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 18px;
+      font-size: 20px;
       letter-spacing: 1px;
       display: block;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
     }
     .leaflet-popup-content {
       font-size: 12px;
       letter-spacing: 1px;
       text-transform: uppercase;
       color: #1A1A1A;
+      line-height: 1.5;
     }
+
+    /* Leaflet permanent label */
+    .map-label {
+      background: #F2EDE4 !important;
+      border: 2px solid #1A1A1A !important;
+      border-radius: 0 !important;
+      box-shadow: 2px 2px 0 #1A1A1A !important;
+      font-family: 'Barlow Condensed', sans-serif !important;
+      font-weight: 700 !important;
+      font-size: 11px !important;
+      letter-spacing: 3px !important;
+      text-transform: uppercase !important;
+      color: #1A1A1A !important;
+      padding: 4px 9px !important;
+    }
+    .map-label::before { display: none !important; }
 
     @media (max-width: 820px) {
       .mapa-section { padding: 64px 24px; }
@@ -1190,9 +1205,9 @@
 
     // ── MAPA ───────────────────────────────────────
     const map = L.map('map', { zoomControl: true, scrollWheelZoom: false })
-                 .setView([-35.048, -59.43], 11);
+                 .setView([-35.09, -59.475], 10);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · © <a href="https://carto.com/">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 19,
@@ -1201,86 +1216,79 @@
     function sqIcon(color) {
       return L.divIcon({
         className: '',
-        html: `<div style="width:20px;height:20px;background:${color};border:2px solid #1A1A1A;box-shadow:3px 3px 0 #1A1A1A;"></div>`,
-        iconSize: [20, 20],
-        iconAnchor: [10, 10],
-        popupAnchor: [0, -14],
+        html: `<div style="width:26px;height:26px;background:${color};border:2.5px solid #1A1A1A;box-shadow:5px 5px 0 #1A1A1A;"></div>`,
+        iconSize: [26, 26],
+        iconAnchor: [13, 13],
+        popupAnchor: [0, -18],
       });
     }
 
     const LOCATIONS = [
       {
-        latlng: [-35.0667, -59.5167],
-        color: '#C4432A',
-        name: 'Las Marianas',
-        detail: 'Viernes 20:00hs · Iglesia Sábado 16:30hs',
-      },
-      {
-        // approx — actualizar con coords reales
-        latlng: [-35.0720, -59.5080],
-        color: '#2D5A2E',
-        name: 'El Arbolito',
-        detail: 'Sábado 18:00hs · Casamiento',
-      },
-      {
-        // approx — actualizar con coords reales
-        latlng: [-35.0610, -59.5250],
-        color: '#1B5C5C',
-        name: 'El Ranchito',
-        detail: 'Domingo al mediodía · Corderos al asador',
-      },
-      {
         latlng: [-35.0057, -59.2784],
         color: '#C9941A',
         name: 'Navarro',
         detail: 'Ciudad principal · Hospedaje',
+        labelDir: 'right',
+      },
+      {
+        latlng: [-35.0667, -59.5167],
+        color: '#C4432A',
+        name: 'Las Marianas',
+        detail: 'Viernes 20hs · Iglesia Sáb 16:30hs',
+        labelDir: 'top',
+      },
+      {
+        latlng: [-35.178, -59.548],
+        color: '#2D5A2E',
+        name: 'El Arbolito',
+        detail: 'Sábado 18hs · Casamiento',
+        labelDir: 'right',
+      },
+      {
+        latlng: [-35.108, -59.658],
+        color: '#1B5C5C',
+        name: 'El Ranchito',
+        detail: 'Domingo · Corderos al asador',
+        labelDir: 'left',
       },
     ];
 
-    LOCATIONS.forEach(({ latlng, color, name, detail }) => {
-      L.marker(latlng, { icon: sqIcon(color) })
-        .addTo(map)
-        .bindPopup(`<b>${name}</b>${detail}`);
+    LOCATIONS.forEach(({ latlng, color, name, detail, labelDir }) => {
+      const marker = L.marker(latlng, { icon: sqIcon(color) }).addTo(map);
+      marker.bindPopup(`<b>${name}</b>${detail}`);
+      marker.bindTooltip(name, {
+        permanent: true,
+        direction: labelDir,
+        className: 'map-label',
+        offset: [16, 0],
+      });
     });
 
-    function midpoint(a, b) {
-      return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-    }
+    function mid(a, b) { return [(a[0]+b[0])/2, (a[1]+b[1])/2]; }
 
-    function distanceLabel(latlng, text) {
-      return L.marker(latlng, {
+    function distLabel(latlng, text) {
+      L.marker(latlng, {
         icon: L.divIcon({
           className: '',
-          html: `<div style="
-            background:#F2EDE4;
-            border:2px solid #1A1A1A;
-            padding:3px 8px;
-            font-family:'Barlow Condensed',sans-serif;
-            font-size:11px;
-            font-weight:700;
-            letter-spacing:3px;
-            text-transform:uppercase;
-            white-space:nowrap;
-            box-shadow:2px 2px 0 #1A1A1A;
-          ">${text}</div>`,
-          iconAnchor: [30, 12],
-          popupAnchor: [0, 0],
+          html: `<div style="background:#F2EDE4;border:2px solid #1A1A1A;padding:4px 10px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;white-space:nowrap;box-shadow:2px 2px 0 #1A1A1A;">${text}</div>`,
+          iconAnchor: [30, 14],
         }),
         interactive: false,
       }).addTo(map);
     }
 
-    const lineStyle = { color: '#1A1A1A', weight: 2, dashArray: '6 5', opacity: 0.5 };
-
-    const navarro   = LOCATIONS[3].latlng;
-    const marianas  = LOCATIONS[0].latlng;
-    const arbolito  = LOCATIONS[1].latlng;
+    const lineStyle = { color: '#1A1A1A', weight: 2, dashArray: '8 6', opacity: 0.45 };
+    const [navarro, marianas, arbolito, ranchito] = LOCATIONS.map(l => l.latlng);
 
     L.polyline([navarro, marianas], lineStyle).addTo(map);
-    distanceLabel(midpoint(navarro, marianas), '30 km');
+    distLabel(mid(navarro, marianas), '30 km');
 
     L.polyline([marianas, arbolito], lineStyle).addTo(map);
-    distanceLabel(midpoint(marianas, arbolito), '15 km');
+    distLabel(mid(marianas, arbolito), '15 km');
+
+    L.polyline([marianas, ranchito], lineStyle).addTo(map);
+    distLabel(mid(marianas, ranchito), '15 km');
 
     // ── FORM SUBMIT ────────────────────────────────
     document.getElementById('rsvpForm').addEventListener('submit', function (e) {
