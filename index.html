@@ -173,6 +173,16 @@
       position: absolute;
       inset: 8px;
       z-index: 2;
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .cube-shadow {
+      transition: opacity 0.7s ease;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50%       { transform: translateY(-6px) scale(1.03); }
     }
 
     /* ── FORM SECTION ────────────────────────────── */
@@ -550,7 +560,9 @@
 
     const grid = document.getElementById('cubeGrid');
 
-    PATTERN.forEach(idx => {
+    const cubes = []; // { face, shadow }
+
+    PATTERN.forEach((idx, i) => {
       const cell = document.createElement('div');
       cell.className = 'cube-cell';
       if (idx !== null) {
@@ -559,11 +571,48 @@
         const face = document.createElement('div');
         face.className = 'cube-face';
         face.style.background = COLORS[idx % COLORS.length];
+
+        // staggered float animation per cube
+        const delay = (i * 0.17) % 2;
+        const duration = 2.4 + (i % 4) * 0.4;
+        face.style.animation = `float ${duration}s ${delay}s ease-in-out infinite`;
+
         cell.appendChild(shadow);
         cell.appendChild(face);
+        cubes.push({ face, shadow });
       }
       grid.appendChild(cell);
     });
+
+    // turn on/off random cubes
+    const offCubes = new Set();
+
+    function toggleRandomCube() {
+      if (cubes.length === 0) return;
+
+      // pick a cube that isn't already off, or re-light one that's off
+      const shouldTurnOff = offCubes.size < 3 && Math.random() > 0.35;
+
+      if (shouldTurnOff) {
+        const candidates = cubes.filter((_, i) => !offCubes.has(i));
+        if (!candidates.length) return;
+        const pick = Math.floor(Math.random() * candidates.length);
+        const globalIdx = cubes.indexOf(candidates[pick]);
+        offCubes.add(globalIdx);
+        candidates[pick].face.style.opacity   = '0';
+        candidates[pick].shadow.style.opacity = '0';
+      } else if (offCubes.size > 0) {
+        const offArr = [...offCubes];
+        const globalIdx = offArr[Math.floor(Math.random() * offArr.length)];
+        offCubes.delete(globalIdx);
+        cubes[globalIdx].face.style.opacity   = '1';
+        cubes[globalIdx].shadow.style.opacity = '1';
+      }
+
+      setTimeout(toggleRandomCube, 600 + Math.random() * 1200);
+    }
+
+    setTimeout(toggleRandomCube, 1000);
 
     // ── FORM SUBMIT ────────────────────────────────
     document.getElementById('rsvpForm').addEventListener('submit', function (e) {
