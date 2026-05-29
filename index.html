@@ -296,6 +296,144 @@
       margin-top: 3px;
     }
 
+    /* ── HOSPEDAJES SECTION ──────────────────────── */
+    .hospedajes-section {
+      padding: 100px 64px;
+      border-top: 3px solid var(--black);
+    }
+
+    .hospedajes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 64px;
+      border-left: 3px solid var(--black);
+      border-top: 3px solid var(--black);
+    }
+
+    .hospedaje-card {
+      padding: 40px 36px;
+      border-right: 3px solid var(--black);
+      border-bottom: 3px solid var(--black);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .hospedaje-tag {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 300;
+      font-size: 10px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      margin-bottom: 10px;
+    }
+
+    .hospedaje-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(28px, 3vw, 42px);
+      line-height: 0.95;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .hospedaje-divider {
+      width: 40px;
+      height: 2px;
+      background: var(--black);
+      margin-bottom: 20px;
+    }
+
+    .hospedaje-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .hospedaje-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .hospedaje-row-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 300;
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+      color: #888;
+    }
+
+    .hospedaje-row-value {
+      font-family: 'Barlow', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .hospedaje-cta {
+      margin-top: 28px;
+      display: inline-block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--black);
+      border-bottom: 2px solid var(--black);
+      padding-bottom: 2px;
+      align-self: flex-start;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .hospedaje-cta:hover {
+      color: var(--terracotta);
+      border-color: var(--terracotta);
+    }
+
+    .hospedajes-note {
+      margin-top: 36px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #888;
+    }
+
+    @media (max-width: 1024px) {
+      .hospedajes-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .hospedajes-section {
+        padding: 64px 24px;
+      }
+
+      .hospedajes-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hospedaje-card {
+        padding: 32px 24px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .hospedajes-section {
+        padding: 48px 18px;
+      }
+
+      .hospedaje-card {
+        padding: 28px 18px;
+      }
+    }
+
     /* ── FORM SECTION ────────────────────────────── */
     .form-section {
       padding: 100px 64px;
@@ -706,6 +844,81 @@
       </div>
 
     </div>
+  </section>
+
+  <!-- HOSPEDAJES -->
+  <section class="hospedajes-section">
+    <span class="label">Dónde quedarse</span>
+    <h2 class="section-title">HOSPE<br>DAJES</h2>
+
+    <div class="hospedajes-grid">
+
+      <div class="hospedaje-card">
+        <div class="hospedaje-tag">Hotel · 5 min</div>
+        <div class="hospedaje-name">NOMBRE<br>HOTEL</div>
+        <div class="hospedaje-divider"></div>
+        <div class="hospedaje-info">
+          <div class="hospedaje-row">
+            <span class="hospedaje-row-label">Dir</span>
+            <span class="hospedaje-row-value">Dirección del lugar</span>
+          </div>
+          <div class="hospedaje-row">
+            <span class="hospedaje-row-label">Tel</span>
+            <span class="hospedaje-row-value">+54 000 000-0000</span>
+          </div>
+          <div class="hospedaje-row">
+            <span class="hospedaje-row-label">Precio</span>
+            <span class="hospedaje-row-value">Desde $XX / noche</span>
+          </div>
+        </div>
+        <a href="#" class="hospedaje-cta">Ver más</a>
+      </div>
+
+      <div class="hospedaje-card">
+        <div class="hospedaje-tag">Cabaña · 10 min</div>
+        <div class="hospedaje-name">NOMBRE<br>LUGAR</div>
+        <div class="hospedaje-divider"></div>
+        <div class="hospedaje-info">
+          <div class="hospedaje-row">
+            <span class="hospedaje-row-label">Dir</span>
+            <span class="hospedaje-row-value">Dirección del lugar</span>
+          </div>
+          <div class="hospedaje-row">
+            <span class="hospedaje-row-label">Tel</span>
+            <span class="hospedaje-row-value">+54 000 000-0000</span>
+          </div>
+          <div class="hospedaje-row">
+            <span class="hospedaje-row-label">Precio</span>
+            <span class="hospedaje-row-value">Desde $XX / noche</span>
+          </div>
+        </div>
+        <a href="#" class="hospedaje-cta">Ver más</a>
+      </div>
+
+      <div class="hospedaje-card">
+        <div class="hospedaje-tag">Hostería · 15 min</div>
+        <div class="hospedaje-name">NOMBRE<br>LUGAR</div>
+        <div class="hospedaje-divider"></div>
+        <div class="hospedaje-info">
+          <div class="hospedaje-row">
+            <span class="hospedaje-row-label">Dir</span>
+            <span class="hospedaje-row-value">Dirección del lugar</span>
+          </div>
+          <div class="hospedaje-row">
+            <span class="hospedaje-row-label">Tel</span>
+            <span class="hospedaje-row-value">+54 000 000-0000</span>
+          </div>
+          <div class="hospedaje-row">
+            <span class="hospedaje-row-label">Precio</span>
+            <span class="hospedaje-row-value">Desde $XX / noche</span>
+          </div>
+        </div>
+        <a href="#" class="hospedaje-cta">Ver más</a>
+      </div>
+
+    </div>
+
+    <p class="hospedajes-note">¿Dudas? Escribinos y te ayudamos a coordinar.</p>
   </section>
 
   <!-- RSVP FORM -->
