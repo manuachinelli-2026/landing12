@@ -1162,8 +1162,8 @@
         face.style.background = COLORS[idx % COLORS.length];
 
         // staggered float animation per cube
-        const delay = (i * 0.17) % 2;
-        const duration = 2.4 + (i % 4) * 0.4;
+        const delay = (i * 0.09) % 1;
+        const duration = 0.9 + (i % 4) * 0.15;
         face.style.animation = `float ${duration}s ${delay}s ease-in-out infinite`;
 
         cell.appendChild(shadow);
@@ -1198,7 +1198,7 @@
         cubes[globalIdx].shadow.style.opacity = '1';
       }
 
-      setTimeout(toggleRandomCube, 600 + Math.random() * 1200);
+      setTimeout(toggleRandomCube, 200 + Math.random() * 400);
     }
 
     setTimeout(toggleRandomCube, 1000);
