@@ -319,28 +319,31 @@
     .htimeline {
       display: flex;
       flex-direction: row;
-      align-items: flex-start;
+      align-items: stretch;
       margin-top: 48px;
+      border-left: 2px solid var(--black);
       overflow-x: auto;
-      padding-bottom: 32px;
     }
 
     .htl-section {
       flex: 1;
-      min-width: 200px;
-      padding-right: 16px;
+      min-width: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-right: 2px solid var(--black);
+      padding: 0 20px;
     }
 
-    .htl-section-header {
-      padding-left: 24px;
-      border-left: 3px solid var(--black);
-      margin-bottom: 0;
+    .htl-header {
+      text-align: center;
+      padding: 32px 0 28px;
     }
 
     .htl-day-name {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(24px, 2.5vw, 36px);
-      letter-spacing: 2px;
+      font-size: clamp(26px, 2.5vw, 40px);
+      letter-spacing: 3px;
       line-height: 1;
     }
 
@@ -352,24 +355,18 @@
       text-transform: uppercase;
       color: var(--terracotta);
       display: block;
-      margin-top: 4px;
-      margin-bottom: 20px;
+      margin-top: 6px;
     }
 
-    .htl-events {
+    .htl-line {
+      width: calc(100% + 40px);
+      height: 2px;
+      background: var(--black);
+      margin: 0 -20px;
       display: flex;
-      flex-direction: row;
-      gap: 0;
-      position: relative;
-      padding-top: 20px;
-      border-top: 2px solid var(--black);
-    }
-
-    .htl-event {
-      flex: 1;
-      padding: 0 16px 0 24px;
-      border-left: 3px solid var(--black);
-      position: relative;
+      justify-content: space-around;
+      align-items: center;
+      flex-shrink: 0;
     }
 
     .htl-dot {
@@ -377,14 +374,27 @@
       height: 12px;
       background: var(--terracotta);
       border-radius: 50%;
-      position: absolute;
-      top: -27px;
-      left: 18px;
+      border: 2px solid var(--black);
+      flex-shrink: 0;
+    }
+
+    .htl-events {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      justify-content: center;
+      padding: 24px 0 40px;
+      width: 100%;
+    }
+
+    .htl-event {
+      flex: 1;
+      text-align: center;
     }
 
     .htl-time {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 28px;
+      font-size: clamp(24px, 2.5vw, 36px);
       color: var(--terracotta);
       letter-spacing: 1px;
       line-height: 1;
@@ -393,10 +403,10 @@
     .htl-name {
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 700;
-      font-size: 15px;
+      font-size: 14px;
       letter-spacing: 2px;
       text-transform: uppercase;
-      margin-top: 4px;
+      margin-top: 6px;
     }
 
     .htl-detail {
@@ -923,13 +933,15 @@
 
         <!-- VIERNES -->
         <div class="htl-section">
-          <div class="htl-section-header">
+          <div class="htl-header">
             <div class="htl-day-name">VIERNES</div>
             <span class="htl-date">11 · Diciembre</span>
           </div>
+          <div class="htl-line">
+            <div class="htl-dot"></div>
+          </div>
           <div class="htl-events">
             <div class="htl-event">
-              <div class="htl-dot"></div>
               <div class="htl-time">20:00</div>
               <div class="htl-name">Las Marianas</div>
               <div class="htl-detail">Evento de pre-boda</div>
@@ -939,19 +951,21 @@
 
         <!-- SÁBADO -->
         <div class="htl-section">
-          <div class="htl-section-header">
+          <div class="htl-header">
             <div class="htl-day-name">SÁBADO</div>
             <span class="htl-date">12 · Diciembre</span>
           </div>
+          <div class="htl-line">
+            <div class="htl-dot"></div>
+            <div class="htl-dot"></div>
+          </div>
           <div class="htl-events">
             <div class="htl-event">
-              <div class="htl-dot"></div>
               <div class="htl-time">16:30</div>
               <div class="htl-name">Iglesia Las Marianas</div>
               <div class="htl-detail">Ceremonia religiosa</div>
             </div>
             <div class="htl-event">
-              <div class="htl-dot"></div>
               <div class="htl-time">18:00</div>
               <div class="htl-name">El Arbolito</div>
               <div class="htl-detail">Casamiento</div>
@@ -961,13 +975,15 @@
 
         <!-- DOMINGO -->
         <div class="htl-section">
-          <div class="htl-section-header">
+          <div class="htl-header">
             <div class="htl-day-name">DOMINGO</div>
             <span class="htl-date">13 · Diciembre</span>
           </div>
+          <div class="htl-line">
+            <div class="htl-dot"></div>
+          </div>
           <div class="htl-events">
             <div class="htl-event">
-              <div class="htl-dot"></div>
               <div class="htl-time">Al mediodía</div>
               <div class="htl-name">El Ranchito</div>
               <div class="htl-detail">Corderos al asador</div>
