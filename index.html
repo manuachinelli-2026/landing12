@@ -38,7 +38,7 @@
       --line:       #A89060;
     }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
 
     body {
       background: var(--cream);
@@ -1197,7 +1197,7 @@
 
       /* Dresscode */
       .dc-layout { grid-template-columns: 1fr; gap: 12px; align-items: start; }
-      .dc-right { margin-left: 0; max-width: 100%; }
+      .dc-right { margin-left: 0; max-width: 100%; min-width: 0; overflow: hidden; }
       .dresscode-section .section-title br { display: none; }
       .dresscode-section .section-title { font-size: clamp(40px, 11vw, 52px); }
       .dc-swatch-sm { width: 18px !important; height: 18px !important; flex-shrink: 0 !important; }
