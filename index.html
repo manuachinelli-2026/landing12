@@ -1165,10 +1165,10 @@
       .nav-links a:not(.nav-asistire-link) { display: none; }
       .nav-asistire { font-size: 11px; padding: 6px 12px; letter-spacing: 2px; }
 
-      /* All sections */
+      /* All sections — kill the 100vh min-height that creates huge blank spaces */
       .dresscode-section, .roadmap-section,
       .mapa-section, .hospedajes-section,
-      .regalos-section { padding: 32px 20px 48px; }
+      .regalos-section { padding: 32px 20px 48px; min-height: auto; }
 
       /* Hero — single column, hide decorative cube grid */
       .hero { grid-template-columns: 1fr; min-height: auto; padding: 24px 20px 40px; gap: 0; }
@@ -1227,9 +1227,24 @@
       .footer-right { text-align: center; }
       .footer-right .swatches { justify-content: center; }
 
-      /* Fixed button */
-      .btn-asistire-fixed-wrap { bottom: 20px; right: 16px; }
-      .unlock-hint { font-size: 9px; }
+      /* Fixed button → full-width bottom bar, never overlaps content */
+      .btn-asistire-fixed-wrap {
+        bottom: 0; left: 0; right: 0;
+        flex-direction: row;
+        align-items: stretch;
+        gap: 0;
+        border-top: 1.5px solid rgba(42,26,14,0.25);
+      }
+      .unlock-hint { display: none !important; }
+      .btn-asistire-fixed {
+        width: 100%;
+        padding: 14px 20px;
+        font-size: 11px;
+        letter-spacing: 3px;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.12);
+        text-align: center;
+      }
+      body { padding-bottom: 52px; }
     }
 
     /* ── SMALL MOBILE ────────────────────────────── */
