@@ -110,29 +110,50 @@
     .nav-asistire:hover { background: var(--rust); border-color: var(--rust); }
 
     /* ── BOTÓN ASISTIRÉ FIJO ─────────────────────── */
-    .btn-asistire-fixed {
+    .btn-asistire-fixed-wrap {
       position: fixed;
       bottom: 32px;
       right: 32px;
       z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .unlock-hint {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--cream);
+      border: 1px solid var(--black);
+      padding: 3px 8px;
+      opacity: 0.75;
+    }
+
+    .btn-asistire-fixed {
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 700;
-      font-size: 15px;
-      letter-spacing: 4px;
+      font-size: 11px;
+      letter-spacing: 3px;
       text-transform: uppercase;
       background: var(--terracotta);
       color: #fff;
       border: 2px solid var(--terracotta);
-      padding: 14px 48px;
+      padding: 8px 18px;
       cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
+      transition: background 0.15s, border-color 0.15s, opacity 0.2s;
       box-shadow: 0 4px 24px rgba(0,0,0,0.18);
     }
     .btn-asistire-fixed:hover { background: var(--rust); border-color: var(--rust); }
+    .btn-asistire-fixed.locked { opacity: 0.5; cursor: default; }
+    .btn-asistire-fixed.locked:hover { background: var(--terracotta); border-color: var(--terracotta); }
 
     /* ── PAGES ───────────────────────────────────── */
-    .page { display: none; padding-top: var(--nav-h); }
-    .page.active { display: block; }
+    .page { display: block; scroll-margin-top: var(--nav-h); }
+    #page-home { padding-top: var(--nav-h); }
 
     /* ── HERO ─────────────────────────────────────── */
     .hero {
@@ -909,11 +930,63 @@
       .dc-swatches { grid-template-columns: repeat(4, 1fr); }
     }
 
+    /* ── HAMBURGER MENU ─────────────────────────── */
+    .nav-hamburger {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: var(--black);
+      padding: 4px 8px;
+      margin-right: 8px;
+      flex-shrink: 0;
+      min-height: 44px;
+      align-items: center;
+      line-height: 1;
+    }
+
+    .nav-dropdown {
+      display: none;
+      position: fixed;
+      top: var(--nav-h);
+      left: 0;
+      right: 0;
+      background: var(--cream);
+      border-bottom: 3px solid var(--black);
+      z-index: 99;
+      flex-direction: column;
+    }
+    .nav-dropdown.open { display: flex; }
+    .nav-dropdown a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--black);
+      cursor: pointer;
+      padding: 14px 24px;
+      border-bottom: 1px solid rgba(42,26,14,0.12);
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      transition: background 0.12s;
+    }
+    .nav-dropdown a:hover { background: rgba(42,26,14,0.06); }
+    .nav-dropdown a.nav-active {
+      background: var(--black);
+      color: var(--cream);
+    }
+    .nav-dropdown a:last-child { border-bottom: none; }
+
     @media (max-width: 820px) {
-      .topnav { padding: 0 20px; gap: 0; overflow-x: auto; }
-      .nav-home { font-size: 13px; margin-right: 20px; flex-shrink: 0; }
-      .nav-links { gap: 16px; margin-right: 16px; }
-      .nav-links a { font-size: 11px; letter-spacing: 2px; }
+      .topnav { padding: 0 20px; gap: 0; }
+      .nav-home { font-size: 13px; margin-right: 8px; flex-shrink: 0; }
+      .nav-hamburger { display: flex; }
+      .nav-links { gap: 0; margin-right: 0; }
+      .nav-links a:not(.nav-asistire-link) { display: none; }
       .nav-asistire { font-size: 11px; padding: 6px 14px; }
 
       .hero { grid-template-columns: 1fr; min-height: auto; padding: 40px 24px 56px; gap: 36px; }
@@ -956,20 +1029,33 @@
 
   <!-- TOP NAV -->
   <nav class="topnav">
-    <a class="nav-home" onclick="showPage('home')">CASAMIENTO · 12·12</a>
+    <a class="nav-home" onclick="navHome()">CASAMIENTO · 12·12</a>
     <div class="nav-links">
+      <button class="nav-hamburger" onclick="toggleHamburger()" aria-label="Menú">&#9776;</button>
       <a data-page="evento"     onclick="showPage('evento')">Evento</a>
       <a data-page="dresscode"  onclick="showPage('dresscode')">Dresscode</a>
       <a data-page="mapa"       onclick="showPage('mapa')">Mapa</a>
       <a data-page="hospedajes" onclick="showPage('hospedajes')">Hospedajes</a>
+      <button class="nav-asistire nav-asistire-link" onclick="openModal()">Asistiré</button>
     </div>
   </nav>
 
+  <!-- DROPDOWN MOBILE MENU -->
+  <div class="nav-dropdown" id="navDropdown">
+    <a data-page="evento"     onclick="showPage('evento');closeHamburger()">Evento</a>
+    <a data-page="dresscode"  onclick="showPage('dresscode');closeHamburger()">Dresscode</a>
+    <a data-page="mapa"       onclick="showPage('mapa');closeHamburger()">Mapa</a>
+    <a data-page="hospedajes" onclick="showPage('hospedajes');closeHamburger()">Hospedajes</a>
+  </div>
+
   <!-- BOTÓN ASISTIRÉ FIJO ABAJO -->
-  <button class="btn-asistire-fixed" onclick="openModal()">Confirmar asistencia</button>
+  <div class="btn-asistire-fixed-wrap">
+    <span class="unlock-hint" id="unlockHint">bajá para confirmar ↓</span>
+    <button class="btn-asistire-fixed locked" id="btnAsistireFixed" onclick="fixedBtnClick()">Confirmar asistencia</button>
+  </div>
 
   <!-- PAGE: HOME -->
-  <div id="page-home" class="page active">
+  <div id="page-home" class="page">
     <section class="hero">
       <div class="hero-left">
         <span class="label">Nos casamos</span>
@@ -1292,18 +1378,52 @@
   </div>
 
   <script>
-    // ── PAGES ──────────────────────────────────────
+    // ── NAV: showPage (scroll to section) ──────────
     function showPage(id) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('page-' + id).classList.add('active');
-      window.scrollTo(0, 0);
+      const target = document.getElementById('page-' + id);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    }
 
-      document.querySelectorAll('.nav-links a').forEach(a => {
+    function navHome() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setActiveNav('home');
+    }
+
+    function setActiveNav(id) {
+      document.querySelectorAll('.nav-links a[data-page], .nav-dropdown a[data-page]').forEach(a => {
         a.classList.toggle('nav-active', a.dataset.page === id);
       });
-
-      if (id === 'mapa') initMap();
     }
+
+    // ── NAV: IntersectionObserver for scroll spy ───
+    const scrollObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id.replace('page-', '');
+          setActiveNav(id);
+        }
+      });
+    }, { rootMargin: '0px 0px -55% 0px' });
+
+    document.querySelectorAll('.page').forEach(p => scrollObserver.observe(p));
+
+    // ── HAMBURGER ──────────────────────────────────
+    function toggleHamburger() {
+      document.getElementById('navDropdown').classList.toggle('open');
+    }
+    function closeHamburger() {
+      document.getElementById('navDropdown').classList.remove('open');
+    }
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      const dropdown = document.getElementById('navDropdown');
+      const hamburger = document.querySelector('.nav-hamburger');
+      if (dropdown.classList.contains('open') &&
+          !dropdown.contains(e.target) &&
+          e.target !== hamburger) {
+        closeHamburger();
+      }
+    });
 
     // ── CUBE GRID ──────────────────────────────────
     const COLORS = [
@@ -1363,7 +1483,7 @@
     }
     setTimeout(toggleRandomCube, 1000);
 
-    // ── MAPA (lazy) ────────────────────────────────
+    // ── MAPA (lazy via IntersectionObserver) ───────
     let map, mapReady = false;
 
     function initMap() {
@@ -1440,6 +1560,42 @@
       L.polyline([arb, ran], ls).addTo(map);
 
       setTimeout(() => map.invalidateSize(), 100);
+    }
+
+    // Lazy init map when #page-mapa enters viewport
+    const mapPageObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          initMap();
+          mapPageObserver.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -10% 0px' });
+
+    const mapaPage = document.getElementById('page-mapa');
+    if (mapaPage) mapPageObserver.observe(mapaPage);
+
+    // ── FIXED BUTTON LOCK ──────────────────────────
+    const btnFixed = document.getElementById('btnAsistireFixed');
+    const unlockHint = document.getElementById('unlockHint');
+
+    function checkScrollUnlock() {
+      if (window.scrollY + window.innerHeight >= document.body.scrollHeight - 300) {
+        btnFixed.classList.remove('locked');
+        unlockHint.style.display = 'none';
+      }
+    }
+    window.addEventListener('scroll', checkScrollUnlock, { passive: true });
+    checkScrollUnlock(); // run on load in case page is short
+
+    function fixedBtnClick() {
+      if (btnFixed.classList.contains('locked')) {
+        // shake the hint briefly
+        unlockHint.style.display = 'block';
+        unlockHint.style.opacity = '1';
+        return;
+      }
+      openModal();
     }
 
     // ── MODAL ──────────────────────────────────────
