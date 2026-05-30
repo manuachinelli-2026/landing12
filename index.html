@@ -1238,11 +1238,18 @@
       .regalo-card { padding: 24px 20px; }
 
       /* Mapa */
-      #map { height: 280px; }
-      .mapa-header { flex-direction: column; align-items: flex-start; gap: 12px; }
-      .circuit-btn { width: 100%; text-align: center; }
-      .mapa-venues { grid-template-columns: 1fr; }
-      .venue-card { padding: 16px; }
+      .mapa-section { padding: 20px 16px 16px; min-height: calc(100svh - var(--nav-h) - 52px); }
+      .mapa-section .section-title { font-size: clamp(32px, 9vw, 44px); margin-bottom: 0; }
+      .mapa-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .circuit-btn { width: 100%; text-align: center; margin-top: 10px; padding: 10px 20px; font-size: 11px; }
+      #map { height: 195px; margin-top: 12px; }
+      .mapa-venues { grid-template-columns: 1fr 1fr; margin-top: 10px; gap: 0; border: 1px solid var(--line); }
+      .venue-card { padding: 10px 12px; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); gap: 2px; }
+      .venue-card:nth-child(even) { border-right: none; }
+      .venue-card:nth-last-child(-n+2) { border-bottom: none; }
+      .venue-name { font-size: 11px; letter-spacing: 1.5px; margin-top: 3px; }
+      .venue-detail { font-size: 9px; }
+      .venue-link { font-size: 9px; margin-top: 4px; }
 
       /* Modal */
       .modal-overlay { padding: 10px; align-items: flex-start; padding-top: 16px; }
@@ -1808,10 +1815,13 @@
       }).addTo(map);
 
       function sqIcon(color) {
+        const sz = window.innerWidth <= 820 ? 12 : 26;
+        const bw = window.innerWidth <= 820 ? '1.5px' : '2.5px';
+        const sh = window.innerWidth <= 820 ? `2px 2px 0 #1A1A1A` : `5px 5px 0 #1A1A1A`;
         return L.divIcon({
           className: '',
-          html: `<div style="width:26px;height:26px;background:${color};border:2.5px solid #1A1A1A;box-shadow:5px 5px 0 #1A1A1A;"></div>`,
-          iconSize: [26,26], iconAnchor: [13,13], popupAnchor: [0,-18],
+          html: `<div style="width:${sz}px;height:${sz}px;background:${color};border:${bw} solid #1A1A1A;box-shadow:${sh};"></div>`,
+          iconSize: [sz,sz], iconAnchor: [sz/2,sz/2], popupAnchor: [0,-(sz+2)],
         });
       }
 
