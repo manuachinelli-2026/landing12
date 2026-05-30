@@ -879,18 +879,18 @@
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 40px 48px;
+      gap: 16px 36px;
     }
 
-    .form-group { display: flex; flex-direction: column; gap: 10px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group.full { grid-column: 1 / -1; }
 
     .form-group label,
     .form-group .field-label {
       font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 300;
-      font-size: 10px;
-      letter-spacing: 5px;
+      font-weight: 400;
+      font-size: 11px;
+      letter-spacing: 2.5px;
       text-transform: uppercase;
     }
 
@@ -901,7 +901,7 @@
       background: transparent;
       border: none;
       border-bottom: 2px solid var(--black);
-      padding: 10px 0;
+      padding: 7px 0;
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 16px;
       color: var(--black);
@@ -929,8 +929,8 @@
 
     textarea { resize: none; height: 72px; }
 
-    .radio-group { display: flex; gap: 36px; padding: 6px 0; }
-    .check-group  { display: flex; gap: 28px; padding: 6px 0; flex-wrap: wrap; }
+    .radio-group { display: flex; gap: 28px; padding: 2px 0; }
+    .check-group  { display: flex; gap: 24px; padding: 2px 0; flex-wrap: wrap; }
 
     .radio-option,
     .check-option {
@@ -979,14 +979,14 @@
       text-align: center;
     }
 
-    .transport-group { display: flex; flex-direction: column; gap: 12px; padding: 6px 0; }
+    .transport-group { display: flex; flex-direction: column; gap: 8px; padding: 2px 0; }
 
     .form-actions {
       grid-column: 1 / -1;
       display: flex;
       align-items: center;
-      gap: 40px;
-      margin-top: 8px;
+      gap: 28px;
+      margin-top: 4px;
     }
 
     .btn-submit {
@@ -1029,11 +1029,9 @@
       background: var(--cream);
       border: 3px solid var(--black);
       box-shadow: 8px 8px 0 var(--black);
-      padding: 52px 48px 48px;
-      max-width: 580px;
+      padding: 36px 44px 32px;
+      max-width: 600px;
       width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
       position: relative;
     }
 
@@ -1054,9 +1052,10 @@
 
     .modal-title {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(48px, 8vw, 72px);
-      line-height: 0.88;
-      margin-bottom: 36px;
+      font-size: clamp(28px, 4vw, 36px);
+      line-height: 1;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
     }
 
     /* ── FOOTER ──────────────────────────────────── */
@@ -1538,7 +1537,7 @@
   <div class="modal-overlay" id="rsvpModal" onclick="handleOverlayClick(event)">
     <div class="modal">
       <button class="modal-close" onclick="closeModal()">✕</button>
-      <div class="modal-title">CONFIRMAR<br>ASISTENCIA</div>
+      <div class="modal-title">CONFIRMAR ASISTENCIA</div>
       <form id="modalForm" action="https://formsubmit.co/dopazoflor@icloud.com" method="POST">
         <input type="hidden" name="_cc" value="manuel@voltchat.com">
         <input type="hidden" name="_subject" value="Nueva confirmación de asistencia - Casamiento 12·12">
@@ -1609,10 +1608,6 @@
               <option value="vegetariano">Vegetariano</option>
               <option value="vegano">Vegano</option>
             </select>
-          </div>
-          <div class="form-group full">
-            <label for="m-comentarios">Comentarios o restricciones alimentarias</label>
-            <textarea id="m-comentarios" name="comentarios" placeholder="Algo que debamos saber..."></textarea>
           </div>
           <div class="form-actions">
             <button type="submit" class="btn-submit">Enviar confirmación</button>
