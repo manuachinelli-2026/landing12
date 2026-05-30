@@ -1186,11 +1186,15 @@
       .btn { align-self: center; margin-top: 8px; padding: 13px 32px; font-size: 12px; letter-spacing: 4px; }
 
       /* Dresscode */
-      .dc-layout { grid-template-columns: 1fr; gap: 16px; align-items: start; }
+      .dc-layout { grid-template-columns: 1fr; gap: 12px; align-items: start; }
       .dc-right { margin-left: 0; max-width: 100%; }
-      .dc-swatch-sm { width: 22px !important; height: 22px !important; }
-      .dc-swatches-compact { flex-wrap: wrap !important; gap: 4px !important; }
-      .dc-carousel-item { width: 195px; height: 255px; }
+      .dresscode-section .section-title br { display: none; }
+      .dresscode-section .section-title { font-size: clamp(40px, 11vw, 52px); }
+      .dc-swatch-sm { width: 18px !important; height: 18px !important; flex-shrink: 0 !important; }
+      .dc-swatches-compact { flex-wrap: nowrap !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 4px !important; }
+      .dc-swatches-compact::-webkit-scrollbar { display: none; }
+      .dc-carousel-item { width: 150px; height: 195px; }
+      .dc-carousel-wrap { margin-top: 16px; }
       .dc-scroll-hint { display: none; }
       .dc-carousel-track::after { display: none; }
 
