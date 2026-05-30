@@ -1171,14 +1171,15 @@
       .regalos-section { padding: 32px 20px 48px; min-height: auto; }
 
       /* Hero — Bauhaus mobile: todo centrado, cube grid visible y contenido */
-      .hero { grid-template-columns: 1fr; min-height: auto; padding: 20px 20px 28px; gap: 20px; text-align: center; }
+      .hero { grid-template-columns: 1fr; min-height: auto; padding: 16px 20px 24px; gap: 16px; text-align: center; }
       .hero-left { align-items: center; }
+      .hero-title { font-size: clamp(44px, 12vw, 58px); }
       .hero-right { display: flex; justify-content: center; }
-      .cube-grid { max-width: 210px; }
-      .hero-info { flex-direction: column; align-items: center; gap: 8px; margin-top: 12px; }
+      .cube-grid { max-width: 300px; }
+      .hero-info { flex-direction: column; align-items: center; gap: 6px; margin-top: 8px; }
       .hero-date { text-align: center; }
       .date-sub { text-align: center; }
-      .btn { align-self: center; margin-top: 20px; padding: 13px 32px; font-size: 12px; letter-spacing: 4px; }
+      .btn { align-self: center; margin-top: 16px; padding: 13px 32px; font-size: 12px; letter-spacing: 4px; }
 
       /* Dresscode */
       .dc-layout { grid-template-columns: 1fr; gap: 16px; align-items: start; }
@@ -1189,17 +1190,37 @@
       .dc-scroll-hint { display: none; }
       .dc-carousel-track::after { display: none; }
 
-      /* Roadmap */
+      /* Roadmap — vertical cards on mobile, no horizontal scroll */
       .roadmap-grid { grid-template-columns: 1fr; }
       .day-col { padding: 24px 20px; }
       .roadmap-title { white-space: normal; font-size: clamp(36px, 10vw, 60px); }
-      .htimeline { overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; margin-top: 28px; }
-      .htl-section { min-width: 240px; scroll-snap-align: start; padding: 0 16px; }
-      .htl-day-name { font-size: 34px; }
-      .htl-header { padding: 20px 0 16px; }
+      .htimeline {
+        flex-direction: column;
+        overflow-x: visible;
+        border-left: none;
+        margin-top: 20px;
+        gap: 0;
+      }
+      .htl-section {
+        min-width: unset;
+        width: 100%;
+        border-right: none;
+        border-left: 2px solid var(--black);
+        border-top: 2px solid var(--black);
+        border-bottom: none;
+        padding: 0;
+        scroll-snap-align: unset;
+      }
+      .htl-section:last-child { border-bottom: 2px solid var(--black); }
+      .htl-header { text-align: left; padding: 14px 18px 10px; border-bottom: 1px solid var(--line); }
+      .htl-day-name { font-size: 30px; letter-spacing: 1px; }
+      .htl-date { margin-top: 2px; }
+      .htl-line { display: none; }
+      .htl-events { flex-direction: row; justify-content: flex-start; padding: 14px 18px 16px; gap: 28px; }
+      .htl-event { text-align: left; flex: none; }
       .htl-time { font-size: 22px; }
-      .htl-name { font-size: 11px; letter-spacing: 1px; }
-      .htl-events { padding: 18px 0 28px; gap: 6px; }
+      .htl-name { font-size: 12px; letter-spacing: 1.5px; margin-top: 4px; }
+      .htl-detail { font-size: 11px; margin-top: 2px; }
 
       /* Hospedajes */
       .hospedajes-grid { grid-template-columns: 1fr; }
