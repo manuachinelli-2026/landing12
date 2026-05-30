@@ -156,7 +156,7 @@
     /* ── PAGES ───────────────────────────────────── */
     .page { display: block; scroll-margin-top: var(--nav-h); }
     #page-home { padding-top: var(--nav-h); }
-    .page:not(#page-home) > section:first-child { border-top: 3px solid var(--black); }
+    .page:not(#page-home) > section:first-child { border-top: 1px solid var(--line); }
 
     /* ── HERO ─────────────────────────────────────── */
     .hero {
@@ -631,6 +631,7 @@
       text-transform: uppercase;
       line-height: 1;
       margin-top: 4px;
+      color: #5C4827;
     }
 
     .venue-detail {
@@ -760,7 +761,7 @@
 
     .hospedaje-card {
       padding: 40px 36px;
-      border-right: 3px solid var(--black);
+      border-right: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
       display: flex;
       flex-direction: column;
@@ -782,9 +783,10 @@
       line-height: 0.95;
       letter-spacing: 1px;
       margin-bottom: 20px;
+      color: var(--title);
     }
 
-    .hospedaje-divider { width: 40px; height: 2px; background: var(--black); margin-bottom: 20px; }
+    .hospedaje-divider { width: 40px; height: 1px; background: var(--line); margin-bottom: 20px; }
 
     .hospedaje-info { display: flex; flex-direction: column; gap: 10px; flex: 1; }
 
