@@ -433,7 +433,16 @@
     }
 
     /* ── MAPA SECTION ───────────────────────────────── */
-    .mapa-section { padding: 64px 64px 80px; }
+    .mapa-section { padding: 48px 64px 80px; }
+
+    .mapa-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
 
     .mapa-venues {
       display: grid;
@@ -1115,8 +1124,15 @@
   <!-- PAGE: MAPA -->
   <div id="page-mapa" class="page">
     <section class="mapa-section">
-      <span class="label">Dónde es todo</span>
-      <h2 class="section-title">MAPA</h2>
+      <div class="mapa-header">
+        <div>
+          <span class="label">Dónde es todo</span>
+          <h2 class="section-title" style="margin-bottom:24px;">MAPA</h2>
+        </div>
+        <a class="circuit-btn" href="https://www.google.com/maps/dir/?api=1&origin=-35.0059331,-59.2783253&destination=-35.1238937,-59.5676461&waypoints=-35.0528235,-59.51344|-35.1190677,-59.5712216&travelmode=driving" target="_blank">
+          Ver circuito completo en Google Maps →
+        </a>
+      </div>
       <div id="map"></div>
 
       <!-- Venue cards -->
@@ -1160,10 +1176,6 @@
 
       </div>
 
-      <!-- Circuito completo -->
-      <a class="circuit-btn" href="https://www.google.com/maps/dir/?api=1&origin=-35.0059331,-59.2783253&destination=-35.1238937,-59.5676461&waypoints=-35.0528235,-59.51344|-35.1190677,-59.5712216&travelmode=driving" target="_blank">
-        Ver circuito completo en Google Maps →
-      </a>
 
     </section>
   </div>
@@ -1364,7 +1376,7 @@
       if (mapReady) { setTimeout(() => map.invalidateSize(), 50); return; }
       mapReady = true;
 
-      map = L.map('map', { zoomControl: true, scrollWheelZoom: true })
+      map = L.map('map', { zoomControl: true, scrollWheelZoom: false })
                .setView([-35.072, -59.435], 10);
 
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -1403,7 +1415,7 @@
           mapsUrl: 'https://maps.google.com/maps?q=-35.1190677,-59.5712216',
         },
         {
-          latlng: [-35.1238937, -59.5676461],
+          latlng: [-35.148, -59.578],          // offset visual — coords reales en mapsUrl
           color: '#1B5C5C', dir: 'left',
           name: 'El Ranchito',
           detail: 'Domingo · Corderos al asador',
@@ -1420,7 +1432,7 @@
           `<b>${name}</b>${detail}<br>` +
           `<a href="${mapsUrl}" target="_blank" style="${popupStyle}font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#1A1A1A;border-bottom:1px solid #1A1A1A;text-decoration:none;">Abrir en Maps →</a>`
         );
-        m.bindTooltip(name, { permanent: false, direction: dir, className: 'map-label', offset: [16,0] });
+        m.bindTooltip(name, { permanent: true, direction: dir, className: 'map-label', offset: [16,0] });
         markers.push(m);
       });
 
