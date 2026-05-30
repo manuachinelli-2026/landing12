@@ -292,12 +292,13 @@
       display: grid;
       grid-template-columns: auto 1fr;
       gap: 64px;
-      align-items: center;
+      align-items: flex-end;
       margin-bottom: 48px;
     }
 
     .dc-left { display: flex; flex-direction: column; }
-    .dc-right { display: flex; flex-direction: column; gap: 16px; max-width: 420px; margin-left: auto; }
+    .dc-right { display: flex; flex-direction: column; gap: 20px; max-width: 420px; margin-left: auto; }
+    .dc-right .dc-note { margin-top: 12px; }
     .dc-left-block { max-width: 480px; margin-bottom: 48px; }
 
     .dc-swatches-compact {
