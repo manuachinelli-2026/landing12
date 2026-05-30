@@ -1907,23 +1907,24 @@
     // ── FIXED BUTTON LOCK ──────────────────────────
     const btnFixed = document.getElementById('btnAsistireFixed');
     const unlockHint = document.getElementById('unlockHint');
+    const LOCKED_TEXT   = '↓  Scrolleá para confirmar';
+    const UNLOCKED_TEXT = 'Confirmar asistencia';
+
+    btnFixed.textContent = LOCKED_TEXT;
 
     function checkScrollUnlock() {
-      if (window.scrollY + window.innerHeight >= document.body.scrollHeight - 300) {
+      const atBottom = window.scrollY + window.innerHeight >= document.body.scrollHeight - 100;
+      if (atBottom && btnFixed.classList.contains('locked')) {
         btnFixed.classList.remove('locked');
-        unlockHint.style.display = 'none';
+        btnFixed.textContent = UNLOCKED_TEXT;
+        if (unlockHint) unlockHint.style.display = 'none';
       }
     }
     window.addEventListener('scroll', checkScrollUnlock, { passive: true });
-    checkScrollUnlock(); // run on load in case page is short
+    checkScrollUnlock();
 
     function fixedBtnClick() {
-      if (btnFixed.classList.contains('locked')) {
-        // shake the hint briefly
-        unlockHint.style.display = 'block';
-        unlockHint.style.opacity = '1';
-        return;
-      }
+      if (btnFixed.classList.contains('locked')) return;
       openModal();
     }
 
