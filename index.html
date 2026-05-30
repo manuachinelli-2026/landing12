@@ -108,6 +108,28 @@
     }
     .nav-asistire:hover { background: var(--rust); border-color: var(--rust); }
 
+    /* ── BOTÓN ASISTIRÉ FIJO ─────────────────────── */
+    .btn-asistire-fixed {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      background: var(--terracotta);
+      color: #fff;
+      border: 2px solid var(--terracotta);
+      padding: 14px 48px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    }
+    .btn-asistire-fixed:hover { background: var(--rust); border-color: var(--rust); }
+
     /* ── PAGES ───────────────────────────────────── */
     .page { display: none; padding-top: var(--nav-h); }
     .page.active { display: block; }
@@ -820,10 +842,11 @@
       <a data-page="dresscode"  onclick="showPage('dresscode')">Dresscode</a>
       <a data-page="mapa"       onclick="showPage('mapa')">Mapa</a>
       <a data-page="hospedajes" onclick="showPage('hospedajes')">Hospedajes</a>
-      <a data-page="regalos"    onclick="showPage('regalos')">¿Qué regalarnos?</a>
     </div>
-    <button class="nav-asistire" onclick="openModal()">Asistiré</button>
   </nav>
+
+  <!-- BOTÓN ASISTIRÉ FIJO ABAJO -->
+  <button class="btn-asistire-fixed" onclick="openModal()">Asistiré</button>
 
   <!-- PAGE: HOME -->
   <div id="page-home" class="page active">
@@ -1089,40 +1112,6 @@
 
       </div>
       <p class="hospedajes-note">¿Dudas? Escribinos y te ayudamos a coordinar.</p>
-    </section>
-  </div>
-
-  <!-- PAGE: REGALOS -->
-  <div id="page-regalos" class="page">
-    <section class="regalos-section">
-      <span class="label">Un detalle especial</span>
-      <h2 class="section-title">¿QUÉ<br>REGA<br>LARNOS?</h2>
-      <div class="regalos-content">
-        <div class="regalo-card">
-          <div class="regalo-card-tag">Opción 1</div>
-          <div class="regalo-card-title">SOBRE</div>
-          <div class="regalo-card-divider"></div>
-          <div class="regalo-card-body">
-            Si querés regalarnos algo, lo que más nos ayuda es una contribución para nuestra luna de miel.<br><br>
-            <strong>CBU</strong><br>
-            0000000000000000000000<br><br>
-            <strong>Alias</strong><br>
-            casamiento.1212
-          </div>
-        </div>
-        <div class="regalo-card">
-          <div class="regalo-card-tag">Opción 2</div>
-          <div class="regalo-card-title">LISTA DE<br>REGALOS</div>
-          <div class="regalo-card-divider"></div>
-          <div class="regalo-card-body">
-            También armamos una lista con algunas ideas si preferís elegir algo concreto.<br><br>
-            <strong>Tienda</strong><br>
-            Próximamente disponible<br><br>
-            <strong>Consultas</strong><br>
-            casamiento1212@gmail.com
-          </div>
-        </div>
-      </div>
     </section>
   </div>
 
