@@ -179,11 +179,10 @@
 
     .hero-title {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(52px, 7vw, 104px);
-      line-height: 1;
+      font-size: clamp(72px, 10vw, 148px);
+      line-height: 0.9;
       letter-spacing: 2px;
       margin-top: 0;
-      white-space: nowrap;
     }
 
     .divider { width: 100%; height: 3px; background: var(--black); margin: 36px 0; }
@@ -298,6 +297,7 @@
 
     .dc-left { display: flex; flex-direction: column; }
     .dc-right { display: flex; flex-direction: column; overflow: hidden; }
+    .dc-left-block { max-width: 480px; margin-bottom: 48px; }
 
     .dc-intro {
       font-family: 'Barlow Condensed', sans-serif;
@@ -1274,59 +1274,56 @@
   <!-- PAGE: DRESSCODE -->
   <div id="page-dresscode" class="page">
     <section class="dresscode-section">
-      <div class="dc-layout">
+      <span class="label">El look del día</span>
+      <h2 class="section-title" style="margin-bottom:24px;">DRESS<br>CODE</h2>
 
-        <!-- IZQUIERDA: título + texto + swatches -->
-        <div class="dc-left">
-          <span class="label">El look del día</span>
-          <h2 class="section-title" style="margin-bottom:24px;">DRESS<br>CODE</h2>
-          <p class="dc-intro">Paleta tierra — colores cálidos y naturales que armonicen con el campo y el entorno de Las Marianas.</p>
-          <div class="dc-swatches-compact" style="margin-bottom:16px;">
-            <div class="dc-swatch-sm" style="background:#8B4513"></div>
-            <div class="dc-swatch-sm" style="background:#5C4827"></div>
-            <div class="dc-swatch-sm" style="background:#8B4D26"></div>
-            <div class="dc-swatch-sm" style="background:#954535"></div>
-            <div class="dc-swatch-sm" style="background:#C4432A"></div>
-            <div class="dc-swatch-sm" style="background:#C06050"></div>
-            <div class="dc-swatch-sm" style="background:#C1654A"></div>
-            <div class="dc-swatch-sm" style="background:#9B2F1F"></div>
-            <div class="dc-swatch-sm" style="background:#D4940A"></div>
-            <div class="dc-swatch-sm" style="background:#C9941A"></div>
-            <div class="dc-swatch-sm" style="background:#C8A843"></div>
-            <div class="dc-swatch-sm" style="background:#4A5320"></div>
-            <div class="dc-swatch-sm" style="background:#6E7D3A"></div>
-            <div class="dc-swatch-sm" style="background:#2D5A2E"></div>
-            <div class="dc-swatch-sm" style="background:#1C3D35"></div>
-            <div class="dc-swatch-sm" style="background:#1B5C5C"></div>
-            <div class="dc-swatch-sm" style="background:#A89060"></div>
-            <div class="dc-swatch-sm" style="background:#B85C35"></div>
-          </div>
-          <p class="dc-note">Evitá el blanco y el negro — reservamos esos colores para los novios.</p>
+      <!-- texto + swatches, anclados a la izquierda -->
+      <div class="dc-left-block">
+        <p class="dc-intro">Paleta tierra — colores cálidos y naturales que armonicen con el campo y el entorno de Las Marianas.</p>
+        <div class="dc-swatches-compact" style="margin-bottom:16px;">
+          <div class="dc-swatch-sm" style="background:#8B4513"></div>
+          <div class="dc-swatch-sm" style="background:#5C4827"></div>
+          <div class="dc-swatch-sm" style="background:#8B4D26"></div>
+          <div class="dc-swatch-sm" style="background:#954535"></div>
+          <div class="dc-swatch-sm" style="background:#C4432A"></div>
+          <div class="dc-swatch-sm" style="background:#C06050"></div>
+          <div class="dc-swatch-sm" style="background:#C1654A"></div>
+          <div class="dc-swatch-sm" style="background:#9B2F1F"></div>
+          <div class="dc-swatch-sm" style="background:#D4940A"></div>
+          <div class="dc-swatch-sm" style="background:#C9941A"></div>
+          <div class="dc-swatch-sm" style="background:#C8A843"></div>
+          <div class="dc-swatch-sm" style="background:#4A5320"></div>
+          <div class="dc-swatch-sm" style="background:#6E7D3A"></div>
+          <div class="dc-swatch-sm" style="background:#2D5A2E"></div>
+          <div class="dc-swatch-sm" style="background:#1C3D35"></div>
+          <div class="dc-swatch-sm" style="background:#1B5C5C"></div>
+          <div class="dc-swatch-sm" style="background:#A89060"></div>
+          <div class="dc-swatch-sm" style="background:#B85C35"></div>
         </div>
+        <p class="dc-note">Evitá el blanco y el negro — reservamos esos colores para los novios.</p>
+      </div>
 
-        <!-- DERECHA: carousel -->
-        <div class="dc-right">
-          <span class="label" style="font-size:11px;letter-spacing:4px;">Referencias de looks</span>
-          <div class="dc-carousel" style="margin-top:16px;">
-            <div class="dc-carousel-item">
-              <img src="https://images.unsplash.com/photo-1519741347686-c1e0aadf4611?w=400&h=500&fit=crop" alt="Referencia 1">
-            </div>
-            <div class="dc-carousel-item">
-              <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400&h=500&fit=crop" alt="Referencia 2">
-            </div>
-            <div class="dc-carousel-item">
-              <img src="https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=400&h=500&fit=crop" alt="Referencia 3">
-            </div>
-            <div class="dc-carousel-item">
-              <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400&h=500&fit=crop" alt="Referencia 4">
-            </div>
-            <div class="dc-carousel-item">
-              <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&h=500&fit=crop" alt="Referencia 5">
-            </div>
+      <!-- carousel ancho completo debajo -->
+      <div class="dc-carousel-wrap">
+        <span class="label" style="font-size:11px;letter-spacing:4px;">Referencias de looks</span>
+        <div class="dc-carousel" style="margin-top:16px;">
+          <div class="dc-carousel-item">
+            <img src="https://images.unsplash.com/photo-1519741347686-c1e0aadf4611?w=400&h=500&fit=crop" alt="Referencia 1">
           </div>
-          <p class="dc-carousel-label">Deslizá para ver más →</p>
+          <div class="dc-carousel-item">
+            <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400&h=500&fit=crop" alt="Referencia 2">
+          </div>
+          <div class="dc-carousel-item">
+            <img src="https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=400&h=500&fit=crop" alt="Referencia 3">
+          </div>
+          <div class="dc-carousel-item">
+            <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400&h=500&fit=crop" alt="Referencia 4">
+          </div>
+          <div class="dc-carousel-item">
+            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&h=500&fit=crop" alt="Referencia 5">
+          </div>
         </div>
-
+        <p class="dc-carousel-label">Deslizá para ver más →</p>
       </div>
     </section>
   </div>
