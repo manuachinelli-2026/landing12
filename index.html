@@ -1439,7 +1439,7 @@
       const [nav, igl, arb, ran] = LOCATIONS.map(l => l.latlng);
       L.polyline([nav, igl], ls).addTo(map); distLabel(mid(nav, igl), '30 km');
       L.polyline([igl, arb], ls).addTo(map); distLabel(mid(igl, arb), '15 km');
-      L.polyline([igl, ran], ls).addTo(map); distLabel(mid(igl, ran), '15 km');
+      L.polyline([arb, ran], ls).addTo(map);
 
       setTimeout(() => map.invalidateSize(), 100);
     }
