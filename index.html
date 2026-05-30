@@ -1620,7 +1620,7 @@
           </div>
           <div class="form-group">
             <label for="m-personas">Cantidad de personas</label>
-            <select id="m-personas" name="personas">
+            <select id="m-personas" name="personas" onchange="updateGuestFields(this.value)">
               <option value="1">1 persona</option>
               <option value="2">2 personas</option>
               <option value="3">3 personas</option>
@@ -1630,6 +1630,9 @@
               <option value="7">7 personas</option>
               <option value="8">8 personas</option>
             </select>
+          </div>
+          <div id="extra-guests" class="form-group full" style="display:none;">
+            <div id="extra-guests-fields"></div>
           </div>
           <div class="form-group">
             <label for="m-menu">Menú</label>
@@ -1870,6 +1873,25 @@
     }
 
     // ── MODAL ──────────────────────────────────────
+    function updateGuestFields(count) {
+      const container = document.getElementById('extra-guests');
+      const fields = document.getElementById('extra-guests-fields');
+      const n = parseInt(count);
+      if (n <= 1) { container.style.display = 'none'; fields.innerHTML = ''; return; }
+      container.style.display = 'block';
+      fields.innerHTML = '';
+      for (let i = 2; i <= n; i++) {
+        fields.innerHTML += `
+          <div style="margin-bottom:16px;">
+            <label style="font-size:11px;letter-spacing:3px;text-transform:uppercase;display:block;margin-bottom:6px;">Persona ${i}</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <input type="text" name="nombre_p${i}" placeholder="Nombre" required style="padding:10px 12px;border:1px solid var(--line);background:transparent;font-family:inherit;font-size:14px;color:var(--black);">
+              <input type="text" name="apellido_p${i}" placeholder="Apellido" required style="padding:10px 12px;border:1px solid var(--line);background:transparent;font-family:inherit;font-size:14px;color:var(--black);">
+            </div>
+          </div>`;
+      }
+    }
+
     function openModal() {
       document.getElementById('rsvpModal').classList.add('open');
       document.body.style.overflow = 'hidden';
