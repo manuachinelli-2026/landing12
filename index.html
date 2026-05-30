@@ -744,6 +744,14 @@
     .topnav a:hover,
     .topnav button:hover { color: var(--terracotta); }
 
+    .topnav a.nav-active {
+      background: var(--black);
+      color: var(--cream);
+      padding: 8px 20px;
+    }
+
+    .topnav a.nav-active:hover { color: var(--cream); opacity: 0.8; }
+
     .topnav .nav-asistire {
       background: var(--black);
       color: var(--cream);
@@ -1583,6 +1591,32 @@
 
     L.polyline([marianas, ranchito], lineStyle).addTo(map);
     distLabel(mid(marianas, ranchito), '15 km');
+
+    // ── SCROLL SPY ─────────────────────────────────
+    const NAV_SECTIONS = [
+      { id: 'regalos',    links: ['#regalos'] },
+      { id: 'hospedajes', links: ['#hospedajes'] },
+      { id: 'mapa',       links: ['#mapa'] },
+      { id: 'evento',     links: ['#evento', '#dresscode'] },
+    ];
+
+    function updateActiveNav() {
+      const offset = document.querySelector('.topnav').offsetHeight + 20;
+      const scrollY = window.scrollY + offset;
+
+      let activeLinks = ['#evento', '#dresscode'];
+      for (const { id, links } of NAV_SECTIONS) {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollY) { activeLinks = links; break; }
+      }
+
+      document.querySelectorAll('.topnav a').forEach(a => {
+        a.classList.toggle('nav-active', activeLinks.includes(a.getAttribute('href')));
+      });
+    }
+
+    window.addEventListener('scroll', updateActiveNav, { passive: true });
+    updateActiveNav();
 
     // ── MODAL ──────────────────────────────────────
     function openModal() {
