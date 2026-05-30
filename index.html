@@ -885,13 +885,28 @@
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group.full { grid-column: 1 / -1; }
 
-    .form-group label,
-    .form-group .field-label {
+    .form-group > label {
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 400;
       font-size: 11px;
       letter-spacing: 2.5px;
       text-transform: uppercase;
+      color: #666;
+    }
+
+    .form-group .field-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.5px;
+      text-transform: none;
+      color: var(--black);
+    }
+
+    .radio-option,
+    .check-option {
+      text-transform: none;
+      letter-spacing: 0;
     }
 
     input[type="text"],
