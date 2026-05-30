@@ -313,6 +313,7 @@
 
     /* ── ROADMAP SECTION ─────────────────────────── */
     .roadmap-section { padding: 64px 64px 100px; min-height: calc(100vh - var(--nav-h)); }
+    .roadmap-title { font-size: clamp(40px, 6vw, 80px); white-space: nowrap; }
 
     .roadmap-grid {
       display: grid;
@@ -332,9 +333,10 @@
 
     .day-name {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(42px, 5vw, 72px);
-      line-height: 0.88;
+      font-size: clamp(28px, 3vw, 48px);
+      line-height: 1;
       letter-spacing: 2px;
+      white-space: nowrap;
     }
 
     .day-date {
@@ -900,12 +902,12 @@
   <div id="page-evento" class="page">
     <section class="roadmap-section">
       <span class="label">El fin de semana</span>
-      <h2 class="section-title">ROAD<br>MAP</h2>
+      <h2 class="section-title roadmap-title">ROAD MAP</h2>
       <div class="roadmap-grid">
 
         <div class="day-col">
           <div class="day-header">
-            <div class="day-name">VIER<br>NES</div>
+            <div class="day-name">VIERNES</div>
             <span class="day-date">11 · Diciembre</span>
           </div>
           <div class="day-divider"></div>
@@ -923,7 +925,7 @@
 
         <div class="day-col">
           <div class="day-header">
-            <div class="day-name">SÁBA<br>DO</div>
+            <div class="day-name">SÁBADO</div>
             <span class="day-date">12 · Diciembre</span>
           </div>
           <div class="day-divider"></div>
@@ -949,7 +951,7 @@
 
         <div class="day-col">
           <div class="day-header">
-            <div class="day-name">DOMIN<br>GO</div>
+            <div class="day-name">DOMINGO</div>
             <span class="day-date">13 · Diciembre</span>
           </div>
           <div class="day-divider"></div>
