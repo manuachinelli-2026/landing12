@@ -1117,16 +1117,16 @@
   <div class="modal-overlay" id="rsvpModal" onclick="handleOverlayClick(event)">
     <div class="modal">
       <button class="modal-close" onclick="closeModal()">✕</button>
-      <div class="modal-title">ASIS<br>TIRÉ</div>
+      <div class="modal-title">CONFIRMAR<br>ASISTENCIA</div>
       <form id="modalForm">
         <div class="form-grid" style="max-width:100%">
           <div class="form-group">
-            <label for="m-nombre">Nombre completo</label>
+            <label for="m-nombre">Nombre</label>
             <input type="text" id="m-nombre" name="nombre" placeholder="Tu nombre" required>
           </div>
           <div class="form-group">
-            <label for="m-email">Email</label>
-            <input type="email" id="m-email" name="email" placeholder="tu@email.com" required>
+            <label for="m-apellido">Apellido</label>
+            <input type="text" id="m-apellido" name="apellido" placeholder="Tu apellido" required>
           </div>
           <div class="form-group full">
             <span class="field-label">¿Confirmás asistencia?</span>
@@ -1146,6 +1146,10 @@
               <option value="2">2 personas</option>
               <option value="3">3 personas</option>
               <option value="4">4 personas</option>
+              <option value="5">5 personas</option>
+              <option value="6">6 personas</option>
+              <option value="7">7 personas</option>
+              <option value="8">8 personas</option>
             </select>
           </div>
           <div class="form-group">
