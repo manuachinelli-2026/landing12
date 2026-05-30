@@ -315,81 +315,97 @@
     .roadmap-section { padding: 64px 64px 100px; min-height: calc(100vh - var(--nav-h)); }
     .roadmap-title { font-size: clamp(40px, 6vw, 80px); white-space: nowrap; }
 
-    .roadmap-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0;
-      margin-top: 0;
+    /* ── HORIZONTAL TIMELINE ────────────────────── */
+    .htimeline {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      margin-top: 48px;
+      overflow-x: auto;
+      padding-bottom: 32px;
+    }
+
+    .htl-section {
+      flex: 1;
+      min-width: 200px;
+      padding-right: 16px;
+    }
+
+    .htl-section-header {
+      padding-left: 24px;
       border-left: 3px solid var(--black);
+      margin-bottom: 0;
     }
 
-    .day-col {
-      padding: 0 48px 48px 40px;
-      border-right: 3px solid var(--black);
-      position: relative;
-    }
-
-    .day-header { margin-bottom: 40px; }
-
-    .day-name {
+    .htl-day-name {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(28px, 3vw, 48px);
-      line-height: 1;
+      font-size: clamp(24px, 2.5vw, 36px);
       letter-spacing: 2px;
-      white-space: nowrap;
+      line-height: 1;
     }
 
-    .day-date {
+    .htl-date {
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 300;
       font-size: 11px;
-      letter-spacing: 6px;
+      letter-spacing: 5px;
       text-transform: uppercase;
       color: var(--terracotta);
-      margin-top: 8px;
       display: block;
-    }
-
-    .day-divider { width: 100%; height: 2px; background: var(--black); margin-bottom: 36px; }
-
-    .events-list { display: flex; flex-direction: column; gap: 28px; position: relative; }
-
-    .events-list::before {
-      content: '';
-      position: absolute;
-      left: 6px; top: 8px; bottom: 8px;
-      width: 2px;
-      background: var(--black);
-      opacity: 0.15;
-    }
-
-    .event-item { display: flex; gap: 20px; align-items: flex-start; }
-
-    .event-dot {
-      width: 14px; height: 14px;
-      background: var(--black);
-      flex-shrink: 0;
       margin-top: 4px;
-      position: relative;
-      z-index: 1;
+      margin-bottom: 20px;
     }
 
-    .event-time {
+    .htl-events {
+      display: flex;
+      flex-direction: row;
+      gap: 0;
+      position: relative;
+      padding-top: 20px;
+      border-top: 2px solid var(--black);
+    }
+
+    .htl-event {
+      flex: 1;
+      padding: 0 16px 0 24px;
+      border-left: 3px solid var(--black);
+      position: relative;
+    }
+
+    .htl-dot {
+      width: 12px;
+      height: 12px;
+      background: var(--terracotta);
+      border-radius: 50%;
+      position: absolute;
+      top: -27px;
+      left: 18px;
+    }
+
+    .htl-time {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 28px;
       color: var(--terracotta);
-      line-height: 1;
       letter-spacing: 1px;
+      line-height: 1;
     }
 
-    .event-name {
+    .htl-name {
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 700;
-      font-size: 16px;
+      font-size: 15px;
       letter-spacing: 2px;
       text-transform: uppercase;
       margin-top: 4px;
-      line-height: 1.2;
+    }
+
+    .htl-detail {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.5;
+      margin-top: 2px;
     }
 
     .event-detail {
@@ -903,66 +919,58 @@
     <section class="roadmap-section">
       <span class="label">El fin de semana</span>
       <h2 class="section-title roadmap-title">ROAD MAP</h2>
-      <div class="roadmap-grid">
+      <div class="htimeline">
 
-        <div class="day-col">
-          <div class="day-header">
-            <div class="day-name">VIERNES</div>
-            <span class="day-date">11 · Diciembre</span>
+        <!-- VIERNES -->
+        <div class="htl-section">
+          <div class="htl-section-header">
+            <div class="htl-day-name">VIERNES</div>
+            <span class="htl-date">11 · Diciembre</span>
           </div>
-          <div class="day-divider"></div>
-          <div class="events-list">
-            <div class="event-item">
-              <div class="event-dot"></div>
-              <div class="event-body">
-                <div class="event-time">20:00</div>
-                <div class="event-name">Las Marianas</div>
-                <div class="event-detail">Evento de pre-boda</div>
-              </div>
+          <div class="htl-events">
+            <div class="htl-event">
+              <div class="htl-dot"></div>
+              <div class="htl-time">20:00</div>
+              <div class="htl-name">Las Marianas</div>
+              <div class="htl-detail">Evento de pre-boda</div>
             </div>
           </div>
         </div>
 
-        <div class="day-col">
-          <div class="day-header">
-            <div class="day-name">SÁBADO</div>
-            <span class="day-date">12 · Diciembre</span>
+        <!-- SÁBADO -->
+        <div class="htl-section">
+          <div class="htl-section-header">
+            <div class="htl-day-name">SÁBADO</div>
+            <span class="htl-date">12 · Diciembre</span>
           </div>
-          <div class="day-divider"></div>
-          <div class="events-list">
-            <div class="event-item">
-              <div class="event-dot"></div>
-              <div class="event-body">
-                <div class="event-time">16:30</div>
-                <div class="event-name">Iglesia Las Marianas</div>
-                <div class="event-detail">Ceremonia religiosa</div>
-              </div>
+          <div class="htl-events">
+            <div class="htl-event">
+              <div class="htl-dot"></div>
+              <div class="htl-time">16:30</div>
+              <div class="htl-name">Iglesia Las Marianas</div>
+              <div class="htl-detail">Ceremonia religiosa</div>
             </div>
-            <div class="event-item">
-              <div class="event-dot"></div>
-              <div class="event-body">
-                <div class="event-time">18:00</div>
-                <div class="event-name">El Arbolito</div>
-                <div class="event-detail">Casamiento</div>
-              </div>
+            <div class="htl-event">
+              <div class="htl-dot"></div>
+              <div class="htl-time">18:00</div>
+              <div class="htl-name">El Arbolito</div>
+              <div class="htl-detail">Casamiento</div>
             </div>
           </div>
         </div>
 
-        <div class="day-col">
-          <div class="day-header">
-            <div class="day-name">DOMINGO</div>
-            <span class="day-date">13 · Diciembre</span>
+        <!-- DOMINGO -->
+        <div class="htl-section">
+          <div class="htl-section-header">
+            <div class="htl-day-name">DOMINGO</div>
+            <span class="htl-date">13 · Diciembre</span>
           </div>
-          <div class="day-divider"></div>
-          <div class="events-list">
-            <div class="event-item">
-              <div class="event-dot"></div>
-              <div class="event-body">
-                <div class="event-time">Al mediodía</div>
-                <div class="event-name">El Ranchito</div>
-                <div class="event-detail">Corderos al asador</div>
-              </div>
+          <div class="htl-events">
+            <div class="htl-event">
+              <div class="htl-dot"></div>
+              <div class="htl-time">Al mediodía</div>
+              <div class="htl-name">El Ranchito</div>
+              <div class="htl-detail">Corderos al asador</div>
             </div>
           </div>
         </div>
