@@ -179,10 +179,11 @@
 
     .hero-title {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(88px, 11vw, 156px);
-      line-height: 0.88;
+      font-size: clamp(52px, 7vw, 104px);
+      line-height: 1;
       letter-spacing: 2px;
-      margin-top: 12px;
+      margin-top: 0;
+      white-space: nowrap;
     }
 
     .divider { width: 100%; height: 3px; background: var(--black); margin: 36px 0; }
@@ -325,6 +326,69 @@
       text-transform: uppercase;
     }
 
+    .dc-swatches-compact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 48px;
+    }
+
+    .dc-swatch-sm {
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(42,26,14,0.15);
+    }
+
+    /* ── IMAGE CAROUSEL ──────────────────────────── */
+    .dc-carousel-wrap {
+      position: relative;
+      margin-top: 32px;
+    }
+
+    .dc-carousel {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 12px;
+      scrollbar-width: none;
+    }
+    .dc-carousel::-webkit-scrollbar { display: none; }
+
+    .dc-carousel-item {
+      flex-shrink: 0;
+      width: 260px;
+      height: 340px;
+      scroll-snap-align: start;
+      border: 3px solid var(--black);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #888;
+    }
+
+    .dc-carousel-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .dc-carousel-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 300;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #888;
+      margin-top: 8px;
+    }
+
     .dc-note {
       margin-top: 40px;
       font-family: 'Barlow Condensed', sans-serif;
@@ -465,31 +529,32 @@
     .mapa-venues {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      margin-top: 28px;
-      border-left: 3px solid var(--black);
-      border-top: 3px solid var(--black);
+      margin-top: 20px;
+      border-left: 1px solid rgba(42,26,14,0.2);
+      border-top: 1px solid rgba(42,26,14,0.2);
     }
 
     .venue-card {
-      padding: 24px 28px;
-      border-right: 3px solid var(--black);
-      border-bottom: 3px solid var(--black);
+      padding: 14px 18px;
+      border-right: 1px solid rgba(42,26,14,0.2);
+      border-bottom: 1px solid rgba(42,26,14,0.2);
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 4px;
     }
 
     .venue-dot {
-      width: 18px; height: 18px;
-      border: 2px solid var(--black);
-      box-shadow: 3px 3px 0 var(--black);
+      width: 10px; height: 10px;
+      border: 1.5px solid var(--black);
       flex-shrink: 0;
     }
 
     .venue-name {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 22px;
-      letter-spacing: 1px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
       line-height: 1;
       margin-top: 4px;
     }
@@ -497,8 +562,8 @@
     .venue-detail {
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 300;
-      font-size: 11px;
-      letter-spacing: 3px;
+      font-size: 10px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       color: #888;
       flex: 1;
@@ -506,16 +571,16 @@
 
     .venue-link {
       font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700;
-      font-size: 11px;
-      letter-spacing: 3px;
+      font-weight: 600;
+      font-size: 10px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       text-decoration: none;
       color: var(--black);
-      border-bottom: 2px solid var(--black);
-      padding-bottom: 2px;
+      border-bottom: 1px solid var(--black);
+      padding-bottom: 1px;
       align-self: flex-start;
-      margin-top: 8px;
+      margin-top: 6px;
       transition: color 0.15s, border-color 0.15s;
     }
     .venue-link:hover { color: var(--terracotta); border-color: var(--terracotta); }
@@ -1068,14 +1133,13 @@
 
   <!-- TOP NAV -->
   <nav class="topnav">
-    <a class="nav-home" onclick="navHome()">CASAMIENTO · 12·12</a>
+    <a class="nav-home" onclick="navHome()"><img src="favicon.svg" width="24" height="24" style="vertical-align:middle;margin-right:8px;border-radius:2px;"> CASAMIENTO · 12·12</a>
     <div class="nav-links">
       <button class="nav-hamburger" onclick="toggleHamburger()" aria-label="Menú">&#9776;</button>
       <a data-page="evento"     onclick="showPage('evento')">Evento</a>
       <a data-page="dresscode"  onclick="showPage('dresscode')">Dresscode</a>
       <a data-page="mapa"       onclick="showPage('mapa')">Mapa</a>
       <a data-page="hospedajes" onclick="showPage('hospedajes')">Hospedajes</a>
-      <button class="nav-asistire nav-asistire-link" onclick="openModal()">Asistiré</button>
     </div>
   </nav>
 
@@ -1098,8 +1162,7 @@
   <div id="page-home" class="page">
     <section class="hero">
       <div class="hero-left">
-        <span class="label">Nos casamos</span>
-        <h1 class="hero-title">CASA<br>MIEN<br>TO</h1>
+        <h1 class="hero-title">CASAMIENTO</h1>
         <div class="divider"></div>
         <div class="hero-info">
           <div>
@@ -1114,7 +1177,6 @@
               <div class="swatch" style="background:var(--teal)"></div>
               <div class="swatch" style="background:var(--rust)"></div>
             </div>
-            <span class="label" style="margin-top:8px;display:block">Dress code · Paleta Tierra</span>
           </div>
           <div class="hero-date">
             <div class="date-num">12·12</div>
@@ -1146,8 +1208,8 @@
   <!-- PAGE: EVENTO -->
   <div id="page-evento" class="page">
     <section class="roadmap-section">
-      <span class="label">El fin de semana</span>
-      <h2 class="section-title roadmap-title">ROAD MAP</h2>
+      <span class="label" style="font-size:13px;letter-spacing:4px;">El fin de semana</span>
+      <h2 class="section-title roadmap-title">ROADMAP</h2>
       <div class="htimeline">
 
         <!-- VIERNES -->
@@ -1221,25 +1283,50 @@
       <h2 class="section-title">DRESS<br>CODE</h2>
       <p class="dc-intro">Paleta tierra — colores cálidos y naturales que armonicen con el campo y el entorno de Las Marianas. Pensá en tonos como los que ves acá abajo: terracota, mostaza, verdes, bordo y cobre.</p>
 
-      <div class="dc-swatches">
-        <div class="dc-swatch-item"><div class="dc-swatch-color" style="background:#8B4513"></div><div class="dc-swatch-name">Saddle Brown</div></div>
-        <div class="dc-swatch-item"><div class="dc-swatch-color" style="background:#5C4827"></div><div class="dc-swatch-name">Marrón Oscuro</div></div>
-        <div class="dc-swatch-item"><div class="dc-swatch-color" style="background:#8B4D26"></div><div class="dc-swatch-name">Cobre</div></div>
-        <div class="dc-swatch-item"><div class="dc-swatch-color" style="background:#954535"></div><div class="dc-swatch-name">Terracota</div></div>
-        <div class="dc-swatch-item"><div class="dc-swatch-color" style="background:#C06050"></div><div class="dc-swatch-name">Salmón</div></div>
-        <div class="dc-swatch-item"><div class="dc-swatch-color" style="background:#C1654A"></div><div class="dc-swatch-name">Óxido</div></div>
-        <div class="dc-swatch-item"><div class="dc-swatch-color" style="background:#9B2F1F"></div><div class="dc-swatch-name">Bordo</div></div>
-        <div class="dc-swatch-item"><div class="dc-swatch-color" style="background:#D4940A"></div><div class="dc-swatch-name">Dorado</div></div>
-        <div class="dc-swatch-item"><div class="dc-swatch-color" style="background:#C8A843"></div><div class="dc-swatch-name">Mostaza</div></div>
-        <div class="dc-swatch-item"><div class="dc-swatch-color" style="background:#4A5320"></div><div class="dc-swatch-name">Verde Oliva</div></div>
-        <div class="dc-swatch-item"><div class="dc-swatch-color" style="background:#6E7D3A"></div><div class="dc-swatch-name">Verde Claro</div></div>
-        <div class="dc-swatch-item"><div class="dc-swatch-color" style="background:#1A4D2E"></div><div class="dc-swatch-name">Verde Oscuro</div></div>
-        <div class="dc-swatch-item"><div class="dc-swatch-color" style="background:#1C3D35"></div><div class="dc-swatch-name">Teal</div></div>
-        <div class="dc-swatch-item"><div class="dc-swatch-color" style="background:#2C3A47"></div><div class="dc-swatch-name">Azul Noche</div></div>
-        <div class="dc-swatch-item"><div class="dc-swatch-color" style="background:#A89060"></div><div class="dc-swatch-name">Arena</div></div>
+      <div class="dc-swatches-compact">
+        <div class="dc-swatch-sm" style="background:#8B4513"></div>
+        <div class="dc-swatch-sm" style="background:#5C4827"></div>
+        <div class="dc-swatch-sm" style="background:#8B4D26"></div>
+        <div class="dc-swatch-sm" style="background:#954535"></div>
+        <div class="dc-swatch-sm" style="background:#C4432A"></div>
+        <div class="dc-swatch-sm" style="background:#C06050"></div>
+        <div class="dc-swatch-sm" style="background:#C1654A"></div>
+        <div class="dc-swatch-sm" style="background:#9B2F1F"></div>
+        <div class="dc-swatch-sm" style="background:#D4940A"></div>
+        <div class="dc-swatch-sm" style="background:#C9941A"></div>
+        <div class="dc-swatch-sm" style="background:#C8A843"></div>
+        <div class="dc-swatch-sm" style="background:#4A5320"></div>
+        <div class="dc-swatch-sm" style="background:#6E7D3A"></div>
+        <div class="dc-swatch-sm" style="background:#2D5A2E"></div>
+        <div class="dc-swatch-sm" style="background:#1C3D35"></div>
+        <div class="dc-swatch-sm" style="background:#1B5C5C"></div>
+        <div class="dc-swatch-sm" style="background:#A89060"></div>
+        <div class="dc-swatch-sm" style="background:#B85C35"></div>
       </div>
 
-      <p class="dc-note">Evitá el blanco y el negro — reservamos esos colores para los novios.</p>
+      <p class="dc-note" style="margin-bottom:32px;">Evitá el blanco y el negro — reservamos esos colores para los novios.</p>
+
+      <div class="dc-carousel-wrap">
+        <span class="label" style="font-size:11px;letter-spacing:4px;">Referencias de looks</span>
+        <div class="dc-carousel" style="margin-top:16px;">
+          <div class="dc-carousel-item" style="background:#C4432A22;">
+            <img src="https://images.unsplash.com/photo-1519741347686-c1e0aadf4611?w=400&h=500&fit=crop" alt="Referencia 1">
+          </div>
+          <div class="dc-carousel-item" style="background:#C9941A22;">
+            <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400&h=500&fit=crop" alt="Referencia 2">
+          </div>
+          <div class="dc-carousel-item" style="background:#2D5A2E22;">
+            <img src="https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=400&h=500&fit=crop" alt="Referencia 3">
+          </div>
+          <div class="dc-carousel-item" style="background:#1B5C5C22;">
+            <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400&h=500&fit=crop" alt="Referencia 4">
+          </div>
+          <div class="dc-carousel-item" style="background:#B85C3522;">
+            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&h=500&fit=crop" alt="Referencia 5">
+          </div>
+        </div>
+        <p class="dc-carousel-label">Deslizá para ver más →</p>
+      </div>
     </section>
   </div>
 
@@ -1304,7 +1391,7 @@
   <div id="page-hospedajes" class="page">
     <section class="hospedajes-section">
       <span class="label">Dónde quedarse</span>
-      <h2 class="section-title">HOSPE<br>DAJES</h2>
+      <h2 class="section-title">HOSPEDAJES</h2>
       <div class="hospedajes-grid">
 
         <div class="hospedaje-card">
@@ -1326,7 +1413,7 @@
 
         <div class="hospedaje-card">
           <div class="hospedaje-tag">Hospedajes en Las Marianas</div>
-          <div class="hospedaje-name">LAS<br>MARIANAS</div>
+          <div class="hospedaje-name">LAS MARIANAS</div>
           <div class="hospedaje-divider"></div>
           <div class="hospedaje-info">
             <div class="hospedaje-row">
