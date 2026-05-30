@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CASAMIENTO · 12·12</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;700&display=swap" rel="stylesheet">
@@ -1409,7 +1410,7 @@
         },
         {
           latlng: [-35.148, -59.578],          // offset visual — coords reales en mapsUrl
-          color: '#1B5C5C', dir: 'left',
+          color: '#1B5C5C', dir: 'left', tooltipOffset: [-16, 0],
           name: 'El Ranchito',
           detail: 'Domingo · Corderos al asador',
           mapsUrl: 'https://maps.google.com/maps?q=-35.1238937,-59.5676461',
@@ -1419,13 +1420,13 @@
       const popupStyle = 'font-family:\'Barlow Condensed\',sans-serif;';
 
       const markers = [];
-      LOCATIONS.forEach(({ latlng, color, name, detail, dir, mapsUrl }) => {
+      LOCATIONS.forEach(({ latlng, color, name, detail, dir, mapsUrl, tooltipOffset }) => {
         const m = L.marker(latlng, { icon: sqIcon(color) }).addTo(map);
         m.bindPopup(
           `<b>${name}</b>${detail}<br>` +
           `<a href="${mapsUrl}" target="_blank" style="${popupStyle}font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#1A1A1A;border-bottom:1px solid #1A1A1A;text-decoration:none;">Abrir en Maps →</a>`
         );
-        m.bindTooltip(name, { permanent: true, direction: dir, className: 'map-label', offset: [16,0] });
+        m.bindTooltip(name, { permanent: true, direction: dir, className: 'map-label', offset: tooltipOffset || [16,0] });
         markers.push(m);
       });
 
