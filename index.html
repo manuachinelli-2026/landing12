@@ -1175,29 +1175,36 @@
       /* All sections */
       .dresscode-section, .roadmap-section,
       .mapa-section, .hospedajes-section,
-      .regalos-section { padding: 36px 20px 52px; }
+      .regalos-section { padding: 32px 20px 48px; }
 
-      /* Hero */
-      .hero { grid-template-columns: 1fr; min-height: auto; padding: 28px 20px 44px; gap: 28px; }
-      .hero-right { justify-content: center; }
-      .cube-grid { max-width: 260px; }
+      /* Hero — single column, hide decorative cube grid */
+      .hero { grid-template-columns: 1fr; min-height: auto; padding: 24px 20px 40px; gap: 0; }
+      .hero-right { display: none; }
       .hero-info { grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
       .hero-date { text-align: right; }
       .date-sub { text-align: right; }
       .btn { margin-top: 28px; padding: 13px 26px; font-size: 12px; letter-spacing: 4px; }
 
       /* Dresscode */
-      .dc-layout { grid-template-columns: 1fr; gap: 20px; align-items: start; }
+      .dc-layout { grid-template-columns: 1fr; gap: 16px; align-items: start; }
       .dc-right { margin-left: 0; max-width: 100%; }
-      .dc-swatches-compact { flex-wrap: wrap !important; }
-      .dc-carousel-item { width: 200px; height: 270px; }
+      .dc-swatch-sm { width: 22px !important; height: 22px !important; }
+      .dc-swatches-compact { flex-wrap: wrap !important; gap: 4px !important; }
+      .dc-carousel-item { width: 195px; height: 255px; }
+      .dc-scroll-hint { display: none; }
+      .dc-carousel-track::after { display: none; }
 
       /* Roadmap */
       .roadmap-grid { grid-template-columns: 1fr; }
-      .day-col { padding: 28px 20px; }
-      .htimeline { overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; }
-      .htl-section { min-width: 200px; scroll-snap-align: start; padding: 0 14px; }
-      .roadmap-title { white-space: normal; font-size: clamp(36px, 10vw, 64px); }
+      .day-col { padding: 24px 20px; }
+      .roadmap-title { white-space: normal; font-size: clamp(36px, 10vw, 60px); }
+      .htimeline { overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; margin-top: 28px; }
+      .htl-section { min-width: 240px; scroll-snap-align: start; padding: 0 16px; }
+      .htl-day-name { font-size: 34px; }
+      .htl-header { padding: 20px 0 16px; }
+      .htl-time { font-size: 22px; }
+      .htl-name { font-size: 11px; letter-spacing: 1px; }
+      .htl-events { padding: 18px 0 28px; gap: 6px; }
 
       /* Hospedajes */
       .hospedajes-grid { grid-template-columns: 1fr; }
@@ -1205,22 +1212,22 @@
 
       /* Regalos */
       .regalos-content { grid-template-columns: 1fr; }
-      .regalo-card { padding: 28px 20px; }
+      .regalo-card { padding: 24px 20px; }
 
       /* Mapa */
-      #map { height: 300px; }
-      .mapa-header { flex-direction: column; align-items: flex-start; gap: 14px; }
+      #map { height: 280px; }
+      .mapa-header { flex-direction: column; align-items: flex-start; gap: 12px; }
       .circuit-btn { width: 100%; text-align: center; }
-      .mapa-venues { grid-template-columns: 1fr 1fr; }
-      .venue-card { padding: 18px 16px; }
+      .mapa-venues { grid-template-columns: 1fr; }
+      .venue-card { padding: 16px; }
 
       /* Modal */
-      .modal-overlay { padding: 12px; align-items: flex-start; padding-top: 20px; }
-      .modal { padding: 32px 22px 28px; max-width: 100%; max-height: calc(100vh - 40px); overflow-y: auto; }
-      .modal-title { font-size: clamp(22px, 6vw, 30px); margin-bottom: 16px; }
-      .form-grid { grid-template-columns: 1fr; gap: 14px 0; }
+      .modal-overlay { padding: 10px; align-items: flex-start; padding-top: 16px; }
+      .modal { padding: 28px 20px 24px; max-width: 100%; max-height: calc(100vh - 32px); overflow-y: auto; }
+      .modal-title { font-size: clamp(20px, 5vw, 26px); margin-bottom: 14px; }
+      .form-grid { grid-template-columns: 1fr; gap: 12px 0; }
       .form-group.full { grid-column: 1; }
-      .form-actions { grid-column: 1; justify-content: flex-end; }
+      .form-actions { grid-column: 1; justify-content: flex-end; margin-top: 6px; }
 
       /* Footer */
       footer { padding: 36px 20px; flex-direction: column; gap: 20px; text-align: center; }
@@ -1228,7 +1235,8 @@
       .footer-right .swatches { justify-content: center; }
 
       /* Fixed button */
-      .btn-asistire-fixed-wrap { bottom: 16px; right: 16px; }
+      .btn-asistire-fixed-wrap { bottom: 20px; right: 16px; }
+      .unlock-hint { font-size: 9px; }
     }
 
     /* ── SMALL MOBILE ────────────────────────────── */
@@ -1238,25 +1246,24 @@
       .regalos-section { padding: 28px 16px 44px; }
 
       .hero { padding: 20px 16px 36px; }
-      .cube-grid { max-width: 220px; }
       .hero-info { grid-template-columns: 1fr; }
       .hero-date { text-align: left; }
       .date-sub { text-align: left; }
 
-      /* Dresscode */
-      .dc-carousel-item { width: 170px; height: 230px; }
-
       /* Roadmap */
-      .day-col { padding: 24px 16px; }
-
-      /* Mapa */
-      .mapa-venues { grid-template-columns: 1fr; }
+      .htl-section { min-width: 200px; }
+      .day-col { padding: 20px 16px; }
 
       /* Modal */
-      .modal { padding: 28px 16px 24px; }
-      .radio-group { gap: 18px; }
-      .check-group { gap: 16px; }
-      .transport-group { gap: 10px; }
+      .modal { padding: 24px 16px 20px; }
+      .radio-group { gap: 16px; }
+      .check-group { gap: 12px; }
+      .transport-group { gap: 8px; }
+
+      /* Cards */
+      .hospedaje-card { padding: 20px 16px; }
+      .regalo-card { padding: 20px 16px; }
+      .venue-card { padding: 14px; }
     }
   </style>
 </head>
@@ -1873,10 +1880,14 @@
     function openModal() {
       document.getElementById('rsvpModal').classList.add('open');
       document.body.style.overflow = 'hidden';
+      var fw = document.querySelector('.btn-asistire-fixed-wrap');
+      if (fw) fw.style.visibility = 'hidden';
     }
     function closeModal() {
       document.getElementById('rsvpModal').classList.remove('open');
       document.body.style.overflow = '';
+      var fw = document.querySelector('.btn-asistire-fixed-wrap');
+      if (fw) fw.style.visibility = '';
     }
     function handleOverlayClick(e) {
       if (e.target === document.getElementById('rsvpModal')) closeModal();
