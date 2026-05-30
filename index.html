@@ -1118,7 +1118,11 @@
     <div class="modal">
       <button class="modal-close" onclick="closeModal()">✕</button>
       <div class="modal-title">CONFIRMAR<br>ASISTENCIA</div>
-      <form id="modalForm">
+      <form id="modalForm" action="https://formsubmit.co/dopazoflor@icloud.com" method="POST">
+        <input type="hidden" name="_cc" value="manuel@voltchat.com">
+        <input type="hidden" name="_subject" value="Nueva confirmación de asistencia - Casamiento 12·12">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" value="https://landing12-rose.vercel.app/#evento">
         <div class="form-grid" style="max-width:100%">
           <div class="form-group">
             <label for="m-nombre">Nombre</label>
@@ -1317,13 +1321,9 @@
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-    document.getElementById('modalForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      console.log('RSVP:', Object.fromEntries(new FormData(this)));
-      this.reset();
+    document.getElementById('modalForm').addEventListener('submit', function() {
       const msg = document.getElementById('modalSuccessMsg');
       msg.style.display = 'block';
-      setTimeout(() => { msg.style.display = 'none'; closeModal(); }, 3000);
     });
   </script>
 </body>
