@@ -404,6 +404,58 @@
       margin-top: 8px;
     }
 
+    .dc-carousel-track {
+      position: relative;
+      margin-top: 16px;
+    }
+    .dc-carousel-track::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 12px;
+      width: 140px;
+      background: linear-gradient(to right, transparent, var(--cream) 85%);
+      pointer-events: none;
+      z-index: 2;
+      transition: opacity 0.5s ease;
+    }
+    .dc-carousel-track.at-end::after { opacity: 0; }
+
+    .dc-scroll-hint {
+      position: absolute;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-60%);
+      width: 40px;
+      height: 40px;
+      border: 1.5px solid var(--black);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      pointer-events: none;
+      color: var(--black);
+      font-size: 18px;
+      animation: dc-arrow-slide 1.8s ease-in-out infinite;
+      transition: opacity 0.5s ease;
+    }
+    .dc-scroll-hint.at-end { opacity: 0; }
+
+    @keyframes dc-arrow-slide {
+      0%, 100% { transform: translateY(-60%) translateX(0); opacity: 0.45; }
+      50%       { transform: translateY(-60%) translateX(7px); opacity: 1; }
+    }
+
+    .dc-carousel-item--greyed img {
+      filter: grayscale(1);
+      transition: filter 0.9s ease;
+    }
+    .dc-carousel-item--greyed.revealed img {
+      filter: grayscale(0);
+    }
+
     .dc-note {
       margin-top: 0;
       font-family: 'Barlow Condensed', sans-serif;
@@ -1310,24 +1362,42 @@
       <!-- carousel ancho completo debajo -->
       <div class="dc-carousel-wrap">
         <span class="label" style="font-size:11px;letter-spacing:4px;">Referencias de looks</span>
-        <div class="dc-carousel" style="margin-top:16px;">
-          <div class="dc-carousel-item">
-            <img src="https://images.unsplash.com/photo-1519741347686-c1e0aadf4611?w=400&h=500&fit=crop" alt="Referencia 1">
+        <div class="dc-carousel-track">
+          <div class="dc-carousel" id="dcCarousel">
+            <div class="dc-carousel-item">
+              <img src="https://images.unsplash.com/photo-1519741347686-c1e0aadf4611?w=400&h=500&fit=crop" alt="Referencia 1">
+            </div>
+            <div class="dc-carousel-item">
+              <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400&h=500&fit=crop" alt="Referencia 2">
+            </div>
+            <div class="dc-carousel-item">
+              <img src="https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=400&h=500&fit=crop" alt="Referencia 3">
+            </div>
+            <div class="dc-carousel-item">
+              <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400&h=500&fit=crop" alt="Referencia 4">
+            </div>
+            <div class="dc-carousel-item">
+              <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&h=500&fit=crop" alt="Referencia 5">
+            </div>
+            <div class="dc-carousel-item">
+              <img src="https://images.unsplash.com/photo-1594463750939-ebb28c3f7f75?w=400&h=500&fit=crop" alt="Referencia 6">
+            </div>
+            <div class="dc-carousel-item">
+              <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=500&fit=crop" alt="Referencia 7">
+            </div>
+            <div class="dc-carousel-item">
+              <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=400&h=500&fit=crop" alt="Referencia 8">
+            </div>
+            <div class="dc-carousel-item dc-carousel-item--greyed">
+              <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&h=500&fit=crop" alt="Referencia 9">
+            </div>
+            <div class="dc-carousel-item dc-carousel-item--greyed">
+              <img src="https://images.unsplash.com/photo-1542295669297-4d352b042bca?w=400&h=500&fit=crop" alt="Referencia 10">
+            </div>
           </div>
-          <div class="dc-carousel-item">
-            <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400&h=500&fit=crop" alt="Referencia 2">
-          </div>
-          <div class="dc-carousel-item">
-            <img src="https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=400&h=500&fit=crop" alt="Referencia 3">
-          </div>
-          <div class="dc-carousel-item">
-            <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400&h=500&fit=crop" alt="Referencia 4">
-          </div>
-          <div class="dc-carousel-item">
-            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&h=500&fit=crop" alt="Referencia 5">
-          </div>
+          <div class="dc-scroll-hint" id="dcScrollHint">&#8594;</div>
         </div>
-        <p class="dc-carousel-label">Deslizá para ver más →</p>
+        <p class="dc-carousel-label">Deslizá para ver más</p>
       </div>
     </section>
   </div>
@@ -1745,6 +1815,36 @@
       const msg = document.getElementById('modalSuccessMsg');
       msg.style.display = 'block';
     });
+
+    // Carousel: scroll hint + greyscale reveal
+    (function() {
+      const carousel = document.getElementById('dcCarousel');
+      const hint     = document.getElementById('dcScrollHint');
+      const track    = carousel && carousel.parentElement;
+
+      if (!carousel || !hint || !track) return;
+
+      function updateHint() {
+        const atEnd = carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 24;
+        hint.classList.toggle('at-end', atEnd);
+        track.classList.toggle('at-end', atEnd);
+      }
+      carousel.addEventListener('scroll', updateHint, { passive: true });
+      updateHint();
+
+      const greyedItems = carousel.querySelectorAll('.dc-carousel-item--greyed');
+      if (greyedItems.length && 'IntersectionObserver' in window) {
+        const obs = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+              obs.unobserve(entry.target);
+            }
+          });
+        }, { root: carousel, threshold: 0.4 });
+        greyedItems.forEach(function(item) { obs.observe(item); });
+      }
+    })();
   </script>
 </body>
 </html>
