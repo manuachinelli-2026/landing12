@@ -930,8 +930,10 @@
     textarea { resize: none; height: 72px; }
 
     .radio-group { display: flex; gap: 36px; padding: 6px 0; }
+    .check-group  { display: flex; gap: 28px; padding: 6px 0; flex-wrap: wrap; }
 
-    .radio-option {
+    .radio-option,
+    .check-option {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -941,7 +943,8 @@
       user-select: none;
     }
 
-    .radio-option input[type="radio"] {
+    .radio-option input[type="radio"],
+    .check-option input[type="checkbox"] {
       appearance: none;
       width: 18px; height: 18px;
       border: 2px solid var(--black);
@@ -951,13 +954,32 @@
       transition: background 0.12s;
     }
 
-    .radio-option input[type="radio"]:checked { background: var(--black); }
-    .radio-option input[type="radio"]:checked::after {
+    .radio-option input[type="radio"]:checked,
+    .check-option input[type="checkbox"]:checked { background: var(--black); }
+
+    .radio-option input[type="radio"]:checked::after,
+    .check-option input[type="checkbox"]:checked::after {
       content: '';
       position: absolute;
       inset: 3px;
       background: var(--cream);
     }
+
+    .check-option input[type="checkbox"]:checked::after {
+      inset: 0;
+      background: transparent;
+      content: '✓';
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cream);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 18px;
+      text-align: center;
+    }
+
+    .transport-group { display: flex; flex-direction: column; gap: 12px; padding: 6px 0; }
 
     .form-actions {
       grid-column: 1 / -1;
@@ -1539,6 +1561,31 @@
               </label>
               <label class="radio-option">
                 <input type="radio" name="asistencia" value="no">No puedo ir
+              </label>
+            </div>
+          </div>
+          <div class="form-group full">
+            <span class="field-label">¿Qué días vas a ir?</span>
+            <div class="check-group">
+              <label class="check-option">
+                <input type="checkbox" name="dias" value="Viernes">Viernes
+              </label>
+              <label class="check-option">
+                <input type="checkbox" name="dias" value="Sábado">Sábado
+              </label>
+              <label class="check-option">
+                <input type="checkbox" name="dias" value="Domingo">Domingo
+              </label>
+            </div>
+          </div>
+          <div class="form-group full">
+            <span class="field-label">¿En qué vas el sábado?</span>
+            <div class="transport-group">
+              <label class="radio-option">
+                <input type="radio" name="transporte" value="Auto">Auto
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="transporte" value="Bus desde Navarro">Preferiría ir y volver en bus desde Navarro
               </label>
             </div>
           </div>
