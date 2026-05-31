@@ -1,6 +1,5 @@
-function doPost(e) {
+function doGet(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = JSON.parse(e.postData.contents);
 
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(["Timestamp", "Nombre", "Apellido", "Asistencia", "Dias", "Transporte", "Personas", "Menu"]);
@@ -8,13 +7,13 @@ function doPost(e) {
 
   sheet.appendRow([
     new Date(),
-    data.nombre || "",
-    data.apellido || "",
-    data.asistencia || "",
-    data.dias || "",
-    data.transporte || "",
-    data.personas || "",
-    data.menu || ""
+    e.parameter.nombre     || "",
+    e.parameter.apellido   || "",
+    e.parameter.asistencia || "",
+    e.parameter.dias       || "",
+    e.parameter.transporte || "",
+    e.parameter.personas   || "",
+    e.parameter.menu       || ""
   ]);
 
   return ContentService

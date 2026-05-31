@@ -1982,11 +1982,10 @@
       };
 
       try {
-        await fetch('https://script.google.com/macros/s/AKfycbwGI0sqpm9t8yn-pPZ8pBlYnmUxSPQninK--xVX7KuA-S38aw7bWWI_d-DnhQEEVCmA/exec', {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify(payload)
+        var qs = new URLSearchParams(payload).toString();
+        await fetch('https://script.google.com/macros/s/AKfycbwGI0sqpm9t8yn-pPZ8pBlYnmUxSPQninK--xVX7KuA-S38aw7bWWI_d-DnhQEEVCmA/exec?' + qs, {
+          method: 'GET',
+          mode: 'no-cors'
         });
         msg.style.display = 'block';
         form.reset();
