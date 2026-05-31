@@ -1610,11 +1610,10 @@
     <div class="modal">
       <button class="modal-close" onclick="closeModal()">✕</button>
       <div class="modal-title">CONFIRMAR ASISTENCIA</div>
-      <form id="modalForm" action="https://formsubmit.co/manuel@voltchat.com" method="POST">
+      <form id="modalForm">
         <input type="hidden" name="_cc" value="dopazoflor@icloud.com">
         <input type="hidden" name="_subject" value="Nueva confirmación de asistencia - Casamiento 12·12">
         <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_next" value="https://landing12-rose.vercel.app/#evento">
         <div class="form-grid" style="max-width:100%">
           <div class="form-group">
             <label for="m-nombre">Nombre</label>
@@ -1688,6 +1687,7 @@
           <div class="form-actions">
             <button type="submit" class="btn-submit">Enviar confirmación</button>
             <div class="success-msg" id="modalSuccessMsg">¡Gracias! Te esperamos.</div>
+            <div class="success-msg" id="modalErrorMsg" style="display:none;color:#9B2F1F;">Hubo un problema al enviar. Intentá de nuevo en unos minutos.</div>
           </div>
         </div>
       </form>
@@ -1957,9 +1957,37 @@
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-    document.getElementById('modalForm').addEventListener('submit', function() {
-      const msg = document.getElementById('modalSuccessMsg');
-      msg.style.display = 'block';
+    document.getElementById('modalForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const btn  = form.querySelector('.btn-submit');
+      const msg  = document.getElementById('modalSuccessMsg');
+      const err  = document.getElementById('modalErrorMsg');
+
+      btn.disabled = true;
+      btn.textContent = 'Enviando…';
+      msg.style.display = 'none';
+      err.style.display = 'none';
+
+      try {
+        const res = await fetch('https://formsubmit.co/ajax/manuel@voltchat.com', {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: new FormData(form)
+        });
+        const data = await res.json();
+        if (data.success === 'true' || data.success === true) {
+          msg.style.display = 'block';
+          form.reset();
+        } else {
+          throw new Error('fail');
+        }
+      } catch {
+        err.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Enviar confirmación';
+      }
     });
 
     // Carousel: scroll hint + greyscale reveal
