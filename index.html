@@ -394,15 +394,30 @@
       text-transform: uppercase;
       color: #888;
       background: var(--cream);
-      isolation: isolate;
+      position: relative;
     }
 
     .dc-carousel-item img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      mix-blend-mode: multiply;
     }
+
+    /* Cubre bandas blancas en fotos compuestas (dc03, dc12) */
+    .dc-carousel-item--collage::before,
+    .dc-carousel-item--collage::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      height: 22px;
+      backdrop-filter: blur(5px) brightness(0.55);
+      -webkit-backdrop-filter: blur(5px) brightness(0.55);
+      background: rgba(30, 20, 10, 0.35);
+      z-index: 2;
+      pointer-events: none;
+    }
+    .dc-carousel-item--collage::before { top: 87px; }
+    .dc-carousel-item--collage::after  { top: 238px; }
 
     .dc-carousel-label {
       font-family: 'Barlow Condensed', sans-serif;
@@ -1490,8 +1505,8 @@
         <span class="label" style="font-size:11px;letter-spacing:4px;">Referencias de looks</span>
         <div class="dc-carousel-track">
           <div class="dc-carousel" id="dcCarousel">
-            <div class="dc-carousel-item"><img src="images/dc03.jpg" alt="Referencia 1"></div>
-            <div class="dc-carousel-item"><img src="images/dc12.jpg" alt="Referencia 2"></div>
+            <div class="dc-carousel-item dc-carousel-item--collage"><img src="images/dc03.jpg" alt="Referencia 1"></div>
+            <div class="dc-carousel-item dc-carousel-item--collage"><img src="images/dc12.jpg" alt="Referencia 2"></div>
             <div class="dc-carousel-item"><img src="images/dc08.jpg" alt="Referencia 3"></div>
             <div class="dc-carousel-item"><img src="images/dc07.jpg" alt="Referencia 4"></div>
             <div class="dc-carousel-item"><img src="images/dc01.jpg" alt="Referencia 5"></div>
