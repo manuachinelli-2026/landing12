@@ -1686,7 +1686,7 @@
           </div>
           <div class="form-actions">
             <button type="submit" class="btn-submit">Enviar confirmación</button>
-            <div class="success-msg" id="modalSuccessMsg">¡Gracias! Se abrió tu app de mail — revisá que se haya enviado.</div>
+            <div class="success-msg" id="modalSuccessMsg">¡Gracias! Te esperamos.</div>
             <div class="success-msg" id="modalErrorMsg" style="display:none;color:#9B2F1F;">Hubo un problema. Intentá de nuevo.</div>
           </div>
         </div>
@@ -1957,34 +1957,45 @@
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-    document.getElementById('modalForm').addEventListener('submit', function(e) {
+    document.getElementById('modalForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      const form = e.target;
-      const get  = name => (form.elements[name] || {}).value || '';
-      const checks = name => Array.from(form.querySelectorAll('[name="' + name + '"]:checked')).map(el => el.value).join(', ') || 'Ninguno';
+      var form = e.target;
+      var btn  = form.querySelector('.btn-submit');
+      var msg  = document.getElementById('modalSuccessMsg');
+      var err  = document.getElementById('modalErrorMsg');
+      var get  = function(n){ return (form.elements[n] || {}).value || ''; };
+      var checks = function(n){ return Array.from(form.querySelectorAll('[name="'+n+'"]:checked')).map(function(el){return el.value;}).join(', ') || ''; };
 
-      const nombre    = get('nombre');
-      const apellido  = get('apellido');
-      const asistencia = get('asistencia') === 'si' ? 'Sí, voy' : 'No puedo ir';
-      const dias      = checks('dias');
-      const transporte = get('transporte') || 'No especificado';
-      const personas  = get('personas');
-      const menu      = get('menu');
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+      msg.style.display = 'none';
+      err.style.display = 'none';
 
-      const subject = encodeURIComponent('Confirmación de asistencia - ' + nombre + ' ' + apellido);
-      const body = encodeURIComponent(
-        'Nombre: ' + nombre + ' ' + apellido + '\n' +
-        'Asistencia: ' + asistencia + '\n' +
-        'Días: ' + dias + '\n' +
-        'Transporte sábado: ' + transporte + '\n' +
-        'Cantidad de personas: ' + personas + '\n' +
-        'Menú: ' + menu
-      );
+      var payload = {
+        nombre:     get('nombre'),
+        apellido:   get('apellido'),
+        asistencia: get('asistencia') === 'si' ? 'Si, voy' : 'No puedo ir',
+        dias:       checks('dias'),
+        transporte: get('transporte') || '',
+        personas:   get('personas'),
+        menu:       get('menu')
+      };
 
-      window.location.href = 'mailto:manuel@voltchat.com?cc=dopazoflor@icloud.com&subject=' + subject + '&body=' + body;
-
-      document.getElementById('modalSuccessMsg').style.display = 'block';
-      document.getElementById('modalErrorMsg').style.display = 'none';
+      try {
+        await fetch('https://script.google.com/macros/s/AKfycbwGI0sqpm9t8yn-pPZ8pBlYnmUxSPQninK--xVX7KuA-S38aw7bWWI_d-DnhQEEVCmA/exec', {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(payload)
+        });
+        msg.style.display = 'block';
+        form.reset();
+      } catch(ex) {
+        err.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Enviar confirmacion';
+      }
     });
 
     // Carousel: scroll hint + greyscale reveal
