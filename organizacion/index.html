@@ -251,6 +251,14 @@
   .avatar.flor { background: var(--green-mid); }
   .avatar.none { background: var(--line-soft); color: var(--black); }
 
+  .avatar-stack {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .avatar-stack .avatar { border: 2px solid var(--cream); }
+  .avatar-stack .avatar + .avatar { margin-left: -10px; }
+
   .card-date {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 11px;
@@ -663,8 +671,9 @@
         <label>Asignado</label>
         <select id="fAssignee">
           <option value="">Sin asignar</option>
-          <option value="Manu">Manu</option>
-          <option value="Flor">Flor</option>
+          <option value="Manu">🍺 Manu</option>
+          <option value="Flor">🍷 Flor</option>
+          <option value="Ambos">🍺🍷 Los dos</option>
         </select>
       </div>
     </div>
@@ -894,6 +903,7 @@
   function avatarHtml(assignee) {
     if (assignee === 'Manu') return '<div class="avatar manu">🍺</div>';
     if (assignee === 'Flor') return '<div class="avatar flor">🍷</div>';
+    if (assignee === 'Ambos') return '<div class="avatar-stack"><div class="avatar manu">🍺</div><div class="avatar flor">🍷</div></div>';
     return '<div class="avatar none">·</div>';
   }
 
