@@ -235,7 +235,7 @@
   .avatar {
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 1px;
     width: 22px;
     height: 22px;
@@ -244,7 +244,9 @@
     align-items: center;
     justify-content: center;
     color: #fff;
+    line-height: 1;
   }
+  .avatar.manu, .avatar.flor { font-size: 13px; }
   .avatar.manu { background: var(--terracotta); }
   .avatar.flor { background: var(--green-mid); }
   .avatar.none { background: var(--line-soft); color: var(--black); }
@@ -711,8 +713,8 @@
   <div class="modal">
     <h2>¿Quién sos?</h2>
     <div class="who-options">
-      <button onclick="setWho('Manu')">Manu</button>
-      <button onclick="setWho('Flor')">Flor</button>
+      <button onclick="setWho('Manu')">🍺 Manu</button>
+      <button onclick="setWho('Flor')">🍷 Flor</button>
     </div>
   </div>
 </div>
@@ -859,10 +861,15 @@
     render();
   }
 
+  function whoEmoji(name) {
+    if (name === 'Manu') return '🍺 ';
+    if (name === 'Flor') return '🍷 ';
+    return '';
+  }
   function getWho() { return localStorage.getItem('org_who') || ''; }
   function setWho(name) {
     localStorage.setItem('org_who', name);
-    document.getElementById('whoPill').textContent = 'Sos: ' + name;
+    document.getElementById('whoPill').textContent = 'Sos: ' + whoEmoji(name) + name;
     document.getElementById('whoOverlay').classList.remove('open');
   }
   function openWhoModal() { document.getElementById('whoOverlay').classList.add('open'); }
@@ -873,7 +880,7 @@
   function initWho() {
     const who = getWho();
     if (who) {
-      document.getElementById('whoPill').textContent = 'Sos: ' + who;
+      document.getElementById('whoPill').textContent = 'Sos: ' + whoEmoji(who) + who;
     } else {
       openWhoModal();
     }
@@ -885,8 +892,8 @@
   }
 
   function avatarHtml(assignee) {
-    if (assignee === 'Manu') return '<div class="avatar manu">M</div>';
-    if (assignee === 'Flor') return '<div class="avatar flor">F</div>';
+    if (assignee === 'Manu') return '<div class="avatar manu">🍺</div>';
+    if (assignee === 'Flor') return '<div class="avatar flor">🍷</div>';
     return '<div class="avatar none">·</div>';
   }
 
