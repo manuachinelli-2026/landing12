@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>Organización · 12·12</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -81,6 +82,21 @@
     transition: opacity 0.15s;
   }
   .who-pill:hover { opacity: 0.85; }
+
+  .structure-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--black);
+    border: 1px solid var(--line-soft);
+    padding: 6px 16px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .structure-btn:hover { background: var(--terracotta); color: var(--cream); border-color: var(--terracotta); }
 
   .view-toggle {
     display: flex;
@@ -545,6 +561,38 @@
   .btn-ghost { background: transparent; color: var(--black); border-color: var(--line-soft); }
   .btn-danger { background: transparent; color: var(--rust); border-color: var(--rust); }
 
+  .structure-modal .modal { max-width: 620px; }
+
+  .structure-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .structure-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--black);
+    opacity: 0.6;
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .structure-table td {
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    color: var(--black);
+    padding: 10px;
+    border-bottom: 1px solid var(--line-soft);
+    vertical-align: top;
+  }
+  .structure-table tr:last-child td { border-bottom: none; }
+  .structure-table td:first-child { font-weight: 500; }
+  .structure-table td:nth-child(2),
+  .structure-table td:nth-child(3) { color: var(--terracotta); white-space: nowrap; }
+  .structure-table td:nth-child(3) { font-weight: 600; }
+
   .who-modal .modal { max-width: 340px; text-align: center; }
   .who-options { display: flex; gap: 10px; margin-top: 18px; }
   .who-options button {
@@ -568,6 +616,7 @@
 <div class="topnav">
   <div class="nav-title">Organización · L12</div>
   <div class="nav-right">
+    <button class="structure-btn" onclick="openStructureModal()">Structure</button>
     <div class="view-toggle">
       <button id="btnViewList" onclick="setView('list')">Lista</button>
       <button id="btnViewKanban" onclick="setView('kanban')">Kanban</button>
@@ -629,6 +678,30 @@
         <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
         <button class="btn btn-primary" onclick="saveIssue()">Guardar</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Structure modal -->
+<div class="overlay structure-modal" id="structureOverlay">
+  <div class="modal">
+    <h2>Reunión semanal</h2>
+    <table class="structure-table">
+      <thead>
+        <tr><th>Structure</th><th>Agenda</th><th>Start</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Good News</td><td>5 min</td><td>10:00</td></tr>
+        <tr><td>Stretching &amp; Headlines</td><td>5 min</td><td>10:05</td></tr>
+        <tr><td>Scorecard &amp; Project Review</td><td>5 min</td><td>10:10</td></tr>
+        <tr><td>OKRs Review</td><td>5 min</td><td>10:15</td></tr>
+        <tr><td>Issues solving</td><td>60 min</td><td>10:20</td></tr>
+        <tr><td>Conclude:<br>- To-Dos Review<br>- Define Cascade (team/clients)<br>- Meeting Score</td><td>5 min</td><td>11:20</td></tr>
+        <tr><td>Ends at...</td><td></td><td>11:25</td></tr>
+      </tbody>
+    </table>
+    <div class="modal-actions" style="justify-content:flex-end;">
+      <button class="btn btn-ghost" onclick="closeStructureModal()">Cerrar</button>
     </div>
   </div>
 </div>
@@ -754,11 +827,17 @@
       .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
     const target = selected[0];
     const rest = selected.slice(1);
-    if (!confirm('¿Fusionar ' + ids.length + ' issues en "' + target.title + '"?')) return;
-    const mergedDescription = [target.description, ...rest.map(i => '— ' + i.title + (i.description ? ': ' + i.description : ''))]
-      .filter(Boolean).join('\n\n');
-    const mergedLinks = [target.links, ...rest.map(i => i.links)].filter(Boolean).join('\n');
-    await sb.from('issues').update({ description: mergedDescription, links: mergedLinks }).eq('id', target.id);
+    const mergedTitle = selected.map(i => i.title).join(' + ');
+    if (!confirm('¿Fusionar en "' + mergedTitle + '"?')) return;
+    const mergedDescription = selected.map(i => i.description).filter(Boolean).join('\n\n');
+    const mergedLinks = selected.map(i => i.links).filter(Boolean).join('\n');
+    const mergedLongTerm = selected.some(i => i.long_term);
+    await sb.from('issues').update({
+      title: mergedTitle,
+      description: mergedDescription,
+      links: mergedLinks,
+      long_term: mergedLongTerm,
+    }).eq('id', target.id);
     await sb.from('issues').delete().in('id', rest.map(i => i.id));
     clearSelection();
     await loadIssues();
@@ -787,6 +866,9 @@
     document.getElementById('whoOverlay').classList.remove('open');
   }
   function openWhoModal() { document.getElementById('whoOverlay').classList.add('open'); }
+
+  function openStructureModal() { document.getElementById('structureOverlay').classList.add('open'); }
+  function closeStructureModal() { document.getElementById('structureOverlay').classList.remove('open'); }
 
   function initWho() {
     const who = getWho();
