@@ -326,13 +326,52 @@
   .row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 9px 6px 9px 20px;
+    gap: 10px;
+    padding: 9px 10px;
     border-top: 1px solid var(--line-soft);
     cursor: pointer;
     transition: background 0.15s;
+    position: relative;
   }
   .row:hover { background: rgba(255,255,255,0.5); }
+  .row.selected { background: rgba(193,101,74,0.12); }
+  .row.dragging { opacity: 0.35; }
+  .row.drag-over-top::before,
+  .row.drag-over-bottom::after {
+    content: '';
+    position: absolute;
+    left: 10px; right: 10px;
+    height: 2px;
+    background: var(--terracotta);
+  }
+  .row.drag-over-top::before { top: 0; }
+  .row.drag-over-bottom::after { bottom: 0; }
+
+  .drag-handle {
+    width: 10px;
+    height: 14px;
+    flex-shrink: 0;
+    cursor: grab;
+    opacity: 0.3;
+    background:
+      radial-gradient(circle, var(--black) 1.3px, transparent 1.3px) 0 0,
+      radial-gradient(circle, var(--black) 1.3px, transparent 1.3px) 0 6px,
+      radial-gradient(circle, var(--black) 1.3px, transparent 1.3px) 0 12px,
+      radial-gradient(circle, var(--black) 1.3px, transparent 1.3px) 6px 0,
+      radial-gradient(circle, var(--black) 1.3px, transparent 1.3px) 6px 6px,
+      radial-gradient(circle, var(--black) 1.3px, transparent 1.3px) 6px 12px;
+    background-repeat: no-repeat;
+  }
+  .row:hover .drag-handle { opacity: 0.65; }
+  .drag-handle:active { cursor: grabbing; }
+
+  .row-check {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    accent-color: var(--terracotta);
+    cursor: pointer;
+  }
 
   .row-title {
     font-family: 'Barlow', sans-serif;
@@ -354,6 +393,48 @@
     text-align: right;
     flex-shrink: 0;
   }
+
+  /* ── BULK BAR ────────────────────────────────── */
+  .bulk-bar {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    display: none;
+    align-items: center;
+    gap: 12px;
+    background: var(--title);
+    color: var(--cream);
+    padding: 12px 16px;
+    z-index: 150;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  }
+  .bulk-bar.open { display: flex; }
+
+  .bulk-count {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .bulk-bar select {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    background: var(--cream);
+    color: var(--black);
+    border: none;
+    padding: 7px 8px;
+  }
+
+  .bulk-bar .btn {
+    padding: 7px 14px;
+    font-size: 12px;
+  }
+  .bulk-bar .btn-ghost { color: var(--cream); border-color: rgba(242,237,228,0.4); }
+  .bulk-bar .btn-danger { color: #FF9E8C; border-color: #FF9E8C; }
 
   /* ── MODAL ───────────────────────────────────── */
   .overlay {
@@ -537,6 +618,22 @@
   </div>
 </div>
 
+<div class="bulk-bar" id="bulkBar">
+  <span class="bulk-count" id="bulkCount">0 seleccionados</span>
+  <select id="bulkMoveStatus">
+    <option value="long_term">Long-term</option>
+    <option value="backlog">Backlog</option>
+    <option value="review">Review</option>
+    <option value="todo">Todo</option>
+    <option value="in_progress">In progress</option>
+    <option value="done">Done</option>
+  </select>
+  <button class="btn btn-ghost" onclick="bulkMove()">Mover</button>
+  <button class="btn btn-ghost" id="btnBulkMerge" onclick="bulkMerge()">Fusionar</button>
+  <button class="btn btn-danger" onclick="bulkDelete()">Eliminar</button>
+  <button class="btn btn-ghost" onclick="clearSelection()">Cancelar</button>
+</div>
+
 <script>
   const SUPABASE_URL = 'https://fmnabcmqdanlitzyoyma.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtbmFiY21xZGFubGl0enlveW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDY1NDAsImV4cCI6MjA2OTEyMjU0MH0.hdW4wn29xaHSM6npBWDXY0hRc6g85_r4lkA_eq8zXnU';
@@ -555,6 +652,83 @@
   let editingId = null;
   let viewMode = localStorage.getItem('org_view') || 'list';
   const collapsedGroups = new Set();
+  const selectedIds = new Set();
+  let draggingId = null;
+
+  function itemsInStatus(status, excludeId) {
+    return issues
+      .filter(i => i.status === status && i.id !== excludeId)
+      .sort((a, b) => (a.position || 0) - (b.position || 0));
+  }
+  function nextPositionAtEnd(status, excludeId) {
+    const items = itemsInStatus(status, excludeId);
+    return items.length ? (items[items.length - 1].position || 0) + 1000 : 1000;
+  }
+  function positionAtStart(status, excludeId) {
+    const items = itemsInStatus(status, excludeId);
+    return items.length ? (items[0].position || 0) - 1000 : 1000;
+  }
+  function positionBetween(beforeItem, afterItem) {
+    const b = beforeItem ? (beforeItem.position || 0) : null;
+    const a = afterItem ? (afterItem.position || 0) : null;
+    if (b !== null && a !== null) return (b + a) / 2;
+    if (b !== null) return b + 1000;
+    if (a !== null) return a - 1000;
+    return 1000;
+  }
+
+  function updateBulkBar() {
+    const bar = document.getElementById('bulkBar');
+    bar.classList.toggle('open', selectedIds.size > 0);
+    document.getElementById('bulkCount').textContent = selectedIds.size + ' seleccionado' + (selectedIds.size === 1 ? '' : 's');
+    document.getElementById('btnBulkMerge').disabled = selectedIds.size < 2;
+    document.getElementById('btnBulkMerge').style.opacity = selectedIds.size < 2 ? '0.4' : '1';
+  }
+
+  function clearSelection() {
+    selectedIds.clear();
+    updateBulkBar();
+    render();
+  }
+
+  async function bulkMove() {
+    const status = document.getElementById('bulkMoveStatus').value;
+    const ids = [...selectedIds];
+    if (!ids.length) return;
+    let pos = nextPositionAtEnd(status);
+    for (const id of ids) {
+      await sb.from('issues').update({ status, position: pos }).eq('id', id);
+      pos += 1000;
+    }
+    clearSelection();
+    await loadIssues();
+  }
+
+  async function bulkDelete() {
+    const ids = [...selectedIds];
+    if (!ids.length) return;
+    if (!confirm('¿Eliminar ' + ids.length + ' issue(s)?')) return;
+    await sb.from('issues').delete().in('id', ids);
+    clearSelection();
+    await loadIssues();
+  }
+
+  async function bulkMerge() {
+    const ids = [...selectedIds];
+    if (ids.length < 2) return;
+    const selected = issues.filter(i => selectedIds.has(i.id))
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    const target = selected[0];
+    const rest = selected.slice(1);
+    if (!confirm('¿Fusionar ' + ids.length + ' issues en "' + target.title + '"?')) return;
+    const mergedDescription = [target.description, ...rest.map(i => '— ' + i.title + (i.description ? ': ' + i.description : ''))]
+      .filter(Boolean).join('\n\n');
+    const mergedLinks = [target.links, ...rest.map(i => i.links)].filter(Boolean).join('\n');
+    await sb.from('issues').update({ description: mergedDescription, links: mergedLinks }).eq('id', target.id);
+    await sb.from('issues').delete().in('id', rest.map(i => i.id));
+    clearSelection();
+    await loadIssues();
+  }
 
   function setView(mode) {
     viewMode = mode;
@@ -608,7 +782,7 @@
     const wrap = document.getElementById('listWrap');
     wrap.innerHTML = '';
     COLUMNS.forEach(col => {
-      const items = issues.filter(i => i.status === col.status);
+      const items = itemsInStatus(col.status);
       const collapsed = collapsedGroups.has(col.status);
       const groupEl = document.createElement('div');
       groupEl.className = 'group' + (collapsed ? ' collapsed' : '');
@@ -623,7 +797,8 @@
         </div>
         <div class="group-rows"></div>
       `;
-      groupEl.querySelector('.group-head').addEventListener('click', e => {
+      const head = groupEl.querySelector('.group-head');
+      head.addEventListener('click', e => {
         if (e.target.closest('.group-add')) return;
         toggleGroup(col.status);
       });
@@ -631,6 +806,19 @@
         e.stopPropagation();
         openNewIssue(col.status);
       });
+      head.addEventListener('dragover', e => e.preventDefault());
+      head.addEventListener('drop', async e => {
+        e.preventDefault();
+        if (!draggingId) return;
+        const newPos = positionAtStart(col.status, draggingId);
+        const dragged = issues.find(i => i.id === draggingId);
+        if (!dragged) return;
+        dragged.status = col.status;
+        dragged.position = newPos;
+        render();
+        await sb.from('issues').update({ status: col.status, position: newPos }).eq('id', draggingId);
+      });
+
       const rows = groupEl.querySelector('.group-rows');
       if (items.length === 0) {
         const hint = document.createElement('div');
@@ -641,24 +829,97 @@
       }
       items.forEach(issue => {
         const row = document.createElement('div');
-        row.className = 'row';
+        row.className = 'row' + (selectedIds.has(issue.id) ? ' selected' : '');
+        row.dataset.id = issue.id;
         row.innerHTML = `
+          <span class="drag-handle" draggable="true"></span>
+          <input type="checkbox" class="row-check" ${selectedIds.has(issue.id) ? 'checked' : ''}>
           <span class="row-title">${escapeHtml(issue.title)}</span>
           ${avatarHtml(issue.assignee)}
           <span class="row-date">${fmtDate(issue.created_at)}</span>
         `;
         row.addEventListener('click', () => openEditIssue(issue.id));
+
+        const checkbox = row.querySelector('.row-check');
+        checkbox.addEventListener('click', e => e.stopPropagation());
+        checkbox.addEventListener('change', () => {
+          if (checkbox.checked) selectedIds.add(issue.id); else selectedIds.delete(issue.id);
+          row.classList.toggle('selected', checkbox.checked);
+          updateBulkBar();
+        });
+
+        const handle = row.querySelector('.drag-handle');
+        handle.addEventListener('click', e => e.stopPropagation());
+        handle.addEventListener('dragstart', e => {
+          e.stopPropagation();
+          draggingId = issue.id;
+          row.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', issue.id);
+        });
+        handle.addEventListener('dragend', () => {
+          row.classList.remove('dragging');
+          draggingId = null;
+          document.querySelectorAll('.row.drag-over-top, .row.drag-over-bottom')
+            .forEach(el => el.classList.remove('drag-over-top', 'drag-over-bottom'));
+        });
+
+        row.addEventListener('dragover', e => {
+          if (!draggingId || draggingId === issue.id) return;
+          e.preventDefault();
+          const rect = row.getBoundingClientRect();
+          const before = (e.clientY - rect.top) < rect.height / 2;
+          row.classList.toggle('drag-over-top', before);
+          row.classList.toggle('drag-over-bottom', !before);
+        });
+        row.addEventListener('dragleave', () => row.classList.remove('drag-over-top', 'drag-over-bottom'));
+        row.addEventListener('drop', async e => {
+          e.preventDefault();
+          e.stopPropagation();
+          row.classList.remove('drag-over-top', 'drag-over-bottom');
+          if (!draggingId || draggingId === issue.id) return;
+          const dragged = issues.find(i => i.id === draggingId);
+          if (!dragged) return;
+          const rect = row.getBoundingClientRect();
+          const before = (e.clientY - rect.top) < rect.height / 2;
+          const groupItems = itemsInStatus(col.status, draggingId);
+          const idx = groupItems.findIndex(i => i.id === issue.id);
+          const beforeItem = before ? groupItems[idx - 1] : groupItems[idx];
+          const afterItem = before ? groupItems[idx] : groupItems[idx + 1];
+          const newPos = positionBetween(beforeItem, afterItem);
+          dragged.status = col.status;
+          dragged.position = newPos;
+          render();
+          await sb.from('issues').update({ status: col.status, position: newPos }).eq('id', draggingId);
+        });
+
         rows.appendChild(row);
       });
+
+      rows.addEventListener('dragover', e => e.preventDefault());
+      rows.addEventListener('drop', async e => {
+        if (e.target !== rows) return;
+        e.preventDefault();
+        if (!draggingId) return;
+        const newPos = nextPositionAtEnd(col.status, draggingId);
+        const dragged = issues.find(i => i.id === draggingId);
+        if (!dragged) return;
+        dragged.status = col.status;
+        dragged.position = newPos;
+        render();
+        await sb.from('issues').update({ status: col.status, position: newPos }).eq('id', draggingId);
+      });
+
       wrap.appendChild(groupEl);
     });
+    updateBulkBar();
   }
 
   function renderKanban() {
     const board = document.getElementById('board');
     board.innerHTML = '';
     COLUMNS.forEach(col => {
-      const items = issues.filter(i => i.status === col.status);
+      const items = itemsInStatus(col.status);
       const colEl = document.createElement('div');
       colEl.className = 'column';
       colEl.dataset.status = col.status;
@@ -712,8 +973,9 @@
         const issue = issues.find(i => i.id === id);
         if (issue && issue.status !== newStatus) {
           issue.status = newStatus;
+          issue.position = nextPositionAtEnd(newStatus, id);
           render();
-          await sb.from('issues').update({ status: newStatus }).eq('id', id);
+          await sb.from('issues').update({ status: newStatus, position: issue.position }).eq('id', id);
         }
       });
 
@@ -768,9 +1030,14 @@
       assignee: document.getElementById('fAssignee').value || null,
     };
     if (editingId) {
+      const prev = issues.find(i => i.id === editingId);
+      if (prev && prev.status !== payload.status) {
+        payload.position = nextPositionAtEnd(payload.status, editingId);
+      }
       await sb.from('issues').update(payload).eq('id', editingId);
     } else {
       payload.created_by = getWho() || null;
+      payload.position = nextPositionAtEnd(payload.status);
       await sb.from('issues').insert(payload);
     }
     closeModal();
@@ -786,7 +1053,7 @@
   }
 
   async function loadIssues() {
-    const { data, error } = await sb.from('issues').select('*').order('created_at', { ascending: true });
+    const { data, error } = await sb.from('issues').select('*').order('position', { ascending: true });
     if (error) { console.error(error); return; }
     issues = data;
     render();
