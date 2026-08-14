@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Organización · 12·12</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream:      #F2EDE4;
+    --card:       #FFFFFF;
+    --black:      #5C4827;
+    --title:      #1E2D5A;
+    --terracotta: #C1654A;
+    --mustard:    #D4940A;
+    --green-dark: #1A4D2E;
+    --green-mid:  #4A5320;
+    --teal:       #1C3D35;
+    --rust:       #9B2F1F;
+    --burgundy:   #954535;
+    --nav-h:      56px;
+    --line:       #A89060;
+    --line-soft:  #D8CBAA;
+  }
+
+  html { overflow-x: hidden; }
+
+  body {
+    background: var(--cream);
+    color: var(--black);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── TOP NAV ─────────────────────────────────── */
+  .topnav {
+    position: sticky;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: var(--cream);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--nav-h);
+    padding: 0 32px;
+  }
+
+  .nav-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--title);
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .who-pill {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: var(--title);
+    color: var(--cream);
+    border: none;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .who-pill:hover { opacity: 0.85; }
+
+  /* ── BOARD ───────────────────────────────────── */
+  .board-wrap {
+    padding: 24px 24px 60px;
+    overflow-x: auto;
+  }
+
+  .board {
+    display: flex;
+    gap: 18px;
+    min-width: max-content;
+    align-items: flex-start;
+  }
+
+  .column {
+    width: 280px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.35);
+    border: 1px solid var(--line-soft);
+  }
+
+  .column-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .column-head-left {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .column-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .column[data-status="long_term"]  .column-title { color: var(--teal); }
+  .column[data-status="backlog"]    .column-title { color: var(--black); }
+  .column[data-status="review"]     .column-title { color: var(--burgundy); }
+  .column[data-status="todo"]       .column-title { color: var(--title); }
+  .column[data-status="in_progress"].column-title { color: var(--mustard); }
+  .column[data-status="done"]       .column-title { color: var(--green-dark); }
+
+  .column-count {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    color: var(--black);
+    opacity: 0.55;
+  }
+
+  .add-btn {
+    background: none;
+    border: 1px solid var(--line-soft);
+    color: var(--black);
+    width: 22px;
+    height: 22px;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .add-btn:hover { background: var(--terracotta); color: var(--cream); border-color: var(--terracotta); }
+
+  .column-body {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 40px;
+  }
+
+  .column-body.drag-over {
+    background: rgba(193,101,74,0.12);
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line-soft);
+    border-left: 3px solid var(--terracotta);
+    padding: 10px 12px;
+    cursor: grab;
+    transition: box-shadow 0.15s, transform 0.1s;
+  }
+  .card:hover { box-shadow: 0 2px 8px rgba(30,45,90,0.12); }
+  .card:active { cursor: grabbing; }
+  .card.dragging { opacity: 0.4; }
+
+  .column[data-status="long_term"]   .card { border-left-color: var(--teal); }
+  .column[data-status="backlog"]     .card { border-left-color: var(--black); }
+  .column[data-status="review"]      .card { border-left-color: var(--burgundy); }
+  .column[data-status="todo"]        .card { border-left-color: var(--title); }
+  .column[data-status="in_progress"] .card { border-left-color: var(--mustard); }
+  .column[data-status="done"]        .card { border-left-color: var(--green-dark); }
+
+  .card-title {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 500;
+    font-size: 14.5px;
+    color: var(--black);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .avatar {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
+  .avatar.manu { background: var(--terracotta); }
+  .avatar.flor { background: var(--green-mid); }
+  .avatar.none { background: var(--line-soft); color: var(--black); }
+
+  .card-date {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    color: var(--black);
+    opacity: 0.5;
+    letter-spacing: 0.5px;
+  }
+
+  .empty-hint {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    color: var(--black);
+    opacity: 0.4;
+    padding: 6px 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── MODAL ───────────────────────────────────── */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,20,10,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px;
+  }
+  .overlay.open { display: flex; }
+
+  .modal {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    width: 100%;
+    max-width: 520px;
+    max-height: 88vh;
+    overflow-y: auto;
+    padding: 28px;
+  }
+
+  .modal h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--title);
+    margin-bottom: 18px;
+  }
+
+  .field { margin-bottom: 16px; }
+
+  .field label {
+    display: block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--black);
+    opacity: 0.7;
+    margin-bottom: 6px;
+  }
+
+  .field input[type="text"],
+  .field textarea,
+  .field select {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--line-soft);
+    padding: 9px 10px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    color: var(--black);
+    resize: vertical;
+  }
+  .field input[type="text"]:focus,
+  .field textarea:focus,
+  .field select:focus { outline: 1px solid var(--terracotta); border-color: var(--terracotta); }
+
+  .field-row { display: flex; gap: 12px; }
+  .field-row .field { flex: 1; }
+
+  .modal-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 22px;
+    gap: 10px;
+  }
+
+  .btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 2px solid transparent;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary { background: var(--terracotta); color: var(--cream); border-color: var(--terracotta); }
+  .btn-ghost { background: transparent; color: var(--black); border-color: var(--line-soft); }
+  .btn-danger { background: transparent; color: var(--rust); border-color: var(--rust); }
+
+  .who-modal .modal { max-width: 340px; text-align: center; }
+  .who-options { display: flex; gap: 10px; margin-top: 18px; }
+  .who-options button {
+    flex: 1;
+    padding: 16px 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border: 1px solid var(--line-soft);
+    background: var(--card);
+    color: var(--black);
+    cursor: pointer;
+  }
+  .who-options button:hover { background: var(--title); color: var(--cream); border-color: var(--title); }
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="nav-title">Organización · L12</div>
+  <div class="nav-right">
+    <button class="who-pill" id="whoPill" onclick="openWhoModal()">Sos: —</button>
+  </div>
+</div>
+
+<div class="board-wrap">
+  <div class="board" id="board"></div>
+</div>
+
+<!-- Issue modal -->
+<div class="overlay" id="issueOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">Nuevo issue</h2>
+    <div class="field">
+      <label>Título</label>
+      <input type="text" id="fTitle" placeholder="Qué hay que hacer">
+    </div>
+    <div class="field">
+      <label>Descripción</label>
+      <textarea id="fDesc" rows="4" placeholder="Detalle, contexto, decisiones..."></textarea>
+    </div>
+    <div class="field">
+      <label>Links (uno por línea)</label>
+      <textarea id="fLinks" rows="2" placeholder="https://..."></textarea>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Estado</label>
+        <select id="fStatus">
+          <option value="long_term">Long-term</option>
+          <option value="backlog">Backlog</option>
+          <option value="review">Review</option>
+          <option value="todo">Todo</option>
+          <option value="in_progress">In progress</option>
+          <option value="done">Done</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Asignado</label>
+        <select id="fAssignee">
+          <option value="">Sin asignar</option>
+          <option value="Manu">Manu</option>
+          <option value="Flor">Flor</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-danger" id="btnDelete" onclick="deleteIssue()">Eliminar</button>
+      <div style="display:flex; gap:10px;">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveIssue()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Who am I modal -->
+<div class="overlay who-modal" id="whoOverlay">
+  <div class="modal">
+    <h2>¿Quién sos?</h2>
+    <div class="who-options">
+      <button onclick="setWho('Manu')">Manu</button>
+      <button onclick="setWho('Flor')">Flor</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://fmnabcmqdanlitzyoyma.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtbmFiY21xZGFubGl0enlveW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDY1NDAsImV4cCI6MjA2OTEyMjU0MH0.hdW4wn29xaHSM6npBWDXY0hRc6g85_r4lkA_eq8zXnU';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const COLUMNS = [
+    { status: 'long_term',   label: 'Long-term' },
+    { status: 'backlog',     label: 'Backlog' },
+    { status: 'review',      label: 'Review' },
+    { status: 'todo',        label: 'Todo' },
+    { status: 'in_progress', label: 'In progress' },
+    { status: 'done',        label: 'Done' },
+  ];
+
+  let issues = [];
+  let editingId = null;
+
+  function getWho() { return localStorage.getItem('org_who') || ''; }
+  function setWho(name) {
+    localStorage.setItem('org_who', name);
+    document.getElementById('whoPill').textContent = 'Sos: ' + name;
+    document.getElementById('whoOverlay').classList.remove('open');
+  }
+  function openWhoModal() { document.getElementById('whoOverlay').classList.add('open'); }
+
+  function initWho() {
+    const who = getWho();
+    if (who) {
+      document.getElementById('whoPill').textContent = 'Sos: ' + who;
+    } else {
+      openWhoModal();
+    }
+  }
+
+  function fmtDate(iso) {
+    const d = new Date(iso);
+    return d.toLocaleDateString('es-AR', { day: '2-digit', month: 'short' });
+  }
+
+  function avatarHtml(assignee) {
+    if (assignee === 'Manu') return '<div class="avatar manu">M</div>';
+    if (assignee === 'Flor') return '<div class="avatar flor">F</div>';
+    return '<div class="avatar none">·</div>';
+  }
+
+  function render() {
+    const board = document.getElementById('board');
+    board.innerHTML = '';
+    COLUMNS.forEach(col => {
+      const items = issues.filter(i => i.status === col.status);
+      const colEl = document.createElement('div');
+      colEl.className = 'column';
+      colEl.dataset.status = col.status;
+      colEl.innerHTML = `
+        <div class="column-head">
+          <div class="column-head-left">
+            <span class="column-title">${col.label}</span>
+            <span class="column-count">${items.length}</span>
+          </div>
+          <button class="add-btn" onclick="openNewIssue('${col.status}')">+</button>
+        </div>
+        <div class="column-body" data-status="${col.status}"></div>
+      `;
+      const body = colEl.querySelector('.column-body');
+      if (items.length === 0) {
+        const hint = document.createElement('div');
+        hint.className = 'empty-hint';
+        hint.textContent = 'sin issues';
+        body.appendChild(hint);
+      }
+      items.forEach(issue => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.draggable = true;
+        card.dataset.id = issue.id;
+        card.innerHTML = `
+          <div class="card-title">${escapeHtml(issue.title)}</div>
+          <div class="card-meta">
+            ${avatarHtml(issue.assignee)}
+            <span class="card-date">${fmtDate(issue.created_at)}</span>
+          </div>
+        `;
+        card.addEventListener('click', () => openEditIssue(issue.id));
+        card.addEventListener('dragstart', () => card.classList.add('dragging'));
+        card.addEventListener('dragend', () => card.classList.remove('dragging'));
+        body.appendChild(card);
+      });
+
+      body.addEventListener('dragover', e => {
+        e.preventDefault();
+        body.classList.add('drag-over');
+      });
+      body.addEventListener('dragleave', () => body.classList.remove('drag-over'));
+      body.addEventListener('drop', async e => {
+        e.preventDefault();
+        body.classList.remove('drag-over');
+        const draggingCard = document.querySelector('.card.dragging');
+        if (!draggingCard) return;
+        const id = draggingCard.dataset.id;
+        const newStatus = body.dataset.status;
+        const issue = issues.find(i => i.id === id);
+        if (issue && issue.status !== newStatus) {
+          issue.status = newStatus;
+          render();
+          await sb.from('issues').update({ status: newStatus }).eq('id', id);
+        }
+      });
+
+      board.appendChild(colEl);
+    });
+  }
+
+  function escapeHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s || '';
+    return d.innerHTML;
+  }
+
+  function openNewIssue(status) {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = 'Nuevo issue';
+    document.getElementById('fTitle').value = '';
+    document.getElementById('fDesc').value = '';
+    document.getElementById('fLinks').value = '';
+    document.getElementById('fStatus').value = status;
+    document.getElementById('fAssignee').value = getWho() || '';
+    document.getElementById('btnDelete').style.display = 'none';
+    document.getElementById('issueOverlay').classList.add('open');
+  }
+
+  function openEditIssue(id) {
+    const issue = issues.find(i => i.id === id);
+    if (!issue) return;
+    editingId = id;
+    document.getElementById('modalTitle').textContent = 'Editar issue';
+    document.getElementById('fTitle').value = issue.title || '';
+    document.getElementById('fDesc').value = issue.description || '';
+    document.getElementById('fLinks').value = issue.links || '';
+    document.getElementById('fStatus').value = issue.status;
+    document.getElementById('fAssignee').value = issue.assignee || '';
+    document.getElementById('btnDelete').style.display = 'inline-block';
+    document.getElementById('issueOverlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('issueOverlay').classList.remove('open');
+  }
+
+  async function saveIssue() {
+    const title = document.getElementById('fTitle').value.trim();
+    if (!title) { alert('Poné un título'); return; }
+    const payload = {
+      title,
+      description: document.getElementById('fDesc').value.trim(),
+      links: document.getElementById('fLinks').value.trim(),
+      status: document.getElementById('fStatus').value,
+      assignee: document.getElementById('fAssignee').value || null,
+    };
+    if (editingId) {
+      await sb.from('issues').update(payload).eq('id', editingId);
+    } else {
+      payload.created_by = getWho() || null;
+      await sb.from('issues').insert(payload);
+    }
+    closeModal();
+    await loadIssues();
+  }
+
+  async function deleteIssue() {
+    if (!editingId) return;
+    if (!confirm('¿Eliminar este issue?')) return;
+    await sb.from('issues').delete().eq('id', editingId);
+    closeModal();
+    await loadIssues();
+  }
+
+  async function loadIssues() {
+    const { data, error } = await sb.from('issues').select('*').order('created_at', { ascending: true });
+    if (error) { console.error(error); return; }
+    issues = data;
+    render();
+  }
+
+  sb.channel('issues-realtime')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'issues' }, () => loadIssues())
+    .subscribe();
+
+  initWho();
+  loadIssues();
+</script>
+
+</body>
+</html>
