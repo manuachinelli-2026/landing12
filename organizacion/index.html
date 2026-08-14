@@ -145,7 +145,6 @@
     text-transform: uppercase;
   }
 
-  .column[data-status="long_term"]  .column-title { color: var(--teal); }
   .column[data-status="backlog"]    .column-title { color: var(--black); }
   .column[data-status="review"]     .column-title { color: var(--burgundy); }
   .column[data-status="todo"]       .column-title { color: var(--title); }
@@ -196,7 +195,6 @@
   .card:active { cursor: grabbing; }
   .card.dragging { opacity: 0.4; }
 
-  .column[data-status="long_term"]   .card { border-left-color: var(--teal); }
   .column[data-status="backlog"]     .card { border-left-color: var(--black); }
   .column[data-status="review"]      .card { border-left-color: var(--burgundy); }
   .column[data-status="todo"]        .card { border-left-color: var(--title); }
@@ -276,7 +274,6 @@
     border-radius: 50%;
     flex-shrink: 0;
   }
-  .group[data-status="long_term"]   .group-dot { background: var(--teal); }
   .group[data-status="backlog"]     .group-dot { background: var(--black); }
   .group[data-status="review"]      .group-dot { background: var(--burgundy); }
   .group[data-status="todo"]        .group-dot { background: var(--title); }
@@ -392,6 +389,30 @@
     width: 52px;
     text-align: right;
     flex-shrink: 0;
+  }
+
+  .tag-longterm {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--green-dark);
+    background: rgba(26,77,46,0.10);
+    border: 1px solid rgba(26,77,46,0.25);
+    padding: 3px 8px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .tag-longterm::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green-dark);
   }
 
   /* ── BULK BAR ────────────────────────────────── */
@@ -580,7 +601,6 @@
       <div class="field">
         <label>Estado</label>
         <select id="fStatus">
-          <option value="long_term">Long-term</option>
           <option value="backlog">Backlog</option>
           <option value="review">Review</option>
           <option value="todo">Todo</option>
@@ -596,6 +616,12 @@
           <option value="Flor">Flor</option>
         </select>
       </div>
+    </div>
+    <div class="field">
+      <label style="display:inline-flex; align-items:center; gap:8px; cursor:pointer;">
+        <input type="checkbox" id="fLongTerm" class="row-check" style="margin:0;">
+        Long-term (ver más adelante)
+      </label>
     </div>
     <div class="modal-actions">
       <button class="btn btn-danger" id="btnDelete" onclick="deleteIssue()">Eliminar</button>
@@ -621,7 +647,6 @@
 <div class="bulk-bar" id="bulkBar">
   <span class="bulk-count" id="bulkCount">0 seleccionados</span>
   <select id="bulkMoveStatus">
-    <option value="long_term">Long-term</option>
     <option value="backlog">Backlog</option>
     <option value="review">Review</option>
     <option value="todo">Todo</option>
@@ -629,6 +654,8 @@
     <option value="done">Done</option>
   </select>
   <button class="btn btn-ghost" onclick="bulkMove()">Mover</button>
+  <button class="btn btn-ghost" onclick="bulkToggleLongTerm(true)">+ Long-term</button>
+  <button class="btn btn-ghost" onclick="bulkToggleLongTerm(false)">- Long-term</button>
   <button class="btn btn-ghost" id="btnBulkMerge" onclick="bulkMerge()">Fusionar</button>
   <button class="btn btn-danger" onclick="bulkDelete()">Eliminar</button>
   <button class="btn btn-ghost" onclick="clearSelection()">Cancelar</button>
@@ -645,7 +672,6 @@
     { status: 'todo',        label: 'Todo' },
     { status: 'in_progress', label: 'In progress' },
     { status: 'done',        label: 'Done' },
-    { status: 'long_term',   label: 'Long-term' },
   ];
 
   let issues = [];
@@ -700,6 +726,14 @@
       await sb.from('issues').update({ status, position: pos }).eq('id', id);
       pos += 1000;
     }
+    clearSelection();
+    await loadIssues();
+  }
+
+  async function bulkToggleLongTerm(value) {
+    const ids = [...selectedIds];
+    if (!ids.length) return;
+    await sb.from('issues').update({ long_term: value }).in('id', ids);
     clearSelection();
     await loadIssues();
   }
@@ -774,6 +808,10 @@
     return '<div class="avatar none">·</div>';
   }
 
+  function longTermTagHtml(issue) {
+    return issue.long_term ? '<span class="tag-longterm">long term</span>' : '';
+  }
+
   function render() {
     if (viewMode === 'list') renderList(); else renderKanban();
   }
@@ -835,6 +873,7 @@
           <span class="drag-handle" draggable="true"></span>
           <input type="checkbox" class="row-check" ${selectedIds.has(issue.id) ? 'checked' : ''}>
           <span class="row-title">${escapeHtml(issue.title)}</span>
+          ${longTermTagHtml(issue)}
           ${avatarHtml(issue.assignee)}
           <span class="row-date">${fmtDate(issue.created_at)}</span>
         `;
@@ -947,6 +986,7 @@
         card.dataset.id = issue.id;
         card.innerHTML = `
           <div class="card-title">${escapeHtml(issue.title)}</div>
+          ${issue.long_term ? `<div style="margin-bottom:8px;">${longTermTagHtml(issue)}</div>` : ''}
           <div class="card-meta">
             ${avatarHtml(issue.assignee)}
             <span class="card-date">${fmtDate(issue.created_at)}</span>
@@ -997,6 +1037,7 @@
     document.getElementById('fLinks').value = '';
     document.getElementById('fStatus').value = status;
     document.getElementById('fAssignee').value = getWho() || '';
+    document.getElementById('fLongTerm').checked = false;
     document.getElementById('btnDelete').style.display = 'none';
     document.getElementById('issueOverlay').classList.add('open');
   }
@@ -1011,6 +1052,7 @@
     document.getElementById('fLinks').value = issue.links || '';
     document.getElementById('fStatus').value = issue.status;
     document.getElementById('fAssignee').value = issue.assignee || '';
+    document.getElementById('fLongTerm').checked = !!issue.long_term;
     document.getElementById('btnDelete').style.display = 'inline-block';
     document.getElementById('issueOverlay').classList.add('open');
   }
@@ -1028,6 +1070,7 @@
       links: document.getElementById('fLinks').value.trim(),
       status: document.getElementById('fStatus').value,
       assignee: document.getElementById('fAssignee').value || null,
+      long_term: document.getElementById('fLongTerm').checked,
     };
     if (editingId) {
       const prev = issues.find(i => i.id === editingId);
