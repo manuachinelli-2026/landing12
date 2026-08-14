@@ -82,6 +82,27 @@
   }
   .who-pill:hover { opacity: 0.85; }
 
+  .view-toggle {
+    display: flex;
+    border: 1px solid var(--line-soft);
+  }
+  .view-toggle button {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--black);
+    border: none;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .view-toggle button + button { border-left: 1px solid var(--line-soft); }
+  .view-toggle button.active { background: var(--terracotta); color: var(--cream); }
+  .view-toggle button:not(.active):hover { background: rgba(193,101,74,0.12); }
+
   /* ── BOARD ───────────────────────────────────── */
   .board-wrap {
     padding: 24px 24px 60px;
@@ -231,6 +252,109 @@
     letter-spacing: 0.5px;
   }
 
+  /* ── LIST VIEW ───────────────────────────────── */
+  .list-wrap {
+    padding: 8px 24px 60px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .group { border-bottom: 1px solid var(--line-soft); }
+
+  .group-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 6px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .group-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .group[data-status="long_term"]   .group-dot { background: var(--teal); }
+  .group[data-status="backlog"]     .group-dot { background: var(--black); }
+  .group[data-status="review"]      .group-dot { background: var(--burgundy); }
+  .group[data-status="todo"]        .group-dot { background: var(--title); }
+  .group[data-status="in_progress"] .group-dot { background: var(--mustard); }
+  .group[data-status="done"]        .group-dot { background: var(--green-dark); }
+
+  .group-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+  }
+
+  .group-count {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    color: var(--black);
+    opacity: 0.5;
+  }
+
+  .group-chevron {
+    font-size: 11px;
+    opacity: 0.5;
+    transition: transform 0.15s;
+  }
+  .group.collapsed .group-chevron { transform: rotate(-90deg); }
+
+  .group-add {
+    margin-left: auto;
+    background: none;
+    border: 1px solid var(--line-soft);
+    color: var(--black);
+    width: 22px;
+    height: 22px;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .group-add:hover { background: var(--terracotta); color: var(--cream); border-color: var(--terracotta); }
+
+  .group-rows { display: flex; flex-direction: column; }
+  .group.collapsed .group-rows { display: none; }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 6px 9px 20px;
+    border-top: 1px solid var(--line-soft);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .row:hover { background: rgba(255,255,255,0.5); }
+
+  .row-title {
+    font-family: 'Barlow', sans-serif;
+    font-size: 14.5px;
+    color: var(--black);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .row-date {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11.5px;
+    color: var(--black);
+    opacity: 0.5;
+    letter-spacing: 0.5px;
+    width: 52px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
   /* ── MODAL ───────────────────────────────────── */
   .overlay {
     position: fixed;
@@ -342,11 +466,16 @@
 <div class="topnav">
   <div class="nav-title">Organización · L12</div>
   <div class="nav-right">
+    <div class="view-toggle">
+      <button id="btnViewList" onclick="setView('list')">Lista</button>
+      <button id="btnViewKanban" onclick="setView('kanban')">Kanban</button>
+    </div>
     <button class="who-pill" id="whoPill" onclick="openWhoModal()">Sos: —</button>
   </div>
 </div>
 
-<div class="board-wrap">
+<div class="list-wrap" id="listWrap"></div>
+<div class="board-wrap" id="boardWrap" style="display:none;">
   <div class="board" id="board"></div>
 </div>
 
@@ -424,6 +553,24 @@
 
   let issues = [];
   let editingId = null;
+  let viewMode = localStorage.getItem('org_view') || 'list';
+  const collapsedGroups = new Set();
+
+  function setView(mode) {
+    viewMode = mode;
+    localStorage.setItem('org_view', mode);
+    document.getElementById('btnViewList').classList.toggle('active', mode === 'list');
+    document.getElementById('btnViewKanban').classList.toggle('active', mode === 'kanban');
+    document.getElementById('listWrap').style.display = mode === 'list' ? 'block' : 'none';
+    document.getElementById('boardWrap').style.display = mode === 'kanban' ? 'block' : 'none';
+    render();
+  }
+
+  function toggleGroup(status) {
+    if (collapsedGroups.has(status)) collapsedGroups.delete(status);
+    else collapsedGroups.add(status);
+    render();
+  }
 
   function getWho() { return localStorage.getItem('org_who') || ''; }
   function setWho(name) {
@@ -454,6 +601,60 @@
   }
 
   function render() {
+    if (viewMode === 'list') renderList(); else renderKanban();
+  }
+
+  function renderList() {
+    const wrap = document.getElementById('listWrap');
+    wrap.innerHTML = '';
+    COLUMNS.forEach(col => {
+      const items = issues.filter(i => i.status === col.status);
+      const collapsed = collapsedGroups.has(col.status);
+      const groupEl = document.createElement('div');
+      groupEl.className = 'group' + (collapsed ? ' collapsed' : '');
+      groupEl.dataset.status = col.status;
+      groupEl.innerHTML = `
+        <div class="group-head">
+          <span class="group-chevron">▾</span>
+          <span class="group-dot"></span>
+          <span class="group-label">${col.label}</span>
+          <span class="group-count">${items.length}</span>
+          <button class="group-add">+</button>
+        </div>
+        <div class="group-rows"></div>
+      `;
+      groupEl.querySelector('.group-head').addEventListener('click', e => {
+        if (e.target.closest('.group-add')) return;
+        toggleGroup(col.status);
+      });
+      groupEl.querySelector('.group-add').addEventListener('click', e => {
+        e.stopPropagation();
+        openNewIssue(col.status);
+      });
+      const rows = groupEl.querySelector('.group-rows');
+      if (items.length === 0) {
+        const hint = document.createElement('div');
+        hint.className = 'empty-hint';
+        hint.style.paddingLeft = '20px';
+        hint.textContent = 'sin issues';
+        rows.appendChild(hint);
+      }
+      items.forEach(issue => {
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.innerHTML = `
+          <span class="row-title">${escapeHtml(issue.title)}</span>
+          ${avatarHtml(issue.assignee)}
+          <span class="row-date">${fmtDate(issue.created_at)}</span>
+        `;
+        row.addEventListener('click', () => openEditIssue(issue.id));
+        rows.appendChild(row);
+      });
+      wrap.appendChild(groupEl);
+    });
+  }
+
+  function renderKanban() {
     const board = document.getElementById('board');
     board.innerHTML = '';
     COLUMNS.forEach(col => {
@@ -595,6 +796,7 @@
     .on('postgres_changes', { event: '*', schema: 'public', table: 'issues' }, () => loadIssues())
     .subscribe();
 
+  setView(viewMode);
   initWho();
   loadIssues();
 </script>
