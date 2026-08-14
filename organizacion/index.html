@@ -640,12 +640,12 @@
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const COLUMNS = [
-    { status: 'long_term',   label: 'Long-term' },
     { status: 'backlog',     label: 'Backlog' },
     { status: 'review',      label: 'Review' },
     { status: 'todo',        label: 'Todo' },
     { status: 'in_progress', label: 'In progress' },
     { status: 'done',        label: 'Done' },
+    { status: 'long_term',   label: 'Long-term' },
   ];
 
   let issues = [];
