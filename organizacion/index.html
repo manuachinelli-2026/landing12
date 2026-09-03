@@ -441,6 +441,46 @@
     background: var(--green-dark);
   }
 
+  .tag-new {
+    display: inline-flex;
+    align-items: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--terracotta);
+    padding: 3px 7px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .row-updated {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 11.5px;
+    letter-spacing: 0.3px;
+    width: 78px;
+    text-align: right;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .row-updated.upd-green  { color: var(--green-dark); }
+  .row-updated.upd-yellow { color: var(--mustard); }
+  .row-updated.upd-red    { color: var(--rust); }
+
+  .card-updated {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .card-updated.upd-green  { color: var(--green-dark); }
+  .card-updated.upd-yellow { color: var(--mustard); }
+  .card-updated.upd-red    { color: var(--rust); }
+
   /* ── BULK BAR ────────────────────────────────── */
   .bulk-bar {
     position: fixed;
@@ -911,6 +951,31 @@
     return issue.long_term ? '<span class="tag-longterm">long term</span>' : '';
   }
 
+  function daysSince(iso) {
+    const diffMs = Date.now() - new Date(iso).getTime();
+    return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  }
+
+  function isNew(issue) {
+    return daysSince(issue.created_at) < 7;
+  }
+
+  function newTagHtml(issue) {
+    return isNew(issue) ? '<span class="tag-new">new</span>' : '';
+  }
+
+  function updatedInfo(issue) {
+    const days = daysSince(issue.updated_at || issue.created_at);
+    let cls = 'upd-green';
+    if (days >= 14) cls = 'upd-red';
+    else if (days >= 7) cls = 'upd-yellow';
+    let text;
+    if (days <= 0) text = 'hoy';
+    else if (days === 1) text = 'hace 1 día';
+    else text = `hace ${days} días`;
+    return { cls, text };
+  }
+
   function render() {
     if (viewMode === 'list') renderList(); else renderKanban();
   }
@@ -968,12 +1033,15 @@
         const row = document.createElement('div');
         row.className = 'row' + (selectedIds.has(issue.id) ? ' selected' : '');
         row.dataset.id = issue.id;
+        const upd = updatedInfo(issue);
         row.innerHTML = `
           <span class="drag-handle" draggable="true"></span>
           <input type="checkbox" class="row-check" ${selectedIds.has(issue.id) ? 'checked' : ''}>
           <span class="row-title">${escapeHtml(issue.title)}</span>
+          ${newTagHtml(issue)}
           ${longTermTagHtml(issue)}
           ${avatarHtml(issue.assignee)}
+          <span class="row-updated ${upd.cls}">${upd.text}</span>
           <span class="row-date">${fmtDate(issue.created_at)}</span>
         `;
         row.addEventListener('click', () => openEditIssue(issue.id));
@@ -1083,12 +1151,13 @@
         card.className = 'card';
         card.draggable = true;
         card.dataset.id = issue.id;
+        const upd = updatedInfo(issue);
         card.innerHTML = `
           <div class="card-title">${escapeHtml(issue.title)}</div>
-          ${issue.long_term ? `<div style="margin-bottom:8px;">${longTermTagHtml(issue)}</div>` : ''}
+          ${(issue.long_term || isNew(issue)) ? `<div style="margin-bottom:8px; display:flex; gap:6px;">${newTagHtml(issue)}${longTermTagHtml(issue)}</div>` : ''}
           <div class="card-meta">
             ${avatarHtml(issue.assignee)}
-            <span class="card-date">${fmtDate(issue.created_at)}</span>
+            <span class="card-updated ${upd.cls}">${upd.text}</span>
           </div>
         `;
         card.addEventListener('click', () => openEditIssue(issue.id));
@@ -1179,7 +1248,7 @@
       await sb.from('issues').update(payload).eq('id', editingId);
     } else {
       payload.created_by = getWho() || null;
-      payload.position = nextPositionAtEnd(payload.status);
+      payload.position = positionAtStart(payload.status);
       await sb.from('issues').insert(payload);
     }
     closeModal();
