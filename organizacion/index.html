@@ -62,6 +62,73 @@
     color: var(--title);
   }
 
+  /* ── COUNTDOWN BANNER ────────────────────────── */
+  .countdown-banner {
+    position: sticky;
+    top: var(--nav-h);
+    z-index: 90;
+    background: var(--title);
+    border-bottom: 1px solid var(--line);
+    padding: 18px 24px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .countdown-banner-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--cream);
+    opacity: 0.75;
+  }
+
+  .countdown-banner-time {
+    display: flex;
+    align-items: center;
+    gap: clamp(6px, 1.5vw, 16px);
+  }
+
+  .cd-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 64px;
+  }
+
+  .cd-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(34px, 7vw, 64px);
+    line-height: 1;
+    letter-spacing: 1px;
+    color: var(--terracotta);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cd-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: clamp(10px, 1.3vw, 13px);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--cream);
+    opacity: 0.6;
+    margin-top: 2px;
+  }
+
+  .cd-sep {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(24px, 5vw, 48px);
+    color: var(--cream);
+    opacity: 0.3;
+    transform: translateY(-6px);
+  }
+
+  .countdown-banner.done .countdown-banner-label { opacity: 1; color: var(--mustard); }
+
   .nav-right {
     display: flex;
     align-items: center;
@@ -675,7 +742,20 @@
   </div>
 </div>
 
-<div class="list-wrap" id="listWrap"></div>
+<div class="countdown-banner" id="countdownBanner">
+  <div class="countdown-banner-label" id="countdownLabel">🎉 Falta para la fiesta 12·12</div>
+  <div class="countdown-banner-time">
+    <div class="cd-unit"><span class="cd-num" id="cdDays">00</span><span class="cd-label">Días</span></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><span class="cd-num" id="cdHours">00</span><span class="cd-label">Hs</span></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><span class="cd-num" id="cdMins">00</span><span class="cd-label">Min</span></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><span class="cd-num" id="cdSecs">00</span><span class="cd-label">Seg</span></div>
+  </div>
+</div>
+
+<div class="list-wrap" id="listWrap">
 <div class="board-wrap" id="boardWrap" style="display:none;">
   <div class="board" id="board"></div>
 </div>
@@ -1269,6 +1349,31 @@
     issues = data;
     render();
   }
+
+  const PARTY_TARGET = new Date('2026-12-12T16:30:00-03:00').getTime();
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function updateCountdown() {
+    const diff = PARTY_TARGET - Date.now();
+    if (diff <= 0) {
+      document.getElementById('countdownLabel').textContent = '🎉 ¡ES HOY, ARRANCÓ LA FIESTA!';
+      document.getElementById('countdownBanner').classList.add('done');
+      document.getElementById('cdDays').textContent = '00';
+      document.getElementById('cdHours').textContent = '00';
+      document.getElementById('cdMins').textContent = '00';
+      document.getElementById('cdSecs').textContent = '00';
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cdDays').textContent = pad(d);
+    document.getElementById('cdHours').textContent = pad(h);
+    document.getElementById('cdMins').textContent = pad(m);
+    document.getElementById('cdSecs').textContent = pad(s);
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
 
   sb.channel('issues-realtime')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'issues' }, () => loadIssues())
