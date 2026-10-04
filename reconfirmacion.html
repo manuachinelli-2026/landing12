@@ -51,8 +51,6 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 #head { display: flex; align-items: center; gap: 9px; margin-top: 10px; }
 #avatar { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 0 2px currentColor; }
 #avatar img { display: block; width: 100%; height: 100%; }
-#who { font-family: var(--cond); font-weight: 700; font-size: 15px; letter-spacing: .04em; line-height: 1.1; }
-#who small { display: block; font-weight: 400; font-size: 12.5px; opacity: .8; letter-spacing: .02em; }
 #paused { margin-left: auto; font-family: var(--cond); font-size: 12px; letter-spacing: .14em; opacity: 0; transition: opacity .2s; }
 #stage.is-paused #paused { opacity: .85; }
 
@@ -237,7 +235,6 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
     <div id="bars"></div>
     <div id="head">
       <div id="avatar"><img src="favicon.svg" alt=""></div>
-      <div id="who">12·12 <small id="chap"></small></div>
       <div id="paused">❚❚ PAUSA</div>
     </div>
   </div>
@@ -519,7 +516,6 @@ function show(i) {
   const el = slides[cur]; void el.offsetWidth; el.classList.add('active');
   fills.forEach((f, n) => f.style.width = n < cur ? '100%' : '0');
   if (durOf(cur) === Infinity) fills[cur].style.width = '100%';
-  document.getElementById('chap').textContent = S[cur].chapter;
   paint();
 }
 function tick(now) {
