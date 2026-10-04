@@ -280,7 +280,7 @@ const MAPS = {
 const P = { brown: '#8B4513', terra: '#C1654A', rust: '#9B2F1F', mustard: '#D4940A', olive: '#4A5320', green: '#1A4D2E', teal: '#1C3D35', navy: '#1E2D5A' };
 
 const DAYS = {
-  v: { name: 'Viernes', num: '11', color: P.teal,    sub: 'Pre-boda',           ics: ['20261211T230000Z', '20261212T040000Z', 'Pre-boda · 12·12', 'Las Marianas, Navarro'] },
+  v: { name: 'Viernes', num: '11', color: P.teal,    sub: 'Pre-boda',           ics: ['20261212T000000Z', '20261212T040000Z', 'Pre-boda · 12·12', 'Las Marianas, Navarro'] },
   s: { name: 'Sábado',  num: '12', color: P.terra,   sub: 'Ceremonia + Fiesta',  ics: ['20261212T193000Z', '20261213T080000Z', 'Casamiento · 12·12', 'Iglesia Las Marianas → Campo El Arbolito'] },
   d: { name: 'Domingo', num: '13', color: P.mustard, sub: 'Almuerzo',            ics: ['20261213T150000Z', '20261213T210000Z', 'Almuerzo · 12·12', 'Campo El Ranchito'] },
 };
@@ -344,7 +344,7 @@ if (invited.includes('v')) {
     <div class="content">
       <div class="kicker a" style="--i:0">Viernes · 11 dic</div>
       <div class="mega a" style="--i:1">PRE<br>BODA</div>
-      ${clock('20:00', 2)}
+      ${clock('21:00', 2)}
       ${loc('Las Marianas', MAPS.marianas, 3)}
     </div>` });
   S.push({ chapter: 'viernes · dress code', bg: 'bg-teal', html: `
