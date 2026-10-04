@@ -280,7 +280,7 @@ const P = { brown: '#8B4513', terra: '#C1654A', rust: '#9B2F1F', mustard: '#D494
 const DAYS = {
   v: { name: 'Viernes', num: '11', color: P.teal,    sub: 'Pre-boda',           ics: ['20261212T000000Z', '20261212T040000Z', 'Pre-boda · 12·12', 'Las Marianas, Navarro'] },
   s: { name: 'Sábado',  num: '12', color: P.terra,   sub: 'Ceremonia + Fiesta',  ics: ['20261212T193000Z', '20261213T080000Z', 'Casamiento · 12·12', 'Iglesia Las Marianas → Campo El Arbolito'] },
-  d: { name: 'Domingo', num: '13', color: P.mustard, sub: 'Almuerzo',            ics: ['20261213T150000Z', '20261213T210000Z', 'Almuerzo · 12·12', 'Campo El Ranchito'] },
+  d: { name: 'Domingo', num: '13', color: P.mustard, sub: 'Almuerzo',            ics: ['20261213T160000Z', '20261213T210000Z', 'Almuerzo · 12·12', 'Campo El Ranchito'] },
 };
 
 /* ═════════════ GRUPO ═════════════ */
@@ -396,7 +396,6 @@ if (invited.includes('s')) {
     <div class="content">
       <div class="big a" style="--i:0">TIPS</div>
       ${tips('Sábado', P.rust, [
-        'La ceremonia arranca <b>16:30 en punto</b>. Llegá unos minutos antes.',
         'La fiesta es <b>sobre pasto</b>: taco ancho o plataforma.',
         'Son <b>37 km de tierra</b> desde Navarro hasta el campo. Si llueve, sumá tiempo.',
         'De madrugada <b>refresca</b>.',
@@ -417,8 +416,8 @@ if (invited.includes('d')) {
     ${cubes([[64, 4, 80, P.terra], [82, 16, 44, P.green], [-4, 86, 56, P.brown]])}
     <div class="content">
       <div class="kicker a" style="--i:0">Domingo · 13 dic</div>
-      <div class="mega a" style="--i:1">AL<br>MUERZO</div>
-      <div class="sticker pop" style="--i:2;font-size:24px">Al mediodía</div>
+      <div class="mega a" style="--i:1;font-size:clamp(64px, 22vw, 96px)">ALMUERZO</div>
+      ${clock('13:00', 2)}
       ${loc('Campo El Ranchito', MAPS.ranchito, 3)}
     </div>` });
   S.push({ chapter: 'domingo · dress code', bg: 'bg-mustard', html: `
