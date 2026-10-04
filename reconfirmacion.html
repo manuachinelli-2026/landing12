@@ -160,8 +160,6 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .photo::before { content: ''; position: absolute; inset: 0; background: var(--shadow); opacity: .55; transform: translate(8px, 8px); }
 .photo img { position: relative; display: block; width: 100%; aspect-ratio: 3/4; object-fit: cover; background: #ddd; }
 .nope { display: flex; gap: 10px; align-items: center; font-family: var(--cond); font-weight: 600; font-size: 18px; letter-spacing: .06em; text-transform: uppercase; }
-.swatch { width: 30px; height: 30px; border-radius: 50%; position: relative; border: 2px solid currentColor; flex: none; }
-.swatch::after { content: ''; position: absolute; left: 50%; top: -4px; bottom: -4px; width: 3px; margin-left: -1.5px; background: var(--rust); transform: rotate(45deg); border-radius: 2px; }
 .tags { display: flex; gap: 10px; flex-wrap: wrap; }
 
 /* agenda */
@@ -375,7 +373,7 @@ if (invited.includes('s')) {
       <div class="tl">
         <div class="tl-row">${clock('16:30', 2)}<div class="a" style="--i:3"><h3>CEREMONIA</h3>${loc('Iglesia Las Marianas', MAPS.marianas, 3)}</div></div>
         <div class="tl-dash a" style="--i:4"></div>
-        <div class="tl-row">${clock('18:00', 5)}<div class="a" style="--i:6"><h3>FIESTA</h3>${loc('Campo El Arbolito', MAPS.arbolito, 6)}</div></div>
+        <div class="tl-row">${clock('18:30', 5)}<div class="a" style="--i:6"><h3>FIESTA</h3>${loc('Campo El Arbolito', MAPS.arbolito, 6)}</div></div>
       </div>
     </div>` });
   S.push({ chapter: 'sábado · dress code', bg: 'bg-terra', html: `
@@ -383,7 +381,7 @@ if (invited.includes('s')) {
       <div class="kicker a" style="--i:0">Dress code · sábado</div>
       <div class="big a" style="--i:1">ELEGANTE<br>SPORT</div>
       <div class="photos">${[3, 12, 8, 7, 1, 11].map((n, k) => `<div class="photo pop" style="--i:${k + 2}"><img src="images/dc${String(n).padStart(2, '0')}.jpg" alt=""></div>`).join('')}</div>
-      <div class="nope a" style="--i:8"><div class="swatch" style="background:#fff"></div><div class="swatch" style="background:#111"></div>Evitá blanco y negro</div>
+      <div class="nope a" style="--i:8">Evitá blanco y negro</div>
     </div>` });
   S.push({ chapter: 'sábado · tips', bg: 'bg-terra', html: `
     ${cubes([[76, 6, 50, P.navy]])}
