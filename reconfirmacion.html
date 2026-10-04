@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#F2EDE4">
 <title>12·12 · Reconfirmación</title>
 <meta property="og:title" content="12·12 · Reconfirmación">
-<meta property="og:description" content="11—13 diciembre 2026 · Navarro">
+<meta property="og:description" content="11—13 diciembre 2026 · Las Marianas">
 <meta property="og:image" content="images/og-preview.jpg">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -78,7 +78,7 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .slide.active .a { animation: up .6s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i, 0) * 90ms + 80ms); }
 @keyframes up { to { opacity: 1; transform: none; } }
 .slide.active .pop { animation: pop .55s cubic-bezier(.3,1.5,.5,1) both; animation-delay: calc(var(--i, 0) * 90ms + 80ms); }
-@keyframes pop { from { opacity: 0; transform: scale(.5) rotate(var(--r, 0deg)); } to { opacity: 1; transform: scale(1) rotate(var(--r, 0deg)); } }
+@keyframes pop { from { opacity: 0; transform: scale(.5); } to { opacity: 1; transform: scale(1); } }
 
 /* ── cubos del home ── */
 .cubes { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
@@ -104,13 +104,13 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 /* ── stickers IG ── */
 .sticker { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; background: #fff; color: var(--title);
   border-radius: 10px; padding: 9px 14px; font-family: var(--cond); font-weight: 700; font-size: 18px; letter-spacing: .04em;
-  text-transform: uppercase; box-shadow: 0 6px 18px rgba(0,0,0,.18); transform: rotate(var(--r, 0deg)); text-decoration: none; }
+  text-transform: uppercase; box-shadow: 0 6px 18px rgba(0,0,0,.18); text-decoration: none; }
 .sticker.loc .pin { width: 18px; height: 18px; flex: none; }
 .sticker.loc span { color: var(--terracotta); }
 .sticker.loc em { font-style: normal; font-size: 11px; letter-spacing: .1em; opacity: .55; margin-left: 4px; white-space: nowrap; }
 .sticker.tag { font-size: 15px; padding: 7px 12px; }
 
-.clock { display: inline-flex; gap: 4px; align-self: flex-start; transform: rotate(var(--r, 0deg)); }
+.clock { display: inline-flex; gap: 4px; align-self: flex-start; }
 .clock b { font-family: var(--display); font-weight: 400; font-size: 64px; line-height: 1; background: #fff; color: var(--title);
   border-radius: 10px; padding: 6px 10px 0; box-shadow: 0 6px 18px rgba(0,0,0,.18); }
 .clock b.colon { background: none; color: var(--fg); box-shadow: none; padding: 6px 0 0; }
@@ -155,7 +155,7 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 
 /* agenda */
 .week { display: grid; gap: 12px; }
-.wk { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 14px; color: var(--cream); transform: rotate(var(--r, 0deg)); box-shadow: 0 8px 20px rgba(0,0,0,.18); }
+.wk { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 14px; color: var(--cream); box-shadow: 0 8px 20px rgba(0,0,0,.18); }
 .wk b { font-family: var(--display); font-weight: 400; font-size: 48px; line-height: .9; min-width: 48px; text-align: center; }
 .wk div { font-family: var(--cond); line-height: 1.15; }
 .wk div strong { display: block; font-size: 22px; letter-spacing: .06em; text-transform: uppercase; }
@@ -179,7 +179,7 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .step-n { font-family: var(--cond); font-weight: 600; font-size: 13px; letter-spacing: .24em; text-transform: uppercase; opacity: .85; text-align: center; }
 
 /* encuesta */
-.poll { background: #fff; color: var(--title); border-radius: 18px; box-shadow: 0 14px 34px rgba(0,0,0,.25); padding: 20px 14px 14px; transform: rotate(var(--r, -1.5deg)); }
+.poll { background: #fff; color: var(--title); border-radius: 18px; box-shadow: 0 14px 34px rgba(0,0,0,.25); padding: 20px 14px 14px; }
 .poll h3 { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1; text-align: center; padding: 0 6px 16px; }
 .poll .opts { display: grid; gap: 8px; }
 .poll button { position: relative; overflow: hidden; display: flex; justify-content: space-between; align-items: center; font: 700 18px var(--cond);
@@ -193,7 +193,7 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .poll .note { font-family: var(--cond); font-size: 13px; letter-spacing: .1em; text-transform: uppercase; text-align: center; color: var(--line); padding-top: 10px; }
 
 /* caja de preguntas */
-.qbox { border-radius: 18px; overflow: hidden; box-shadow: 0 14px 34px rgba(0,0,0,.25); transform: rotate(1deg); }
+.qbox { border-radius: 18px; overflow: hidden; box-shadow: 0 14px 34px rgba(0,0,0,.25); }
 .qbox .top { background: var(--qc); color: #fff; padding: 24px 18px 20px; text-align: center; font-family: var(--display); font-size: 34px; line-height: 1; }
 .qbox .body { background: #fff; padding: 14px; display: grid; gap: 8px; }
 .qbox input { width: 100%; min-width: 0; font: 600 17px var(--body); color: var(--title); background: #f3eee6; border: 0; border-radius: 10px; padding: 14px; outline: none; user-select: text; -webkit-user-select: text; }
@@ -282,10 +282,10 @@ const dayLabel = k => `${DAYS[k].name} ${DAYS[k].num}`;
 
 /* ═════════════ helpers ═════════════ */
 const pin = `<svg class="pin" viewBox="0 0 24 24"><path fill="#C1654A" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/></svg>`;
-const loc = (name, url, i, r = 0) => `<a class="sticker loc pop" style="--i:${i};--r:${r}deg" href="${url}" target="_blank" rel="noopener">${pin}<span>${name}</span><em>MAPS ↗</em></a>`;
-const clock = (t, i, r = 0) => { const [h, m] = t.split(':'); return `<div class="clock pop" style="--i:${i};--r:${r}deg"><b>${h[0]}</b><b>${h[1]}</b><b class="colon">:</b><b>${m[0]}</b><b>${m[1]}</b></div>`; };
+const loc = (name, url, i) => `<a class="sticker loc pop" style="--i:${i}" href="${url}" target="_blank" rel="noopener">${pin}<span>${name}</span><em>MAPS ↗</em></a>`;
+const clock = (t, i) => { const [h, m] = t.split(':'); return `<div class="clock pop" style="--i:${i}"><b>${h[0]}</b><b>${h[1]}</b><b class="colon">:</b><b>${m[0]}</b><b>${m[1]}</b></div>`; };
 const tips = (title, hdr, items, i) => `<div class="card tips a" style="--i:${i};--hdr:${hdr}"><div class="card-h">Tips · ${title}</div><div class="card-b"><ol>${items.map(t => `<li><span>${t}</span></li>`).join('')}</ol></div></div>`;
-const tags = (list, i) => `<div class="tags">${list.map((t, n) => `<span class="sticker tag pop" style="--i:${i + n};--r:${[-4, 3, -2][n % 3]}deg">${t}</span>`).join('')}</div>`;
+const tags = (list, i) => `<div class="tags">${list.map((t, n) => `<span class="sticker tag pop" style="--i:${i + n}">${t}</span>`).join('')}</div>`;
 // cubos decorativos: [left%, top%, tamaño px, color]
 const cubes = list => `<div class="cubes">${list.map(([x, y, s, c], n) =>
   `<div class="cube" style="left:${x}%;top:${y}%;--s:${s}px;--c:${c};--d:${(1 + (n % 4) * .15).toFixed(2)}s;--dl:${(n * .09).toFixed(2)}s"></div>`).join('')}</div>`;
@@ -302,8 +302,8 @@ S.push({ chapter: 'casamiento', bg: 'bg-cream', dur: Infinity, html: `
       `<div class="cube" style="--c:${CUBE_COLORS[c]};--d:${(.9 + (n % 4) * .15).toFixed(2)}s;--dl:${(n * .09 % 1).toFixed(2)}s"></div>`}</div>`).join('')}</div>
     <div class="kicker a" style="--i:1">Casamiento</div>
     <div class="mega a" style="--i:2;color:var(--terracotta)">12·12</div>
-    <div class="kicker a" style="--i:3">11—13 diciembre 2026 · Navarro</div>
-    <div class="card count pop" style="--i:4;--r:-2deg">
+    <div class="kicker a" style="--i:3">11—13 diciembre 2026 · Las Marianas</div>
+    <div class="card count pop" style="--i:4">
       <div class="card-h">Faltan</div>
       <div class="digits" id="cd"></div>
     </div>
@@ -311,14 +311,13 @@ S.push({ chapter: 'casamiento', bg: 'bg-cream', dur: Infinity, html: `
   <div class="hint">tocá para seguir →</div>` });
 
 // — Agenda
-const wkRot = [-2, 1.5, -1];
 S.push({ chapter: 'tu invitación', bg: 'bg-green', html: `
   ${cubes([[74, 6, 56, P.mustard], [88, 16, 30, P.terra]])}
   <div class="content">
     <div class="kicker a" style="--i:0">Tu invitación</div>
     <div class="big a" style="--i:1">${invited.length === 3 ? 'TODO EL<br>FINDE' : invited.map(k => DAYS[k].name.toUpperCase()).join('<br>+ ')}</div>
     <div class="week">
-      ${invited.map((k, n) => `<div class="wk pop" style="--i:${n + 2};--r:${wkRot[n]}deg;background:${DAYS[k].color}"><b>${DAYS[k].num}</b><div><strong>${DAYS[k].name}</strong><span>${DAYS[k].sub}</span></div></div>`).join('')}
+      ${invited.map((k, n) => `<div class="wk pop" style="--i:${n + 2};background:${DAYS[k].color}"><b>${DAYS[k].num}</b><div><strong>${DAYS[k].name}</strong><span>${DAYS[k].sub}</span></div></div>`).join('')}
     </div>
     <div class="kicker a" style="--i:6">Navarro · Las Marianas · diciembre 2026</div>
   </div>` });
@@ -330,8 +329,8 @@ if (invited.includes('v')) {
     <div class="content">
       <div class="kicker a" style="--i:0">Viernes · 11 dic</div>
       <div class="mega a" style="--i:1">PRE<br>BODA</div>
-      ${clock('20:00', 2, -3)}
-      ${loc('Las Marianas', MAPS.marianas, 3, 2)}
+      ${clock('20:00', 2)}
+      ${loc('Las Marianas', MAPS.marianas, 3)}
     </div>` });
   S.push({ chapter: 'viernes · dress code', bg: 'bg-teal', html: `
     ${cubes([[72, 8, 56, P.olive], [8, 82, 44, P.mustard]])}
@@ -360,9 +359,9 @@ if (invited.includes('s')) {
       <div class="kicker a" style="--i:0">Sábado · 12 dic</div>
       <div class="mega a" style="--i:1">EL<br>DÍA</div>
       <div class="tl">
-        <div class="tl-row">${clock('16:30', 2, -2)}<div class="a" style="--i:3"><h3>CEREMONIA</h3>${loc('Iglesia Las Marianas', MAPS.marianas, 3)}</div></div>
+        <div class="tl-row">${clock('16:30', 2)}<div class="a" style="--i:3"><h3>CEREMONIA</h3>${loc('Iglesia Las Marianas', MAPS.marianas, 3)}</div></div>
         <div class="tl-dash a" style="--i:4"></div>
-        <div class="tl-row">${clock('18:00', 5, 2)}<div class="a" style="--i:6"><h3>FIESTA</h3>${loc('Campo El Arbolito', MAPS.arbolito, 6)}</div></div>
+        <div class="tl-row">${clock('18:00', 5)}<div class="a" style="--i:6"><h3>FIESTA</h3>${loc('Campo El Arbolito', MAPS.arbolito, 6)}</div></div>
       </div>
     </div>` });
   S.push({ chapter: 'sábado · dress code', bg: 'bg-terra', html: `
@@ -392,8 +391,8 @@ if (invited.includes('d')) {
     <div class="content">
       <div class="kicker a" style="--i:0">Domingo · 13 dic</div>
       <div class="mega a" style="--i:1">AL<br>MUERZO</div>
-      <div class="sticker pop" style="--i:2;--r:-3deg;font-size:24px">Al mediodía</div>
-      ${loc('Campo El Ranchito', MAPS.ranchito, 3, 2)}
+      <div class="sticker pop" style="--i:2;font-size:24px">Al mediodía</div>
+      ${loc('Campo El Ranchito', MAPS.ranchito, 3)}
     </div>` });
   S.push({ chapter: 'domingo · dress code', bg: 'bg-mustard', html: `
     ${cubes([[72, 8, 56, P.rust], [8, 82, 44, P.teal]])}
@@ -476,7 +475,7 @@ S.push({ chapter: 'confirmación', bg: 'bg-terra', dur: Infinity, cls: 'rsvp', h
 
     <div class="q" data-q="resumen" data-bg="bg-cream">
       <div class="step-n" data-n></div>
-      <div class="card qs" style="transform:rotate(-1deg)">
+      <div class="card qs">
         <div class="card-h" style="background:var(--terracotta)">Tus respuestas</div>
         <div class="card-b summary" id="summary"></div>
       </div>
