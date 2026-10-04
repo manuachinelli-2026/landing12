@@ -138,7 +138,7 @@ function buildResumen(ss) {
 
   const rows = [
     ['CONFIRMACIONES', ''],
-    ['Respondieron', `=IFERROR(COUNTIFS(${R('invitado')},"<>",${real(TABS.rsvp)}),0)`],
+    ['Respondieron', '=B3+B4'],
     ['Vienen', `=IFERROR(COUNTIFS(${R('asistencia')},"Sí, voy",${real(TABS.rsvp)}),0)`],
     ['No vienen', `=IFERROR(COUNTIFS(${R('asistencia')},"No puedo",${real(TABS.rsvp)}),0)`],
     ['Viernes', `=IFERROR(COUNTIFS(${R('dias')},"*Viernes*",${real(TABS.rsvp)}),0)`],
