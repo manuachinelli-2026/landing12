@@ -211,6 +211,12 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .acct span { font-size: 15.5px; font-weight: 600; word-break: break-all; }
 .copy { flex: none; font: 700 13px var(--cond); letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--brown); border: 0; border-radius: 8px; padding: 8px 11px; }
 .copy.ok { background: var(--green-dark); }
+/* regalo sobre fondo crema */
+.bg-cream .seg { background: rgba(30,45,90,.08); }
+.bg-cream .seg button { color: var(--title); }
+.bg-cream .seg button.on { background: var(--terracotta); color: #fff; }
+.bg-cream .copy { background: var(--terracotta); }
+.bg-cream .lead b { color: var(--terracotta); }
 
 /* ── preguntas estilo IG ── */
 .q { display: none; flex: 1; flex-direction: column; justify-content: center; gap: 16px; }
@@ -475,11 +481,11 @@ if (invited.includes('d')) {
 }
 
 // — Regalo
-S.push({ chapter: 'regalo', bg: 'bg-brown', dur: Infinity, html: `
-  ${trio(66, 6, [P.mustard, P.terra, '#F2EDE4'])}
+S.push({ chapter: 'regalo', bg: 'bg-cream', dur: Infinity, html: `
+  ${trio(66, 6, [P.mustard, P.terra, P.green])}
   <div class="content">
-    <div class="big a" style="--i:1">¿QUÉ<br>REGALARNOS?</div>
-    <div class="lead a" style="--i:2">Ya tenemos tostadora.<br>Si querés, aportá a lo que viene 🏠</div>
+    <div class="big a" style="--i:1">¿QUÉ<br><span style="color:var(--terracotta)">REGALARNOS?</span></div>
+    <div class="lead a" style="--i:2">Ya tenemos tres tostadoras 😅<br>Lo que nos falta es <b>armar nuestra casa</b>&nbsp;🏡</div>
     <div class="seg a no-tap" style="--i:3">${Object.entries(ACCOUNTS).map(([k, a], n) => `<button data-cur="${k}" class="${n ? '' : 'on'}">${a.label}</button>`).join('')}</div>
     <div class="card acct a no-tap" style="--i:4"><div class="card-b" id="acct" style="padding-top:8px"></div></div>
   </div>` });
@@ -561,8 +567,8 @@ S.push({ chapter: 'confirmación', bg: 'bg-terra', dur: Infinity, cls: 'rsvp', h
       <button class="cta ghost" type="button" id="restart">Cambiar respuestas</button>
     </div>
 
-    <div class="q center" data-q="gracias" data-bg="bg-mustard">
-      <div class="mega" id="th-t"></div>
+    <div class="q center" data-q="gracias" data-bg="bg-green">
+      <div class="mega" id="th-t" style="font-size:clamp(56px, 18vw, 80px)"></div>
       <div class="lead" id="th-s"></div>
       <button class="cta" type="button" id="ics">Agregar al calendario</button>
       <button class="cta ghost" type="button" id="again">Ver de nuevo</button>
@@ -960,7 +966,7 @@ $('send').addEventListener('click', async () => {
     ]);
     await Promise.race([sending, new Promise(r => setTimeout(r, 1500))]);
     lastFlush = '';
-    $('th-t').innerHTML = yes() ? 'CONFIR<br>MADO' : 'GRACIAS<br>POR AVISAR';
+    $('th-t').innerHTML = yes() ? 'CONFIRMADO' : 'GRACIAS<br>POR AVISAR';
     const nombres = [A.nombre, ...fams].join(', ').replace(/, ([^,]*)$/, ' y $1');
     $('th-s').textContent = !yes() ? `${A.nombre}, ya quedó registrado.`
       : fams.length ? `${nombres}: los esperamos ${A.dias.join(' · ')}.` : `${A.nombre}, te esperamos: ${A.dias.join(' · ')}.`;
