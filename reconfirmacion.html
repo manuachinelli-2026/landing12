@@ -220,6 +220,8 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 #toast.on { opacity: 1; transform: translate(-50%, 0); }
 
 .bit { position: absolute; z-index: 25; top: -40px; pointer-events: none; animation: fall linear forwards; }
+/* TEMPORAL: número de historia para editar */
+.slide-num { position: absolute; left: 12px; bottom: 12px; z-index: 40; pointer-events: none; min-width: 34px; height: 34px; padding: 0 8px; border-radius: 17px; background: #111; color: #fff; font: 700 18px/34px system-ui, sans-serif; text-align: center; }
 @keyframes fall { to { transform: translateY(110dvh) rotate(400deg); } }
 
 @media (max-height: 720px) {
@@ -496,7 +498,7 @@ S.push({ chapter: 'confirmación', bg: 'bg-terra', dur: Infinity, cls: 'rsvp', h
 const stage = document.getElementById('stage');
 const slidesEl = document.getElementById('slides');
 const barsEl = document.getElementById('bars');
-slidesEl.innerHTML = S.map((s, i) => `<section class="slide ${s.bg} ${s.cls || ''}" data-i="${i}">${s.html}</section>`).join('');
+slidesEl.innerHTML = S.map((s, i) => `<section class="slide ${s.bg} ${s.cls || ''}" data-i="${i}"><div class="slide-num">${i + 1}</div>${s.html}</section>`).join('');
 barsEl.innerHTML = S.map(() => '<div class="bar"><i></i></div>').join('');
 const slides = [...slidesEl.children];
 const fills = [...barsEl.querySelectorAll('i')];
