@@ -172,6 +172,8 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
   background: rgba(10, 10, 10, .94); opacity: 0; pointer-events: none; transition: opacity .2s; cursor: zoom-out; }
 #lightbox.on { opacity: 1; pointer-events: auto; }
 #lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
+.big .pero { display: block; margin: 2px 0 4px; font-family: var(--body); font-style: italic; font-weight: 400; font-size: 22px; line-height: 1; letter-spacing: .02em; text-transform: none; opacity: .9; }
+.big .pero + span { display: block; }
 .dc-board { flex: 1 1 auto; min-height: 0; max-height: 440px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 14px; padding-right: 8px; }
 .dc-side { display: grid; grid-template-rows: 1fr 1fr; gap: 14px; min-height: 0; }
 .dc-board .mood { min-height: 0; }
@@ -416,7 +418,7 @@ if (invited.includes('s')) {
   S.push({ chapter: 'sábado · dress code', bg: 'bg-terra', html: `
     <div class="content">
       <div class="kicker a" style="--i:0">Dress code</div>
-      <div class="big a" style="--i:1">ELEGANTE<br>SPORT</div>
+      <div class="big a" style="--i:1">ELEGANTE<span class="pero">pero</span><span style="color:var(--title)">RELAJADO</span></div>
       <div class="dc-board">
         <button class="photo mood dc-hero pop" style="--i:2" data-gal="fiesta" data-idx="0" data-track="dress code fiesta"><img src="${GALLERIES.fiesta[0]}" alt=""></button>
         <div class="dc-side">
