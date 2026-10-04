@@ -118,13 +118,14 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .card-b { padding: 6px 16px 16px; }
 
 /* portada (estilo hero del home) */
-.cover { gap: 14px; padding-bottom: 26px; }
-.cover-title { font-family: var(--display); font-weight: 400; font-size: clamp(54px, 16vw, 72px); line-height: .9; letter-spacing: 2px; color: var(--title); }
-.cover-label { font-family: var(--cond); font-weight: 300; font-size: 11px; letter-spacing: 6px; text-transform: uppercase; color: #5C4827; }
-.cover-loc { font-family: var(--cond); font-weight: 700; font-size: 18px; line-height: 1.2; color: #5C4827; margin-top: 2px; }
-.cover-date { font-family: var(--display); font-size: 56px; line-height: 1; color: var(--terracotta); margin-top: 2px; }
-.cover .cube-grid { width: min(200px, 24dvh); margin-top: auto; }
-.cover .count { max-width: 230px; margin-top: 16px; margin-bottom: auto; border-radius: 14px; }
+.cover { gap: 0; padding-bottom: 30px; }
+.cover-head { display: flex; flex-direction: column; align-items: center; }
+.cover-date { font-family: var(--display); font-size: clamp(84px, 26vw, 108px); line-height: .82; letter-spacing: .02em; color: var(--terracotta); }
+.cover-label { font-family: var(--cond); font-weight: 400; font-size: 12px; letter-spacing: 7px; text-transform: uppercase; color: #5C4827; margin-top: 10px; padding-left: 7px; }
+.cover-rule { width: 28px; height: 2px; background: var(--terracotta); margin: 12px 0 10px; }
+.cover-loc { font-family: var(--cond); font-weight: 700; font-size: 18px; line-height: 1.2; letter-spacing: .02em; color: #5C4827; }
+.cover .cube-grid { width: min(216px, 26dvh); margin-top: 18px; }
+.cover .count { width: min(216px, 26dvh); max-width: none; margin-top: 18px; border-radius: 14px; }
 .cover .count .card-h { padding: 7px 12px 6px; font-size: 12px; }
 .cover .count .digits { gap: 12px; padding: 6px 10px 8px; }
 .cover .count .digits b { font-size: 30px; }
@@ -316,10 +317,11 @@ const PATTERN = [0, 1, 2, 3, null, 2, null, 4, 5, null, 6, 1, null, 3, 0, null, 
 const CUBE_COLORS = [P.brown, P.terra, P.rust, P.mustard, P.olive, P.green, P.teal];
 S.push({ chapter: 'casamiento', bg: 'bg-cream', dur: Infinity, html: `
   <div class="content center cover">
-    <div class="a" style="--i:1">
+    <div class="cover-head a" style="--i:1">
       <div class="cover-date">12·12</div>
       <div class="cover-label">Diciembre 2026</div>
-      <div class="cover-loc" style="margin-top:12px">Las Marianas, Buenos Aires</div>
+      <div class="cover-rule"></div>
+      <div class="cover-loc">Las Marianas, Buenos Aires</div>
     </div>
     <div class="cube-grid pop" style="--i:2" id="cubeGrid">${PATTERN.map((c, n) => `<div class="cell">${c === null ? '' :
       `<div class="cube" style="--c:${CUBE_COLORS[c]};--d:${(.9 + (n % 4) * .15).toFixed(2)}s;--dl:${(n * .09 % 1).toFixed(2)}s"></div>`}</div>`).join('')}</div>
