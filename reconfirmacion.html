@@ -372,14 +372,6 @@ if (invited.includes('v')) {
 
 // — Sábado
 if (invited.includes('s')) {
-  S.push({ chapter: 'sábado · bus', bg: 'bg-olive', dur: Infinity, html: `
-    ${cubes([[70, 4, 64, P.mustard], [86, 14, 32, P.terra]])}
-    <div class="content">
-      <div class="kicker a" style="--i:0">Sábado · traslado</div>
-      <div class="big a" style="--i:1">BUS IDA<br>Y VUELTA</div>
-      <div class="lead a" style="--i:2">Vamos a poner un bus ida y vuelta desde Navarro.</div>
-      <div class="a no-tap" style="--i:3">${poll('p-bus-story', '¿Te interesa?', BUS_OPTS, P.olive)}</div>
-    </div>` });
   S.push({ chapter: 'sábado · el día', bg: 'bg-terra', html: `
     ${cubes([[64, 4, 80, P.rust], [82, 16, 44, P.mustard], [-4, 86, 56, P.brown]])}
     <div class="content">
@@ -390,6 +382,14 @@ if (invited.includes('s')) {
         <div class="tl-dash a" style="--i:4"></div>
         <div class="tl-row">${clock('18:30', 5)}<div class="a" style="--i:6"><h3>FIESTA</h3>${loc('Campo El Arbolito', MAPS.arbolito, 6)}</div></div>
       </div>
+    </div>` });
+  S.push({ chapter: 'sábado · bus', bg: 'bg-olive', dur: Infinity, html: `
+    ${cubes([[70, 4, 64, P.mustard], [86, 14, 32, P.terra]])}
+    <div class="content">
+      <div class="kicker a" style="--i:0">Sábado · traslado</div>
+      <div class="big a" style="--i:1">BUS IDA<br>Y VUELTA</div>
+      <div class="lead a" style="--i:2">Vamos a poner un bus ida y vuelta desde Navarro.</div>
+      <div class="a no-tap" style="--i:3">${poll('p-bus-story', '¿Te interesa?', BUS_OPTS, P.olive)}</div>
     </div>` });
   S.push({ chapter: 'sábado · dress code', bg: 'bg-terra', html: `
     <div class="content">
