@@ -459,10 +459,10 @@ if (invited.includes('s')) {
 // — Domingo
 if (invited.includes('d')) {
   S.push({ chapter: 'domingo · almuerzo', bg: 'bg-mustard', html: `
-    ${trio(58, 75, [P.terra, P.green, P.navy], 58)}
+    ${trio(64, 8, [P.terra, P.green, P.navy], 58)}
     <div class="content">
       <div class="kicker a" style="--i:0">Domingo · 13 dic</div>
-      <div class="mega a" style="--i:1;font-size:clamp(64px, 22vw, 96px)">ALMUERZO</div>
+      <div class="mega a" style="--i:1;font-size:clamp(64px, 22vw, 96px)">ALMUERZO<br>EN FAMILIA</div>
       ${clock('13:00', 2)}
       ${loc('Campo El Ranchito', MAPS.ranchito, 3)}
     </div>` });
@@ -471,7 +471,6 @@ if (invited.includes('d')) {
     <div class="content">
       <div class="kicker a" style="--i:0">Dress code</div>
       <div class="big a" style="--i:1">CASUAL<br>POST BODA</div>
-      <div class="lead a" style="--i:2">Almuerzo en familia</div>
     </div>` });
 }
 
