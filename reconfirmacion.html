@@ -172,17 +172,18 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
   background: rgba(10, 10, 10, .94); opacity: 0; pointer-events: none; transition: opacity .2s; cursor: zoom-out; }
 #lightbox.on { opacity: 1; pointer-events: auto; }
 #lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
-.big .pero { display: block; margin: 2px 0 4px; font-family: var(--body); font-style: italic; font-weight: 400; font-size: 22px; line-height: 1; letter-spacing: .02em; text-transform: none; opacity: .9; }
-.big .pero + span { display: block; }
 .dc-board { flex: 1 1 auto; min-height: 0; max-height: 440px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 14px; padding-right: 8px; }
 .dc-side { display: grid; grid-template-rows: 1fr 1fr; gap: 14px; min-height: 0; }
 .dc-board .mood { min-height: 0; }
 .dc-board .photo img { height: 100%; aspect-ratio: auto; object-position: top; }
 .dc-tag { position: absolute; left: 8px; bottom: 8px; z-index: 1; padding: 5px 9px 4px; border-radius: 8px; background: #fff; color: var(--title);
   font-family: var(--cond); font-weight: 700; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
-.dc-tag em { font-style: normal; color: var(--terracotta); margin-left: 3px; }
-.dc-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.dc-foot .nope { font-size: 16px; }
+.no-bw { color: var(--rust); font-size: 15px; }
+/* tarjetas con varias fotos: cartas apiladas + ícono de carrusel tipo IG */
+.dc-stack { isolation: isolate; }
+.dc-stack::after { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--cream); opacity: .85; transform: translate(6px, -6px); }
+.dc-multi { position: absolute; top: 8px; right: 8px; z-index: 1; width: 30px; height: 30px; padding: 5px; border-radius: 9px; background: rgba(0,0,0,.5); }
+.dc-multi svg { display: block; width: 100%; height: 100%; }
 #lightbox .nav { display: none; position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(0,0,0,.55); color: #fff; font-size: 26px; line-height: 38px; box-shadow: 0 0 0 1px rgba(255,255,255,.25); }
 #lightbox .prev { left: 10px; } #lightbox .next { right: 10px; }
 #lightbox .count { display: none; position: absolute; left: 0; right: 0; bottom: calc(var(--bot) + 4px); text-align: center; color: #fff; font-family: var(--cond); font-weight: 600; font-size: 12px; letter-spacing: .2em; opacity: .7; }
@@ -377,6 +378,7 @@ S.push({ chapter: 'tu invitación', bg: 'bg-green', html: `
 
 // — Viernes
 // collages de dress code: se ven en grande en el #lightbox
+const MULTI = '<svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="14.5" height="14.5" rx="2.5" fill="none" stroke="#fff" stroke-width="2"/><rect x="2.5" y="7" width="14.5" height="14.5" rx="2.5" fill="#fff"/></svg>';   // ícono de carrusel (varias fotos)
 const GALLERIES = {
   pena:  [1, 2, 3, 5].map(n => `images/pb0${n}.jpg`),
   fiesta: ['images/fmix.jpg'],
@@ -418,15 +420,16 @@ if (invited.includes('s')) {
   S.push({ chapter: 'sábado · dress code', bg: 'bg-terra', html: `
     <div class="content">
       <div class="kicker a" style="--i:0">Dress code</div>
-      <div class="big a" style="--i:1">ELEGANTE<span class="pero">pero</span><span style="color:var(--title)">RELAJADO</span></div>
+      <div class="big a" style="--i:1">ELEGANTE<br>RELAJADO</div>
+      <div class="sticker no-bw pop" style="--i:2">Evitá blanco y negro</div>
       <div class="dc-board">
-        <button class="photo mood dc-hero pop" style="--i:2" data-gal="fiesta" data-idx="0" data-track="dress code fiesta"><img src="${GALLERIES.fiesta[0]}" alt=""></button>
+        <button class="photo mood dc-hero pop" style="--i:3" data-gal="fiesta" data-idx="0" data-track="dress code fiesta"><img src="${GALLERIES.fiesta[0]}" alt=""></button>
         <div class="dc-side">
-          <button class="photo mood pop" style="--i:3" data-gal="ellos" data-idx="0" data-track="dress code ellos"><img src="${GALLERIES.ellos[0]}" alt=""><span class="dc-tag">Ellos <em>${GALLERIES.ellos.length}</em></span></button>
-          <button class="photo mood pop" style="--i:4" data-gal="ellas" data-idx="0" data-track="dress code ellas"><img src="${GALLERIES.ellas[0]}" alt=""><span class="dc-tag">Ellas <em>${GALLERIES.ellas.length}</em></span></button>
+          <button class="photo mood dc-stack pop" style="--i:4" data-gal="ellos" data-idx="0" data-track="dress code ellos"><img src="${GALLERIES.ellos[0]}" alt=""><span class="dc-multi">${MULTI}</span><span class="dc-tag">Ellos ›</span></button>
+          <button class="photo mood dc-stack pop" style="--i:5" data-gal="ellas" data-idx="0" data-track="dress code ellas"><img src="${GALLERIES.ellas[0]}" alt=""><span class="dc-multi">${MULTI}</span><span class="dc-tag">Ellas ›</span></button>
         </div>
       </div>
-      <div class="dc-foot a" style="--i:5"><span class="nope">Evitá blanco y negro</span><span class="moods-hint">(Tocá para ver más)</span></div>
+      <div class="moods-hint a" style="--i:6">(Tocá las fotos para ver más)</div>
     </div>` });
   S.push({ chapter: 'sábado · tips', bg: 'bg-navy', html: `
     ${cubes([[76, 6, 50, P.terra]])}
