@@ -237,6 +237,8 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .qbox .top { background: var(--qc); color: #fff; padding: 24px 18px 20px; text-align: center; font-family: var(--display); font-size: 34px; line-height: 1; }
 .qbox .body { background: #fff; padding: 14px; display: grid; gap: 8px; }
 .qbox input { width: 100%; min-width: 0; font: 600 17px var(--body); color: var(--title); background: #f3eee6; border: 0; border-radius: 10px; padding: 14px; outline: none; user-select: text; -webkit-user-select: text; }
+.fam-add { font: 700 16px var(--cond); letter-spacing: .08em; text-transform: uppercase; color: var(--title); background: none; border: 2px dashed #d9cdb8; border-radius: 10px; padding: 13px; }
+.fam-hint { font-family: var(--cond); font-weight: 600; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; text-align: center; opacity: .85; }
 .qbox input::placeholder { color: #b3a894; font-weight: 400; }
 .qbox input:focus { box-shadow: inset 0 0 0 2px var(--qc); }
 
@@ -321,6 +323,8 @@ const DAYS = {
 const QS = new URLSearchParams(location.search);
 const raw = (QS.get('d') || 'vsd').toLowerCase();
 const invited = ['v', 's', 'd'].filter(k => raw.includes(k));
+const FAMILY = QS.has('f');            // &f → puede confirmar también por su familia
+const FAM_YES = 'Sí, por mi familia';
 if (!invited.length) invited.push('v', 's', 'd');
 const BUS_OPTS = ['Sí', 'Voy por mi cuenta'];
 const dayLabel = k => `${DAYS[k].name} ${DAYS[k].num}`;
@@ -501,6 +505,25 @@ S.push({ chapter: 'confirmación', bg: 'bg-terra', dur: Infinity, cls: 'rsvp', h
         </div>
       </div>
       <div class="err" id="err-n"></div>
+      <button class="cta" type="button" data-next>Seguir</button>
+    </div>
+
+    <div class="q" data-q="familia" data-bg="bg-brown">
+      <div class="step-n" data-n></div>
+      ${poll('p-familia', '¿Confirmás también por tu familia?', ['Solo por mí', FAM_YES], P.brown)}
+    </div>
+
+    <div class="q" data-q="familiares" data-bg="bg-olive">
+      <div class="step-n" data-n></div>
+      <div class="qbox qs" style="--qc:${P.mustard}">
+        <div class="top">Agregá a tu familia</div>
+        <div class="body" id="fam-list">
+          <input class="fam" placeholder="Nombre" autocomplete="off" enterkeyhint="next">
+          <button type="button" class="fam-add" id="fam-add">+ Agregar familiar</button>
+        </div>
+      </div>
+      <div class="fam-hint">Solo quienes recibieron la invitación con vos</div>
+      <div class="err" id="err-f"></div>
       <button class="cta" type="button" data-next>Seguir</button>
     </div>
 
@@ -810,6 +833,7 @@ let busFromStory = false;     // si ya contestó en la historia del bus, no se r
 function flow() {
   if (!yes()) return ['venis', 'nombre', 'resumen'];
   const f = ['venis', 'nombre'];
+  if (FAMILY) { f.push('familia'); if (A.familia === FAM_YES) f.push('familiares'); }
   if (invited.length > 1) f.push('dias');
   if (needsHosp()) f.push('hospedaje');
   if (needsBus() && !busFromStory) f.push('bus');
@@ -878,16 +902,33 @@ rsvpSlide.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click
     if (!cual) return err('err-m', 'Contanos cuál.');
     A.menu = `${MENU_OTRA}: ${cual}`; err('err-m', ''); document.activeElement.blur();
   }
+  if (qCur === 'familiares') {
+    A.familiares = [...document.querySelectorAll('#fam-list .fam')].map(i => i.value.trim()).filter(Boolean);
+    if (!A.familiares.length) return err('err-f', 'Agregá al menos un nombre.');
+    err('err-f', ''); document.activeElement.blur();
+  }
   if (qCur === 'dias' && !A.dias.length) return err('err-d', 'Elegí al menos un día.');
   if (qCur === 'dias') err('err-d', '');
   advance();
 }));
+function addFam() {
+  const i = Object.assign(document.createElement('input'), { className: 'fam', placeholder: 'Nombre', autocomplete: 'off', enterKeyHint: 'next' });
+  $('fam-add').before(i); i.focus();
+}
+$('fam-add').addEventListener('click', addFam);
+$('fam-list').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || !e.target.matches('.fam')) return;
+  const next = e.target.nextElementSibling;
+  next && next.matches('.fam') ? next.focus() : addFam();
+});
+const famList = () => (yes() && A.familia === FAM_YES && A.familiares) || [];
 $('f-n').addEventListener('keydown', e => { if (e.key === 'Enter') $('f-a').focus(); });
 $('f-a').addEventListener('keydown', e => { if (e.key === 'Enter') Q.nombre.querySelector('[data-next]').click(); });
 $('f-alg').addEventListener('keydown', e => { if (e.key === 'Enter') $('alg-next').click(); });
 
 function renderSummary() {
   const rows = [['Nombre', `${A.nombre} ${A.apellido}`], ['¿Venís?', A.venis]];
+  if (famList().length) rows.push(['Familia', famList().join(', ')]);
   if (yes()) {
     if (invited.length > 1) rows.push(['Días', A.dias.join(', ')]);
     if (needsHosp()) rows.push(['Hospedaje', A.hospedaje]);
@@ -898,7 +939,7 @@ function renderSummary() {
 }
 $('restart').addEventListener('click', () => {
   rsvpSlide.querySelectorAll('.poll:not(#p-dias)').forEach(p => { p.classList.remove('voted'); p.querySelectorAll('button').forEach(b => b.classList.remove('picked')); });
-  delete A.venis; delete A.hospedaje; delete A.menu;
+  delete A.venis; delete A.hospedaje; delete A.menu; delete A.familia; delete A.familiares;
   Q.menu.querySelector('.alg').hidden = $('alg-next').hidden = true; $('f-alg').value = '';
   if (!busFromStory) delete A.bus;
   goQ('venis');
@@ -911,11 +952,20 @@ $('send').addEventListener('click', async () => {
     track('enviado', yes() ? 'viene' : 'no viene');
     const session = summary();
     // Google tarda ~5 s en contestar: esperamos como mucho 1,5 s y el envío sigue en segundo plano (keepalive)
-    const sending = post({ type: 'rsvp', respuesta: { ...answers(), grupo: session.grupo, sesion: session.sesion, visitante: session.visitante, test: session.test }, session, events: T.queue.splice(0) });
+    const base = { ...answers(), grupo: session.grupo, sesion: session.sesion, visitante: session.visitante, test: session.test };
+    const fams = famList(), quien = `${A.nombre} ${A.apellido}`;
+    const sending = Promise.all([
+      post({ type: 'rsvp', respuesta: { ...base, personas: 1 + fams.length, confirmado_por: '' }, session, events: T.queue.splice(0) }),
+      // cada familiar va como su propia fila en Reconfirmación, vinculada a quien confirmó
+      ...fams.map(nombre => post({ type: 'rsvp', respuesta: { ...base, invitado: `${nombre} (familia de ${quien})`.toLowerCase(),
+        nombre, apellido: '', familia: '', familiares: '', menu: '', personas: '', confirmado_por: quien } })),
+    ]);
     await Promise.race([sending, new Promise(r => setTimeout(r, 1500))]);
     lastFlush = '';
     $('th-t').innerHTML = yes() ? 'CONFIR<br>MADO' : 'GRACIAS<br>POR AVISAR';
-    $('th-s').textContent = yes() ? `${A.nombre}, te esperamos: ${A.dias.join(' · ')}.` : `${A.nombre}, ya quedó registrado.`;
+    const nombres = [A.nombre, ...fams].join(', ').replace(/, ([^,]*)$/, ' y $1');
+    $('th-s').textContent = !yes() ? `${A.nombre}, ya quedó registrado.`
+      : fams.length ? `${nombres}: los esperamos ${A.dias.join(' · ')}.` : `${A.nombre}, te esperamos: ${A.dias.join(' · ')}.`;
     $('ics').style.display = yes() ? '' : 'none';
     err('err-s', '');
     goQ('gracias');
