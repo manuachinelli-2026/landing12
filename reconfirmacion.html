@@ -339,9 +339,14 @@ const poll = (id, title, opts, qc, note = '') => `
     <div class="opts">${opts.map(o => `<button type="button" data-v="${o}"><i class="fill"></i><span>${o}</span><span class="ck">✓</span></button>`).join('')}</div>
     ${note ? `<div class="note">${note}</div>` : ''}
   </div>`;
+// grupito de 3 cubos (grande, mediano, chico) con 8px entre ellos, anclado en [left%, top%]
+const trio = (x, y, [c1, c2, c3], B = 56) => {
+  const M = Math.round(B * .54), m = Math.round(B * .32), g = 8;
+  return cubes([[x, y, B, c1], [x, y, M, c2, B + g, Math.round(B * .4)], [x, y, m, c3, Math.round(B * .5), B + g]]);
+};
 // cubos decorativos: [left%, top%, tamaño px, color]
-const cubes = list => `<div class="cubes">${list.map(([x, y, s, c], n) =>
-  `<div class="cube" style="left:${x}%;top:${y}%;--s:${s}px;--c:${c};--d:${(1 + (n % 4) * .15).toFixed(2)}s;--dl:${(n * .09).toFixed(2)}s"></div>`).join('')}</div>`;
+const cubes = list => `<div class="cubes">${list.map(([x, y, s, c, dx = 0, dy = 0], n) =>
+  `<div class="cube" style="left:calc(${x}% + ${dx}px);top:calc(${y}% + ${dy}px);--s:${s}px;--c:${c};--d:${(1 + (n % 4) * .15).toFixed(2)}s;--dl:${(n * .09).toFixed(2)}s"></div>`).join('')}</div>`;
 
 /* ═════════════ HISTORIAS ═════════════ */
 const S = [];   // { chapter, bg, html, dur, cls }
@@ -368,7 +373,7 @@ S.push({ chapter: 'casamiento', bg: 'bg-cream', dur: Infinity, html: `
 
 // — Agenda
 S.push({ chapter: 'tu invitación', bg: 'bg-green', html: `
-  ${cubes([[74, 6, 56, P.mustard], [88, 16, 30, P.terra]])}
+  ${trio(66, 7, [P.mustard, P.terra, '#F2EDE4'])}
   <div class="content">
     <div class="kicker a" style="--i:0">Tu invitación</div>
     <div class="big a" style="--i:1">${invited.length === 3 ? 'TODO EL<br>FINDE' : invited.map(k => DAYS[k].name.toUpperCase()).join('<br>+ ')}</div>
@@ -381,14 +386,14 @@ S.push({ chapter: 'tu invitación', bg: 'bg-green', html: `
 // collages de dress code: se ven en grande en el #lightbox
 const MULTI = '<svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="14.5" height="14.5" rx="2.5" fill="none" stroke="#fff" stroke-width="2"/><rect x="2.5" y="7" width="14.5" height="14.5" rx="2.5" fill="#fff"/></svg>';   // ícono de carrusel (varias fotos)
 const GALLERIES = {
-  pena:  [1, 2, 3, 5].map(n => `images/pb0${n}.jpg`),
+  pena:  [1, 5, 2, 3].map(n => `images/pb0${n}.jpg`),
   fiesta: ['images/fmix.jpg'],
   ellos: [1, 2, 3, 4].map(n => `images/fh0${n}.jpg`),
   ellas: [1, 2, 3, 4, 5].map(n => `images/fm0${n}.jpg`),
 };
 if (invited.includes('v')) {
   S.push({ chapter: 'viernes · pre-boda', bg: 'bg-teal', html: `
-    ${cubes([[64, 4, 80, P.mustard], [84, 18, 40, P.terra], [-6, 82, 60, P.green]])}
+    ${trio(63, 32, [P.mustard, P.terra, '#F2EDE4'], 64)}
     <div class="content">
       <div class="kicker a" style="--i:0">Viernes · 11 dic</div>
       <div class="mega a" style="--i:1">PRE<br>BODA</div>
@@ -396,7 +401,7 @@ if (invited.includes('v')) {
       ${loc('Las Marianas', MAPS.marianas, 3)}
     </div>` });
   S.push({ chapter: 'viernes · dress code', bg: 'bg-teal', dur: Infinity, html: `
-    ${cubes([[72, 8, 56, P.olive]])}
+    ${trio(72, 7, [P.mustard, P.terra, '#F2EDE4'], 44)}
     <div class="content">
       <div class="kicker a" style="--i:0">Dress code</div>
       <div class="big a" style="--i:1">DE PEÑA</div>
@@ -408,7 +413,7 @@ if (invited.includes('v')) {
 // — Sábado
 if (invited.includes('s')) {
   S.push({ chapter: 'sábado · el día', bg: 'bg-terra', html: `
-    ${cubes([[64, 4, 80, P.rust], [82, 16, 44, P.mustard], [-4, 86, 56, P.brown]])}
+    ${trio(60, 23, [P.rust, P.mustard, P.navy], 62)}
     <div class="content">
       <div class="kicker a" style="--i:0">Sábado · 12 dic</div>
       <div class="mega a" style="--i:1">EL<br>DÍA</div>
@@ -433,7 +438,7 @@ if (invited.includes('s')) {
       <div class="moods-hint a" style="--i:6">(Tocá las fotos para ver más)</div>
     </div>` });
   S.push({ chapter: 'sábado · tips', bg: 'bg-navy', html: `
-    ${cubes([[76, 6, 50, P.terra]])}
+    ${trio(70, 7, [P.terra, P.mustard, '#F2EDE4'], 46)}
     <div class="content">
       <div class="big a" style="--i:0">TIPS</div>
       ${tipCards([
@@ -450,7 +455,7 @@ if (invited.includes('s')) {
 // — Domingo
 if (invited.includes('d')) {
   S.push({ chapter: 'domingo · almuerzo', bg: 'bg-mustard', html: `
-    ${cubes([[64, 4, 80, P.terra], [82, 16, 44, P.green], [-4, 86, 56, P.brown]])}
+    ${trio(58, 75, [P.terra, P.green, P.navy], 58)}
     <div class="content">
       <div class="kicker a" style="--i:0">Domingo · 13 dic</div>
       <div class="mega a" style="--i:1;font-size:clamp(64px, 22vw, 96px)">ALMUERZO</div>
@@ -458,7 +463,7 @@ if (invited.includes('d')) {
       ${loc('Campo El Ranchito', MAPS.ranchito, 3)}
     </div>` });
   S.push({ chapter: 'domingo · dress code', bg: 'bg-mustard', html: `
-    ${cubes([[72, 8, 56, P.rust], [8, 82, 44, P.teal]])}
+    ${trio(66, 9, [P.rust, P.navy, P.green])}
     <div class="content">
       <div class="kicker a" style="--i:0">Dress code · domingo</div>
       <div class="big a" style="--i:1">CASUAL<br>DE CAMPO</div>
@@ -468,7 +473,7 @@ if (invited.includes('d')) {
 
 // — Regalo
 S.push({ chapter: 'regalo', bg: 'bg-brown', dur: Infinity, html: `
-  ${cubes([[74, 4, 64, P.mustard], [88, 14, 32, P.terra]])}
+  ${trio(66, 6, [P.mustard, P.terra, '#F2EDE4'])}
   <div class="content">
     <div class="kicker a" style="--i:0">Regalo</div>
     <div class="big a" style="--i:1">¿QUÉ<br>REGALARNOS?</div>
