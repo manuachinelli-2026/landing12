@@ -377,7 +377,7 @@ S.push({ chapter: 'tu invitación', bg: 'bg-green', html: `
 // collages de dress code: se ven en grande en el #lightbox
 const GALLERIES = {
   pena:  [1, 2, 3, 5].map(n => `images/pb0${n}.jpg`),
-  vibra: ['images/fmix.jpg'],
+  fiesta: ['images/fmix.jpg'],
   ellos: [1, 2, 3, 4].map(n => `images/fh0${n}.jpg`),
   ellas: [1, 2, 3, 4, 5].map(n => `images/fm0${n}.jpg`),
 };
@@ -418,7 +418,7 @@ if (invited.includes('s')) {
       <div class="kicker a" style="--i:0">Dress code</div>
       <div class="big a" style="--i:1">ELEGANTE<br>SPORT</div>
       <div class="dc-board">
-        <button class="photo mood dc-hero pop" style="--i:2" data-gal="vibra" data-idx="0" data-track="dress code la vibra"><img src="${GALLERIES.vibra[0]}" alt=""><span class="dc-tag">La vibra</span></button>
+        <button class="photo mood dc-hero pop" style="--i:2" data-gal="fiesta" data-idx="0" data-track="dress code fiesta"><img src="${GALLERIES.fiesta[0]}" alt=""></button>
         <div class="dc-side">
           <button class="photo mood pop" style="--i:3" data-gal="ellos" data-idx="0" data-track="dress code ellos"><img src="${GALLERIES.ellos[0]}" alt=""><span class="dc-tag">Ellos <em>${GALLERIES.ellos.length}</em></span></button>
           <button class="photo mood pop" style="--i:4" data-gal="ellas" data-idx="0" data-track="dress code ellas"><img src="${GALLERIES.ellas[0]}" alt=""><span class="dc-tag">Ellas <em>${GALLERIES.ellas.length}</em></span></button>
