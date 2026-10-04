@@ -164,10 +164,18 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .photo { position: relative; }
 .photo::before { content: ''; position: absolute; inset: 0; background: var(--shadow); opacity: .55; transform: translate(8px, 8px); }
 .photo img { position: relative; display: block; width: 100%; aspect-ratio: 3/4; object-fit: cover; background: #ddd; }
-.moods { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; padding-right: 8px; }
-.moods .photo { grid-column: span 2; }
-.moods .photo:nth-child(4) { grid-column: 2 / span 2; }
-.moods img { aspect-ratio: 9/16; object-position: top; }
+/* moodboard: un collage grande que va cambiando */
+.moodshow { align-self: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.moodshow .frame { position: relative; width: min(240px, 31dvh); aspect-ratio: 9/16; background: var(--cream); box-shadow: 10px 10px 0 rgba(139, 94, 60, .55); }
+.moodshow img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+.moodshow .dots { display: flex; gap: 6px; }
+.moodshow .dots i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .3; }
+.slide.active .moodshow img, .slide.active .moodshow .dots i { animation: moodfade 11s linear infinite; animation-delay: calc(var(--k) * 2.2s); }
+@keyframes moodfade { 0% { opacity: 0; } 4%, 24% { opacity: 1; } 28%, 100% { opacity: 0; } }
+.slide.active .moodshow .dots i { animation-name: mooddot; }
+@keyframes mooddot { 0%, 22%, 100% { opacity: .3; } 2%, 20% { opacity: 1; } }
+#stage.is-paused .moodshow img, #stage.is-paused .moodshow .dots i { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .moodshow img:first-child { opacity: 1; } }
 .nope { display: flex; gap: 10px; align-items: center; font-family: var(--cond); font-weight: 600; font-size: 18px; letter-spacing: .06em; text-transform: uppercase; }
 .tags { display: flex; gap: 10px; flex-wrap: wrap; }
 
@@ -363,12 +371,15 @@ if (invited.includes('v')) {
       ${clock('21:00', 2)}
       ${loc('Las Marianas', MAPS.marianas, 3)}
     </div>` });
-  S.push({ chapter: 'viernes · dress code', bg: 'bg-teal', html: `
+  S.push({ chapter: 'viernes · dress code', bg: 'bg-teal', dur: 11000, html: `
     ${cubes([[72, 8, 56, P.olive], [8, 82, 44, P.mustard]])}
     <div class="content">
       <div class="kicker a" style="--i:0">Dress code</div>
       <div class="big a" style="--i:1">DE PEÑA</div>
-      <div class="moods">${[1, 2, 3, 4, 5].map((n, k) => `<div class="photo pop" style="--i:${k + 4}"><img src="images/pb${String(n).padStart(2, '0')}.jpg" alt=""></div>`).join('')}</div>
+      <div class="moodshow pop" style="--i:2">
+        <div class="frame">${[1, 2, 3, 4, 5].map((n, k) => `<img src="images/pb0${n}.jpg" alt="" style="--k:${k}">`).join('')}</div>
+        <div class="dots">${[0, 1, 2, 3, 4].map(k => `<i style="--k:${k}"></i>`).join('')}</div>
+      </div>
     </div>` });
 }
 
