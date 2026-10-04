@@ -258,8 +258,9 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 /* ═════════════ CONFIG ═════════════ */
 // Link por grupo:  reconfirmacion.html?d=vsd  ·  ?d=vs  ·  ?d=s   (también ?d=v)
 // Para revisar:    &still (sin auto-avance)  ·  &s=5 (abre en la historia 5)
+//                  &test (marca las filas como prueba en el Sheet)  ·  &notrack (no manda nada)
+// Todo va al Apps Script (apps-script.gs): respuestas, visitas y eventos.
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvFRfdEfnHMt831plwXJaawTkwbfplZHLoq6zzO3fSHP_hXp6zcQcn88DArcqVLObB/exec';
-const DRY_RUN = true;          // ← en true no manda nada al Sheet. Pasar a false cuando el Apps Script tenga la pestaña nueva.
 const AUTO_MS = 8000;
 const WEDDING = new Date('2026-12-12T16:30:00-03:00');
 
@@ -524,12 +525,14 @@ function paint() {
 }
 function show(i) {
   i = Math.max(0, Math.min(S.length - 1, i));
+  leaveStory();
   slides[cur].classList.remove('active');
   cur = i; elapsed = 0; t0 = performance.now();
   const el = slides[cur]; void el.offsetWidth; el.classList.add('active');
   fills.forEach((f, n) => f.style.width = n < cur ? '100%' : '0');
   if (durOf(cur) === Infinity) fills[cur].style.width = '100%';
   paint();
+  viewStory();
 }
 function tick(now) {
   const d = durOf(cur);
@@ -543,6 +546,8 @@ function tick(now) {
 }
 const next = () => cur < S.length - 1 && show(cur + 1);
 const prev = () => show(cur - 1);
+const navNext = () => { T.nav.adelante++; next(); };
+const navPrev = () => { T.nav.atras++; prev(); };
 const chapterOf = i => S[i].chapter.split(' · ')[0];
 function jumpChapter(dir) {
   const c = chapterOf(cur); let i = cur;
@@ -564,20 +569,109 @@ stage.addEventListener('pointerup', e => {
   if (!down) return;
   const dx = e.clientX - down.x, dy = e.clientY - down.y, held = down.held;
   down = null; setPaused(false);
-  if (held) return;
-  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) return jumpChapter(dx < 0 ? 1 : -1);
+  if (held) { T.nav.pausas++; return; }
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { T.nav.swipes++; return jumpChapter(dx < 0 ? 1 : -1); }
   if (Math.abs(dy) > 50) return;
   const r = stage.getBoundingClientRect();
-  (e.clientX - r.left < r.width * .3) ? prev() : next();
+  (e.clientX - r.left < r.width * .3) ? navPrev() : navNext();
 });
 stage.addEventListener('pointercancel', () => { clearTimeout(holdT); down = null; setPaused(false); });
 document.addEventListener('keydown', e => {
   if (e.target.matches('input')) return;
-  if (e.key === 'ArrowRight' || e.key === ' ') next();
-  if (e.key === 'ArrowLeft') prev();
+  if (e.key === 'ArrowRight' || e.key === ' ') navNext();
+  if (e.key === 'ArrowLeft') navPrev();
 });
 document.addEventListener('visibilitychange', () => setPaused(document.hidden));
 stage.addEventListener('contextmenu', e => e.preventDefault());
+
+/* ═════════════ TRACKING (tipo pixel) ═════════════ */
+// Cada visita manda al Sheet: qué historias vio, cuánto tiempo, qué tocó y hasta qué pregunta llegó.
+// Pestañas: "Visitas" (una fila por visita, se va actualizando) y "Eventos" (una fila por cosa que pasó).
+const TRACK = !QS.has('notrack');
+const rid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+const VID = (() => { try { let v = localStorage.getItem('1212_vid'); if (!v) { v = rid(); localStorage.setItem('1212_vid', v); } return v; } catch { return rid(); } })();
+const T = {
+  sid: rid(), start: Date.now(), viewStart: Date.now(), seen: new Set(), ms: {}, clicks: [], queue: [],
+  preguntas: new Set(), nav: { adelante: 0, atras: 0, swipes: 0, pausas: 0 }, enviado: false,
+};
+const ua = navigator.userAgent;
+const DEVICE = /iPhone|iPad|iPod/.test(ua) ? 'iOS' : /Android/.test(ua) ? 'Android' : 'Desktop';
+const APP = /Instagram/.test(ua) ? 'Instagram' : /FBAN|FBAV/.test(ua) ? 'Facebook' : /WhatsApp/.test(ua) ? 'WhatsApp' : 'Navegador';
+
+function track(event, detail = '') {
+  if (!TRACK) return;
+  T.queue.push({ hora: new Date().toISOString(), evento: event, historia_n: cur + 1, historia: S[cur].chapter, detalle: String(detail).slice(0, 200) });
+}
+function leaveStory() { const k = cur + 1; T.ms[k] = (T.ms[k] || 0) + (Date.now() - T.viewStart); }
+function viewStory() {
+  T.viewStart = Date.now(); T.seen.add(cur + 1); track('historia', S[cur].chapter);
+  if (cur === S.length - 1 && typeof qCur !== 'undefined') T.preguntas.add(qCur);
+}
+
+// qué tocó: links, botones, chips… (data-track manda, si no se arma solo)
+stage.addEventListener('click', e => {
+  const el = e.target.closest('a, button'); if (!el) return;
+  const pollEl = el.closest('.poll');
+  const what = el.dataset.track
+    || (pollEl ? `${pollEl.id.replace(/^p-/, '')} = ${el.dataset.v}` : '')
+    || (el.hasAttribute('data-next') ? `seguir (${qCur})` : '')
+    || (el.classList.contains('copy') ? `copiar ${document.querySelector('.seg .on')?.dataset.cur} ${el.closest('.row')?.querySelector('small')?.textContent}` : '')
+    || (el.closest('.seg') ? `moneda ${el.dataset.cur}` : '')
+    || (el.matches('a.loc') ? `maps ${el.querySelector('span')?.textContent}` : '')
+    || el.id || el.textContent.trim().slice(0, 40);
+  T.clicks.push(what); track('click', what);
+}, true);
+
+// todas las preguntas van siempre (vacías si no le tocaron), así una reconfirmación pisa la anterior
+function answers() {
+  const out = {};
+  const asked = flow();
+  if (needsBus()) asked.push('bus');                                // pudo contestarlo en la historia del bus
+  Object.keys(Q).filter(q => !['resumen', 'gracias'].includes(q)).forEach(q => {
+    if (q === 'nombre') { out.nombre = A.nombre || ''; out.apellido = A.apellido || ''; return; }
+    const v = asked.includes(q) ? A[q] : '';
+    out[COLUMN[q] || q] = Array.isArray(v) ? v.join(', ') : (v ?? '');
+  });
+  return out;
+}
+const COLUMN = { venis: 'asistencia' };    // nombre de columna en el Sheet (si no está acá, usa el data-q)
+
+function summary() {
+  leaveStory(); T.viewStart = Date.now();
+  const r = answers();
+  return {
+    sesion: T.sid, visitante: VID, grupo: invited.join('').toUpperCase(), test: QS.has('test') || QS.has('still') ? 'Sí' : '',
+    inicio: new Date(T.start).toISOString(), segundos: Math.round((Date.now() - T.start) / 1000),
+    dispositivo: DEVICE, app: APP, referrer: document.referrer,
+    historias_total: S.length, historias_vistas: T.seen.size, max_historia: Math.max(...T.seen),
+    ultima_historia: `${cur + 1} · ${S[cur].chapter}`,
+    historias: [...T.seen].sort((a, b) => a - b).join(' · '),
+    tiempo_por_historia: Object.entries(T.ms).map(([k, ms]) => `${k}: ${Math.round(ms / 1000)}s`).join(' · '),
+    clicks: T.clicks.length, clickeo: [...new Set(T.clicks)].join(' | '),
+    taps_adelante: T.nav.adelante, taps_atras: T.nav.atras, swipes: T.nav.swipes, pausas: T.nav.pausas,
+    preguntas_vistas: [...T.preguntas].join(' · '),
+    nombre: r.nombre || '', apellido: r.apellido || '',
+    respuestas: Object.entries(r).filter(([k]) => !['nombre', 'apellido'].includes(k)).map(([k, v]) => `${k}: ${v}`).join(' | '),
+    confirmo: T.enviado ? 'Sí' : 'No',
+  };
+}
+function post(payload, beacon) {
+  const body = JSON.stringify(payload);
+  if (beacon && navigator.sendBeacon && navigator.sendBeacon(SCRIPT_URL, new Blob([body], { type: 'text/plain;charset=utf-8' }))) return Promise.resolve();
+  return fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', keepalive: body.length < 60000, headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body });
+}
+let lastFlush = '';
+function flush() {
+  if (!TRACK) return;
+  const session = summary();
+  const sig = JSON.stringify({ ...session, segundos: 0 });
+  if (!T.queue.length && sig === lastFlush) return;          // nada nuevo
+  lastFlush = sig;
+  post({ type: 'track', session, events: T.queue.splice(0) }, true).catch(() => {});
+}
+setInterval(flush, 15000);
+document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
+addEventListener('pagehide', flush);
 
 /* ═════════════ PORTADA ═════════════ */
 function countdown() {
@@ -657,17 +751,21 @@ function goQ(q) {
   if (tag) tag.textContent = q === 'resumen' ? 'Último paso' : `Pregunta ${n + 1} de ${f.length - 1}`;
   if (q === 'resumen') renderSummary();
   paint();
+  T.preguntas.add(q); track('pregunta', q);
 }
 const advance = () => { const f = flow(); goQ(f[f.indexOf(qCur) + 1]); };
 const err = (id, msg) => { $(id).textContent = msg; $(id).classList.toggle('on', !!msg); };
 
-// encuestas de una sola opción → avanzan solas
-[['p-venis', 'venis'], ['p-hosp', 'hospedaje'], ['p-bus', 'bus'], ['p-menu', 'menu']].forEach(([id, key]) => {
-  $(id).addEventListener('click', e => {
-    const b = e.target.closest('button'); if (!b || $(id).classList.contains('voted')) return;
-    A[key] = b.dataset.v;
-    $(id).classList.add('voted');
-    $(id).querySelectorAll('button').forEach(x => x.classList.toggle('picked', x === b));
+// encuestas de una sola opción → guardan en A[data-q] y avanzan solas.
+// Para sumar una pregunta: agregar <div class="q" data-q="clave" data-bg="…">${poll(…)}</div> y meter 'clave' en flow().
+// Llega sola al Sheet como columna "clave".
+rsvpSlide.querySelectorAll('.q').forEach(qEl => {
+  const p = qEl.querySelector('.poll'); if (!p || qEl.dataset.q === 'dias') return;
+  p.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b || p.classList.contains('voted')) return;
+    A[qEl.dataset.q] = b.dataset.v;
+    p.classList.add('voted');
+    p.querySelectorAll('button').forEach(x => x.classList.toggle('picked', x === b));
     if (navigator.vibrate) navigator.vibrate(15);
     setTimeout(advance, 600);
   });
@@ -720,17 +818,12 @@ $('restart').addEventListener('click', () => {
 
 $('send').addEventListener('click', async () => {
   $('send').disabled = true; $('send').textContent = 'Enviando…';
-  const params = new URLSearchParams({
-    form: 'reconfirmacion', grupo: invited.join('').toUpperCase(),
-    nombre: A.nombre, apellido: A.apellido, asistencia: yes() ? 'Sí' : 'No',
-    dias: yes() ? A.dias.map(d => d.split(' ')[0]).join(', ') : '',
-    hospedaje: needsHosp() ? A.hospedaje : '',
-    bus: needsBus() ? A.bus : '',
-    menu: yes() ? A.menu : '',
-  });
   try {
-    if (DRY_RUN) { console.log('[DRY_RUN]', Object.fromEntries(params)); await new Promise(r => setTimeout(r, 600)); }
-    else await fetch(SCRIPT_URL + '?' + params, { mode: 'no-cors' });
+    T.enviado = true;
+    track('enviado', yes() ? 'viene' : 'no viene');
+    const session = summary();
+    await post({ type: 'rsvp', respuesta: { ...answers(), grupo: session.grupo, sesion: session.sesion, visitante: session.visitante, test: session.test }, session, events: T.queue.splice(0) });
+    lastFlush = '';
     $('th-t').innerHTML = yes() ? 'CONFIR<br>MADO' : 'GRACIAS<br>POR AVISAR';
     $('th-s').textContent = yes() ? `${A.nombre}, te esperamos: ${A.dias.join(' · ')}.` : `${A.nombre}, ya quedó registrado.`;
     $('ics').style.display = yes() ? '' : 'none';
@@ -738,6 +831,7 @@ $('send').addEventListener('click', async () => {
     goQ('gracias');
     if (yes()) cubeRain();
   } catch {
+    T.enviado = false;
     err('err-s', 'Hubo un problema. Probá de nuevo.');
   } finally { $('send').disabled = false; $('send').textContent = 'Enviar'; }
 });
