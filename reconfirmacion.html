@@ -288,6 +288,7 @@ const QS = new URLSearchParams(location.search);
 const raw = (QS.get('d') || 'vsd').toLowerCase();
 const invited = ['v', 's', 'd'].filter(k => raw.includes(k));
 if (!invited.length) invited.push('v', 's', 'd');
+const BUS_OPTS = ['Sí', 'Voy por mi cuenta'];
 const dayLabel = k => `${DAYS[k].name} ${DAYS[k].num}`;
 
 /* ═════════════ helpers ═════════════ */
@@ -296,6 +297,13 @@ const loc = (name, url, i) => `<a class="sticker loc pop" style="--i:${i}" href=
 const clock = (t, i) => { const [h, m] = t.split(':'); return `<div class="clock pop" style="--i:${i}"><b>${h[0]}</b><b>${h[1]}</b><b class="colon">:</b><b>${m[0]}</b><b>${m[1]}</b></div>`; };
 const tips = (title, hdr, items, i) => `<div class="card tips a" style="--i:${i};--hdr:${hdr}"><div class="card-h">Tips · ${title}</div><div class="card-b"><ol>${items.map(t => `<li><span>${t}</span></li>`).join('')}</ol></div></div>`;
 const tags = (list, i) => `<div class="tags">${list.map((t, n) => `<span class="sticker tag pop" style="--i:${i + n}">${t}</span>`).join('')}</div>`;
+// encuesta tipo sticker de IG
+const poll = (id, title, opts, qc, note = '') => `
+  <div class="poll qs" id="${id}" style="--qc:${qc}">
+    <h3>${title}</h3>
+    <div class="opts">${opts.map(o => `<button type="button" data-v="${o}"><i class="fill"></i><span>${o}</span><span class="ck">✓</span></button>`).join('')}</div>
+    ${note ? `<div class="note">${note}</div>` : ''}
+  </div>`;
 // cubos decorativos: [left%, top%, tamaño px, color]
 const cubes = list => `<div class="cubes">${list.map(([x, y, s, c], n) =>
   `<div class="cube" style="left:${x}%;top:${y}%;--s:${s}px;--c:${c};--d:${(1 + (n % 4) * .15).toFixed(2)}s;--dl:${(n * .09).toFixed(2)}s"></div>`).join('')}</div>`;
@@ -364,6 +372,14 @@ if (invited.includes('v')) {
 
 // — Sábado
 if (invited.includes('s')) {
+  S.push({ chapter: 'sábado · bus', bg: 'bg-olive', dur: Infinity, html: `
+    ${cubes([[70, 4, 64, P.mustard], [86, 14, 32, P.terra]])}
+    <div class="content">
+      <div class="kicker a" style="--i:0">Sábado · traslado</div>
+      <div class="big a" style="--i:1">BUS IDA<br>Y VUELTA</div>
+      <div class="lead a" style="--i:2">Vamos a poner un bus ida y vuelta desde Navarro.</div>
+      <div class="a no-tap" style="--i:3">${poll('p-bus-story', '¿Te interesa?', BUS_OPTS, P.olive)}</div>
+    </div>` });
   S.push({ chapter: 'sábado · el día', bg: 'bg-terra', html: `
     ${cubes([[64, 4, 80, P.rust], [82, 16, 44, P.mustard], [-4, 86, 56, P.brown]])}
     <div class="content">
@@ -435,13 +451,6 @@ S.push({ chapter: 'regalo', bg: 'bg-brown', dur: Infinity, html: `
   </div>` });
 
 // — Confirmación: una pregunta por pantalla, con stickers de IG
-const poll = (id, title, opts, qc, note = '') => `
-  <div class="poll qs" id="${id}" style="--qc:${qc}">
-    <h3>${title}</h3>
-    <div class="opts">${opts.map(o => `<button type="button" data-v="${o}"><i class="fill"></i><span>${o}</span><span class="ck">✓</span></button>`).join('')}</div>
-    ${note ? `<div class="note">${note}</div>` : ''}
-  </div>`;
-
 S.push({ chapter: 'confirmación', bg: 'bg-terra', dur: Infinity, cls: 'rsvp', html: `
   <div class="content no-tap">
     <div class="q on" data-q="venis" data-bg="bg-terra">
@@ -476,7 +485,7 @@ S.push({ chapter: 'confirmación', bg: 'bg-terra', dur: Infinity, cls: 'rsvp', h
 
     <div class="q" data-q="bus" data-bg="bg-olive">
       <div class="step-n" data-n></div>
-      ${poll('p-bus', '¿Te interesaría sumarte a un bus desde Navarro el sábado?', ['Sí', 'No'], P.olive)}
+      ${poll('p-bus', '¿Te sumás al bus ida y vuelta desde Navarro?', BUS_OPTS, P.olive)}
     </div>
 
     <div class="q" data-q="menu" data-bg="bg-navy">
@@ -635,13 +644,14 @@ const goes = day => yes() && A.dias.some(d => d.startsWith(day));
 // hospedaje: solo quien viene desde el viernes (el domingo la gente ya se va) · bus: solo quien va el sábado
 const needsHosp = () => goes('Viernes');
 const needsBus = () => goes('Sábado');
+let busFromStory = false;     // si ya contestó en la historia del bus, no se repregunta
 // qué preguntas aparecen según las respuestas
 function flow() {
   if (!yes()) return ['venis', 'nombre', 'resumen'];
   const f = ['venis', 'nombre'];
   if (invited.length > 1) f.push('dias');
   if (needsHosp()) f.push('hospedaje');
-  if (needsBus()) f.push('bus');
+  if (needsBus() && !busFromStory) f.push('bus');
   f.push('menu', 'resumen');
   return f;
 }
@@ -669,6 +679,15 @@ const err = (id, msg) => { $(id).textContent = msg; $(id).classList.toggle('on',
     if (navigator.vibrate) navigator.vibrate(15);
     setTimeout(advance, 600);
   });
+});
+// historia del bus: guarda la respuesta y sigue a la próxima historia
+if ($('p-bus-story')) $('p-bus-story').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  A.bus = b.dataset.v; busFromStory = true;
+  $('p-bus-story').classList.add('voted');
+  $('p-bus-story').querySelectorAll('button').forEach(x => x.classList.toggle('picked', x === b));
+  if (navigator.vibrate) navigator.vibrate(15);
+  setTimeout(next, 700);
 });
 // días: multi-selección, arrancan todos marcados
 $('p-dias').querySelectorAll('button').forEach(b => b.classList.add('picked'));
@@ -702,7 +721,8 @@ function renderSummary() {
 }
 $('restart').addEventListener('click', () => {
   rsvpSlide.querySelectorAll('.poll:not(#p-dias)').forEach(p => { p.classList.remove('voted'); p.querySelectorAll('button').forEach(b => b.classList.remove('picked')); });
-  delete A.venis; delete A.hospedaje; delete A.bus; delete A.menu;
+  delete A.venis; delete A.hospedaje; delete A.menu;
+  if (!busFromStory) delete A.bus;
   goQ('venis');
 });
 
