@@ -168,10 +168,23 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .moods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: min(100%, 44dvh); padding-right: 8px; }
 .mood { padding: 0; border: 0; background: none; cursor: zoom-in; }
 .moods-hint { font-family: var(--cond); font-weight: 600; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; opacity: .7; }
-#lightbox { position: absolute; inset: 0; z-index: 50; display: grid; place-items: center; padding: calc(var(--top) + 56px) 16px calc(var(--bot) + 24px);
+#lightbox { position: absolute; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: calc(var(--top) + 56px) 16px calc(var(--bot) + 34px);
   background: rgba(10, 10, 10, .94); opacity: 0; pointer-events: none; transition: opacity .2s; cursor: zoom-out; }
 #lightbox.on { opacity: 1; pointer-events: auto; }
 #lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
+.dc-board { flex: 1 1 auto; min-height: 0; max-height: 440px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 14px; padding-right: 8px; }
+.dc-side { display: grid; grid-template-rows: 1fr 1fr; gap: 14px; min-height: 0; }
+.dc-board .mood { min-height: 0; }
+.dc-board .photo img { height: 100%; aspect-ratio: auto; object-position: top; }
+.dc-tag { position: absolute; left: 8px; bottom: 8px; z-index: 1; padding: 5px 9px 4px; border-radius: 8px; background: #fff; color: var(--title);
+  font-family: var(--cond); font-weight: 700; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
+.dc-tag em { font-style: normal; color: var(--terracotta); margin-left: 3px; }
+.dc-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.dc-foot .nope { font-size: 16px; }
+#lightbox .nav { display: none; position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(0,0,0,.55); color: #fff; font-size: 26px; line-height: 38px; box-shadow: 0 0 0 1px rgba(255,255,255,.25); }
+#lightbox .prev { left: 10px; } #lightbox .next { right: 10px; }
+#lightbox .count { display: none; position: absolute; left: 0; right: 0; bottom: calc(var(--bot) + 4px); text-align: center; color: #fff; font-family: var(--cond); font-weight: 600; font-size: 12px; letter-spacing: .2em; opacity: .7; }
+#lightbox.multi .nav, #lightbox.multi .count { display: block; }
 #lightbox .x { position: absolute; top: calc(var(--top) + 14px); right: 14px; width: 36px; height: 36px; border: 0; border-radius: 50%; background: rgba(255,255,255,.16); color: #fff; font-size: 20px; line-height: 36px; }
 .nope { display: flex; gap: 10px; align-items: center; font-family: var(--cond); font-weight: 600; font-size: 18px; letter-spacing: .06em; text-transform: uppercase; }
 .tags { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -266,7 +279,7 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
   </div>
   <div id="slides"></div>
   <div id="toast"></div>
-  <div id="lightbox" class="no-tap"><img alt=""><button class="x" aria-label="Cerrar">✕</button></div>
+  <div id="lightbox" class="no-tap"><img alt=""><button class="nav prev" aria-label="Anterior">‹</button><button class="nav next" aria-label="Siguiente">›</button><div class="count"></div><button class="x" aria-label="Cerrar">✕</button></div>
 </main>
 
 <script>
@@ -361,7 +374,13 @@ S.push({ chapter: 'tu invitación', bg: 'bg-green', html: `
   </div>` });
 
 // — Viernes
-const MOODS = [1, 2, 3, 5];   // collages del dress code de peña (images/pb0N.jpg)
+// collages de dress code: se ven en grande en el #lightbox
+const GALLERIES = {
+  pena:  [1, 2, 3, 5].map(n => `images/pb0${n}.jpg`),
+  vibra: ['images/fmix.jpg'],
+  ellos: [1, 2, 3, 4].map(n => `images/fh0${n}.jpg`),
+  ellas: [1, 2, 3, 4, 5].map(n => `images/fm0${n}.jpg`),
+};
 if (invited.includes('v')) {
   S.push({ chapter: 'viernes · pre-boda', bg: 'bg-teal', html: `
     ${cubes([[64, 4, 80, P.mustard], [84, 18, 40, P.terra], [-6, 82, 60, P.green]])}
@@ -376,7 +395,7 @@ if (invited.includes('v')) {
     <div class="content">
       <div class="kicker a" style="--i:0">Dress code</div>
       <div class="big a" style="--i:1">DE PEÑA</div>
-      <div class="moods">${MOODS.map((n, k) => `<button class="photo mood pop" style="--i:${k + 2}" data-src="images/pb0${n}.jpg" data-track="dress code foto ${k + 1}"><img src="images/pb0${n}.jpg" alt=""></button>`).join('')}</div>
+      <div class="moods">${GALLERIES.pena.map((src, k) => `<button class="photo mood pop" style="--i:${k + 2}" data-gal="pena" data-idx="${k}" data-track="dress code foto ${k + 1}"><img src="${src}" alt=""></button>`).join('')}</div>
       <div class="moods-hint a" style="--i:6">(Tocá una foto para verla en grande)</div>
     </div>` });
 }
@@ -398,8 +417,14 @@ if (invited.includes('s')) {
     <div class="content">
       <div class="kicker a" style="--i:0">Dress code</div>
       <div class="big a" style="--i:1">ELEGANTE<br>SPORT</div>
-      <div class="photos">${[3, 12, 8, 7, 1, 11].map((n, k) => `<div class="photo pop" style="--i:${k + 2}"><img src="images/dc${String(n).padStart(2, '0')}.jpg" alt=""></div>`).join('')}</div>
-      <div class="nope a" style="--i:8">Evitá blanco y negro</div>
+      <div class="dc-board">
+        <button class="photo mood dc-hero pop" style="--i:2" data-gal="vibra" data-idx="0" data-track="dress code la vibra"><img src="${GALLERIES.vibra[0]}" alt=""><span class="dc-tag">La vibra</span></button>
+        <div class="dc-side">
+          <button class="photo mood pop" style="--i:3" data-gal="ellos" data-idx="0" data-track="dress code ellos"><img src="${GALLERIES.ellos[0]}" alt=""><span class="dc-tag">Ellos <em>${GALLERIES.ellos.length}</em></span></button>
+          <button class="photo mood pop" style="--i:4" data-gal="ellas" data-idx="0" data-track="dress code ellas"><img src="${GALLERIES.ellas[0]}" alt=""><span class="dc-tag">Ellas <em>${GALLERIES.ellas.length}</em></span></button>
+        </div>
+      </div>
+      <div class="dc-foot a" style="--i:5"><span class="nope">Evitá blanco y negro</span><span class="moods-hint">(Tocá para ver más)</span></div>
     </div>` });
   S.push({ chapter: 'sábado · tips', bg: 'bg-navy', html: `
     ${cubes([[76, 6, 50, P.terra]])}
@@ -588,21 +613,43 @@ stage.addEventListener('pointerup', e => {
 });
 stage.addEventListener('pointercancel', () => { clearTimeout(holdT); down = null; setPaused(false); });
 document.addEventListener('keydown', e => {
-  if (e.target.matches('input')) return;
+  if (e.target.matches('input') || document.getElementById('lightbox').classList.contains('on')) return;
   if (e.key === 'ArrowRight' || e.key === ' ') navNext();
   if (e.key === 'ArrowLeft') navPrev();
 });
 document.addEventListener('visibilitychange', () => setPaused(document.hidden));
 
-// fotos del dress code: tocar abre en grande, tocar de nuevo cierra
+// fotos del dress code: tocar abre en grande; flechas, swipe o tocar la foto pasan a la siguiente
 const lightbox = document.getElementById('lightbox');
+let gal = [], gi = 0, lbX = null, lbSwiped = false;
+const lbShow = () => {
+  lightbox.querySelector('img').src = gal[gi];
+  lightbox.classList.toggle('multi', gal.length > 1);
+  lightbox.querySelector('.count').textContent = `${gi + 1} / ${gal.length}`;
+};
+const lbStep = d => { gi = (gi + d + gal.length) % gal.length; lbShow(); };
 const closeLightbox = () => { if (!lightbox.classList.contains('on')) return; lightbox.classList.remove('on'); setPaused(false); };
 stage.addEventListener('click', e => {
   const m = e.target.closest('.mood'); if (!m) return;
-  lightbox.querySelector('img').src = m.dataset.src; lightbox.classList.add('on'); setPaused(true);
+  gal = GALLERIES[m.dataset.gal]; gi = +m.dataset.idx; lbShow(); lightbox.classList.add('on'); setPaused(true);
 });
-lightbox.addEventListener('click', closeLightbox);
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+lightbox.addEventListener('pointerdown', e => { lbX = e.clientX; });
+lightbox.addEventListener('pointerup', e => {
+  const dx = lbX === null ? 0 : e.clientX - lbX; lbX = null;
+  if (gal.length > 1 && Math.abs(dx) > 40) { lbSwiped = true; lbStep(dx < 0 ? 1 : -1); }
+});
+lightbox.addEventListener('click', e => {
+  if (lbSwiped) { lbSwiped = false; return; }
+  if (e.target.closest('.prev')) return lbStep(-1);
+  if (e.target.closest('.next') || (e.target.tagName === 'IMG' && gal.length > 1)) return lbStep(1);
+  closeLightbox();
+});
+document.addEventListener('keydown', e => {
+  if (!lightbox.classList.contains('on')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (gal.length > 1 && e.key === 'ArrowRight') lbStep(1);
+  if (gal.length > 1 && e.key === 'ArrowLeft') lbStep(-1);
+});
 stage.addEventListener('contextmenu', e => e.preventDefault());
 
 /* ═════════════ TRACKING (tipo pixel) ═════════════ */
@@ -881,8 +928,7 @@ $('ics').addEventListener('click', () => {
 $('again').addEventListener('click', () => show(0));
 
 /* ═════════════ GO ═════════════ */
-[3, 12, 8, 7, 1, 11].forEach(n => { new Image().src = `images/dc${String(n).padStart(2, '0')}.jpg`; });
-MOODS.forEach(n => { new Image().src = `images/pb0${n}.jpg`; });
+Object.values(GALLERIES).flat().forEach(src => { new Image().src = src; });
 show(+QS.get('s') || 0);
 requestAnimationFrame(tick);
 </script>
