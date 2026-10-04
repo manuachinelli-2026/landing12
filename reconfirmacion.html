@@ -162,9 +162,8 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .photo img { position: relative; display: block; width: 100%; aspect-ratio: 3/4; object-fit: cover; background: #ddd; }
 .moods { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; padding-right: 8px; }
 .moods .photo { grid-column: span 2; }
-.moods .photo:nth-child(-n+2) { grid-column: span 3; }
-.moods .photo:nth-child(-n+2) img { aspect-ratio: 4/5; }
-.moods img { object-position: top; }
+.moods .photo:nth-child(4) { grid-column: 2 / span 2; }
+.moods img { aspect-ratio: 9/16; object-position: top; }
 .nope { display: flex; gap: 10px; align-items: center; font-family: var(--cond); font-weight: 600; font-size: 18px; letter-spacing: .06em; text-transform: uppercase; }
 .tags { display: flex; gap: 10px; flex-wrap: wrap; }
 
@@ -362,7 +361,7 @@ if (invited.includes('v')) {
   S.push({ chapter: 'viernes · dress code', bg: 'bg-teal', html: `
     ${cubes([[72, 8, 56, P.olive], [8, 82, 44, P.mustard]])}
     <div class="content">
-      <div class="kicker a" style="--i:0">Dress code · viernes</div>
+      <div class="kicker a" style="--i:0">Dress code</div>
       <div class="big a" style="--i:1">DE PEÑA</div>
       <div class="moods">${[1, 2, 3, 4, 5].map((n, k) => `<div class="photo pop" style="--i:${k + 4}"><img src="images/pb${String(n).padStart(2, '0')}.jpg" alt=""></div>`).join('')}</div>
     </div>` });
