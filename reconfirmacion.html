@@ -391,13 +391,6 @@ if (invited.includes('s')) {
       <div class="lead a" style="--i:2">Vamos a poner un bus ida y vuelta desde Navarro.</div>
       <div class="a no-tap" style="--i:3">${poll('p-bus-story', '¿Te interesa?', BUS_OPTS, P.olive)}</div>
     </div>` });
-  S.push({ chapter: 'sábado · dress code', bg: 'bg-terra', html: `
-    <div class="content">
-      <div class="kicker a" style="--i:0">Dress code · sábado</div>
-      <div class="big a" style="--i:1">ELEGANTE<br>SPORT</div>
-      <div class="photos">${[3, 12, 8, 7, 1, 11].map((n, k) => `<div class="photo pop" style="--i:${k + 2}"><img src="images/dc${String(n).padStart(2, '0')}.jpg" alt=""></div>`).join('')}</div>
-      <div class="nope a" style="--i:8">Evitá blanco y negro</div>
-    </div>` });
   S.push({ chapter: 'sábado · tips', bg: 'bg-terra', html: `
     ${cubes([[76, 6, 50, P.navy]])}
     <div class="content">
@@ -408,6 +401,13 @@ if (invited.includes('s')) {
         'Son <b>37 km de tierra</b> desde Navarro hasta el campo. Si llueve, sumá tiempo.',
         'De madrugada <b>refresca</b>.',
       ], 1)}
+    </div>` });
+  S.push({ chapter: 'sábado · dress code', bg: 'bg-terra', html: `
+    <div class="content">
+      <div class="kicker a" style="--i:0">Dress code · sábado</div>
+      <div class="big a" style="--i:1">ELEGANTE<br>SPORT</div>
+      <div class="photos">${[3, 12, 8, 7, 1, 11].map((n, k) => `<div class="photo pop" style="--i:${k + 2}"><img src="images/dc${String(n).padStart(2, '0')}.jpg" alt=""></div>`).join('')}</div>
+      <div class="nope a" style="--i:8">Evitá blanco y negro</div>
     </div>` });
 }
 
