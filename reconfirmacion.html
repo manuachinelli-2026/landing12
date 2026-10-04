@@ -124,9 +124,11 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .cover-loc { font-family: var(--cond); font-weight: 700; font-size: 18px; line-height: 1.2; color: #5C4827; margin-top: 2px; }
 .cover-date { font-family: var(--display); font-size: 56px; line-height: 1; color: var(--terracotta); margin-top: 2px; }
 .cover .cube-grid { width: min(200px, 24dvh); }
-.cover .count .card-h { padding: 9px 16px 8px; }
-.cover .count .digits { padding: 8px 10px 10px; }
-.cover .count .digits b { font-size: 40px; }
+.cover .count { max-width: 230px; margin-top: 16px; border-radius: 14px; }
+.cover .count .card-h { padding: 7px 12px 6px; font-size: 12px; }
+.cover .count .digits { gap: 12px; padding: 6px 10px 8px; }
+.cover .count .digits b { font-size: 30px; }
+.cover .count .digits small { font-size: 9.5px; }
 
 /* countdown */
 .count { align-self: center; width: 100%; max-width: 320px; }
