@@ -167,7 +167,7 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 /* moodboard: grilla de collages que se abren en grande */
 .moods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: min(100%, 44dvh); padding-right: 8px; }
 .mood { padding: 0; border: 0; background: none; cursor: zoom-in; }
-.moods-hint { font-family: var(--cond); font-weight: 600; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; opacity: .7; }
+.moods-hint { font-family: var(--cond); font-weight: 600; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; opacity: .7; }
 #lightbox { position: absolute; inset: 0; z-index: 50; display: grid; place-items: center; padding: calc(var(--top) + 56px) 16px calc(var(--bot) + 24px);
   background: rgba(10, 10, 10, .94); opacity: 0; pointer-events: none; transition: opacity .2s; cursor: zoom-out; }
 #lightbox.on { opacity: 1; pointer-events: auto; }
@@ -371,12 +371,12 @@ if (invited.includes('v')) {
       ${loc('Las Marianas', MAPS.marianas, 3)}
     </div>` });
   S.push({ chapter: 'viernes · dress code', bg: 'bg-teal', dur: Infinity, html: `
-    ${cubes([[72, 8, 56, P.olive], [8, 82, 44, P.mustard]])}
+    ${cubes([[72, 8, 56, P.olive]])}
     <div class="content">
       <div class="kicker a" style="--i:0">Dress code</div>
       <div class="big a" style="--i:1">DE PEÑA</div>
       <div class="moods">${MOODS.map((n, k) => `<button class="photo mood pop" style="--i:${k + 2}" data-src="images/pb0${n}.jpg" data-track="dress code foto ${k + 1}"><img src="images/pb0${n}.jpg" alt=""></button>`).join('')}</div>
-      <div class="moods-hint a" style="--i:6">Tocá una foto para verla en grande</div>
+      <div class="moods-hint a" style="--i:6">(Tocá una foto para verla en grande)</div>
     </div>` });
 }
 
