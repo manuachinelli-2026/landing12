@@ -123,8 +123,8 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .cover-label { font-family: var(--cond); font-weight: 300; font-size: 11px; letter-spacing: 6px; text-transform: uppercase; color: #5C4827; }
 .cover-loc { font-family: var(--cond); font-weight: 700; font-size: 18px; line-height: 1.2; color: #5C4827; margin-top: 2px; }
 .cover-date { font-family: var(--display); font-size: 56px; line-height: 1; color: var(--terracotta); margin-top: 2px; }
-.cover .cube-grid { width: min(200px, 24dvh); }
-.cover .count { max-width: 230px; margin-top: 16px; border-radius: 14px; }
+.cover .cube-grid { width: min(200px, 24dvh); margin-top: auto; }
+.cover .count { max-width: 230px; margin-top: 16px; margin-bottom: auto; border-radius: 14px; }
 .cover .count .card-h { padding: 7px 12px 6px; font-size: 12px; }
 .cover .count .digits { gap: 12px; padding: 6px 10px 8px; }
 .cover .count .digits b { font-size: 30px; }
@@ -311,8 +311,7 @@ S.push({ chapter: 'casamiento', bg: 'bg-cream', dur: Infinity, html: `
     <div class="a" style="--i:1">
       <div class="cover-date">12·12</div>
       <div class="cover-label">Diciembre 2026</div>
-      <div class="cover-label" style="margin-top:14px">Dirección</div>
-      <div class="cover-loc">Las Marianas, Buenos Aires</div>
+      <div class="cover-loc" style="margin-top:12px">Las Marianas, Buenos Aires</div>
     </div>
     <div class="cube-grid pop" style="--i:2" id="cubeGrid">${PATTERN.map((c, n) => `<div class="cell">${c === null ? '' :
       `<div class="cube" style="--c:${CUBE_COLORS[c]};--d:${(.9 + (n % 4) * .15).toFixed(2)}s;--dl:${(n * .09 % 1).toFixed(2)}s"></div>`}</div>`).join('')}</div>
