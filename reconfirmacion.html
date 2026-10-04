@@ -312,10 +312,10 @@ S.push({ chapter: 'casamiento', bg: 'bg-cream', dur: Infinity, html: `
   <div class="content center cover">
     <h1 class="cover-title a" style="--i:0">CASAMIENTO</h1>
     <div class="a" style="--i:1">
-      <div class="cover-label">Dirección</div>
-      <div class="cover-loc">Las Marianas, Buenos Aires</div>
       <div class="cover-date">12·12</div>
       <div class="cover-label">Diciembre 2026</div>
+      <div class="cover-label" style="margin-top:14px">Dirección</div>
+      <div class="cover-loc">Las Marianas, Buenos Aires</div>
     </div>
     <div class="cube-grid pop" style="--i:2" id="cubeGrid">${PATTERN.map((c, n) => `<div class="cell">${c === null ? '' :
       `<div class="cube" style="--c:${CUBE_COLORS[c]};--d:${(.9 + (n % 4) * .15).toFixed(2)}s;--dl:${(n * .09 % 1).toFixed(2)}s"></div>`}</div>`).join('')}</div>
