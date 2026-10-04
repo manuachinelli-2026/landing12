@@ -11,7 +11,7 @@
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -116,6 +116,17 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .card { background: #fff; color: var(--title); border-radius: 18px; overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,.22); }
 .card-h { padding: 14px 16px 12px; color: #fff; font-family: var(--cond); font-weight: 700; font-size: 15px; letter-spacing: .16em; text-transform: uppercase; }
 .card-b { padding: 6px 16px 16px; }
+
+/* portada (estilo hero del home) */
+.cover { gap: 14px; padding-bottom: 26px; }
+.cover-title { font-family: var(--display); font-weight: 400; font-size: clamp(54px, 16vw, 72px); line-height: .9; letter-spacing: 2px; color: var(--title); }
+.cover-label { font-family: var(--cond); font-weight: 300; font-size: 11px; letter-spacing: 6px; text-transform: uppercase; color: #5C4827; }
+.cover-loc { font-family: var(--cond); font-weight: 700; font-size: 18px; line-height: 1.2; color: #5C4827; margin-top: 2px; }
+.cover-date { font-family: var(--display); font-size: 56px; line-height: 1; color: var(--terracotta); margin-top: 2px; }
+.cover .cube-grid { width: min(200px, 24dvh); }
+.cover .count .card-h { padding: 9px 16px 8px; }
+.cover .count .digits { padding: 8px 10px 10px; }
+.cover .count .digits b { font-size: 40px; }
 
 /* countdown */
 .count { align-self: center; width: 100%; max-width: 320px; }
@@ -292,17 +303,21 @@ const cubes = list => `<div class="cubes">${list.map(([x, y, s, c], n) =>
 /* ═════════════ HISTORIAS ═════════════ */
 const S = [];   // { chapter, bg, html, dur, cls }
 
-// — Portada: grilla de cubos del home
-const PATTERN = [0, 1, 2, 3, null, 2, null, 4, 5, null, 6, 1, null, 3, 0, null];
+// — Portada: igual al hero del home
+const PATTERN = [0, 1, 2, 3, null, 2, null, 4, 5, null, 6, 1, null, 3, 0, null, 2, 4, null, 5];
 const CUBE_COLORS = [P.brown, P.terra, P.rust, P.mustard, P.olive, P.green, P.teal];
 S.push({ chapter: 'casamiento', bg: 'bg-cream', dur: Infinity, html: `
-  <div class="content center">
-    <div class="cube-grid pop" style="--i:0" id="cubeGrid">${PATTERN.map((c, n) => `<div class="cell">${c === null ? '' :
+  <div class="content center cover">
+    <h1 class="cover-title a" style="--i:0">CASAMIENTO</h1>
+    <div class="a" style="--i:1">
+      <div class="cover-label">Dirección</div>
+      <div class="cover-loc">Las Marianas, Buenos Aires</div>
+      <div class="cover-date">12·12</div>
+      <div class="cover-label">Diciembre 2026</div>
+    </div>
+    <div class="cube-grid pop" style="--i:2" id="cubeGrid">${PATTERN.map((c, n) => `<div class="cell">${c === null ? '' :
       `<div class="cube" style="--c:${CUBE_COLORS[c]};--d:${(.9 + (n % 4) * .15).toFixed(2)}s;--dl:${(n * .09 % 1).toFixed(2)}s"></div>`}</div>`).join('')}</div>
-    <div class="kicker a" style="--i:1">Casamiento</div>
-    <div class="mega a" style="--i:2;color:var(--terracotta)">12·12</div>
-    <div class="kicker a" style="--i:3">11—13 diciembre 2026 · Las Marianas</div>
-    <div class="card count pop" style="--i:4">
+    <div class="card count pop" style="--i:3">
       <div class="card-h">Faltan</div>
       <div class="digits" id="cd"></div>
     </div>
