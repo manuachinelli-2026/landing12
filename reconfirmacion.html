@@ -831,7 +831,9 @@ $('send').addEventListener('click', async () => {
     T.enviado = true;
     track('enviado', yes() ? 'viene' : 'no viene');
     const session = summary();
-    await post({ type: 'rsvp', respuesta: { ...answers(), grupo: session.grupo, sesion: session.sesion, visitante: session.visitante, test: session.test }, session, events: T.queue.splice(0) });
+    // Google tarda ~5 s en contestar: esperamos como mucho 1,5 s y el envío sigue en segundo plano (keepalive)
+    const sending = post({ type: 'rsvp', respuesta: { ...answers(), grupo: session.grupo, sesion: session.sesion, visitante: session.visitante, test: session.test }, session, events: T.queue.splice(0) });
+    await Promise.race([sending, new Promise(r => setTimeout(r, 1500))]);
     lastFlush = '';
     $('th-t').innerHTML = yes() ? 'CONFIR<br>MADO' : 'GRACIAS<br>POR AVISAR';
     $('th-s').textContent = yes() ? `${A.nombre}, te esperamos: ${A.dias.join(' · ')}.` : `${A.nombre}, ya quedó registrado.`;
