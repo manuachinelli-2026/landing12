@@ -478,7 +478,6 @@ if (invited.includes('d')) {
 S.push({ chapter: 'regalo', bg: 'bg-brown', dur: Infinity, html: `
   ${trio(66, 6, [P.mustard, P.terra, '#F2EDE4'])}
   <div class="content">
-    <div class="kicker a" style="--i:0">Regalo</div>
     <div class="big a" style="--i:1">¿QUÉ<br>REGALARNOS?</div>
     <div class="lead a" style="--i:2">Ya tenemos tostadora.<br>Si querés, aportá a lo que viene 🏠</div>
     <div class="seg a no-tap" style="--i:3">${Object.entries(ACCOUNTS).map(([k, a], n) => `<button data-cur="${k}" class="${n ? '' : 'on'}">${a.label}</button>`).join('')}</div>
