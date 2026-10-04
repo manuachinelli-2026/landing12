@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+[hidden] { display: none !important; }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 /* paleta del repo (index.html) */
@@ -444,14 +445,6 @@ if (invited.includes('s')) {
         ['🧥', 'Cuando baja el sol <b>refresca</b>: llevá algo de abrigo.'],
       ], 1)}
     </div>` });
-  S.push({ chapter: 'sábado · bus', bg: 'bg-olive', dur: Infinity, html: `
-    ${cubes([[70, 4, 64, P.mustard], [86, 14, 32, P.terra]])}
-    <div class="content">
-      <div class="kicker a" style="--i:0">Sábado · traslado</div>
-      <div class="big a" style="--i:1">BUS IDA<br>Y VUELTA</div>
-      <div class="lead a" style="--i:2">Vamos a poner un bus ida y vuelta desde Navarro al campo.</div>
-      <div class="a no-tap" style="--i:3">${poll('p-bus-story', '¿Te interesa?', BUS_OPTS, P.olive)}</div>
-    </div>` });
 }
 
 // — Domingo
@@ -485,6 +478,7 @@ S.push({ chapter: 'regalo', bg: 'bg-brown', dur: Infinity, html: `
   </div>` });
 
 // — Confirmación: una pregunta por pantalla, con stickers de IG
+const MENU_OTRA = 'Alergia u otra';   // abre un campo para escribir cuál
 S.push({ chapter: 'confirmación', bg: 'bg-terra', dur: Infinity, cls: 'rsvp', html: `
   <div class="content no-tap">
     <div class="q on" data-q="venis" data-bg="bg-terra">
@@ -524,7 +518,10 @@ S.push({ chapter: 'confirmación', bg: 'bg-terra', dur: Infinity, cls: 'rsvp', h
 
     <div class="q" data-q="menu" data-bg="bg-navy">
       <div class="step-n" data-n></div>
-      ${poll('p-menu', '¿Alguna restricción alimentaria?', ['Ninguna', 'Vegetariano', 'Vegano', 'Celíaco'], P.navy)}
+      ${poll('p-menu', '¿Alguna restricción alimentaria?', ['Ninguna', 'Vegetariano', 'Vegano', 'Celíaco', MENU_OTRA], P.navy)}
+      <div class="qbox alg" hidden><div class="body"><input id="f-alg" placeholder="¿Cuál? (ej: maní, lactosa)" enterkeyhint="done"></div></div>
+      <div class="err" id="err-m"></div>
+      <button class="cta" type="button" data-next id="alg-next" hidden>Seguir</button>
     </div>
 
     <div class="q" data-q="resumen" data-bg="bg-cream">
@@ -837,6 +834,12 @@ rsvpSlide.querySelectorAll('.q').forEach(qEl => {
   p.addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b || p.classList.contains('voted')) return;
     A[qEl.dataset.q] = b.dataset.v;
+    if (qEl.dataset.q === 'menu') {      // "Alergia u otra" pide escribir cuál; el resto avanza
+      const otra = b.dataset.v === MENU_OTRA;
+      Q.menu.querySelector('.alg').hidden = $('alg-next').hidden = !otra;
+      p.querySelectorAll('button').forEach(x => x.classList.toggle('picked', x === b));
+      if (otra) return $('f-alg').focus();
+    }
     p.classList.add('voted');
     p.querySelectorAll('button').forEach(x => x.classList.toggle('picked', x === b));
     if (navigator.vibrate) navigator.vibrate(15);
@@ -865,12 +868,18 @@ rsvpSlide.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click
     if (!A.nombre || !A.apellido) return err('err-n', 'Completá nombre y apellido.');
     err('err-n', ''); document.activeElement.blur();
   }
+  if (qCur === 'menu') {
+    const cual = $('f-alg').value.trim();
+    if (!cual) return err('err-m', 'Contanos cuál.');
+    A.menu = `${MENU_OTRA}: ${cual}`; err('err-m', ''); document.activeElement.blur();
+  }
   if (qCur === 'dias' && !A.dias.length) return err('err-d', 'Elegí al menos un día.');
   if (qCur === 'dias') err('err-d', '');
   advance();
 }));
 $('f-n').addEventListener('keydown', e => { if (e.key === 'Enter') $('f-a').focus(); });
 $('f-a').addEventListener('keydown', e => { if (e.key === 'Enter') Q.nombre.querySelector('[data-next]').click(); });
+$('f-alg').addEventListener('keydown', e => { if (e.key === 'Enter') $('alg-next').click(); });
 
 function renderSummary() {
   const rows = [['Nombre', `${A.nombre} ${A.apellido}`], ['¿Venís?', A.venis]];
@@ -885,6 +894,7 @@ function renderSummary() {
 $('restart').addEventListener('click', () => {
   rsvpSlide.querySelectorAll('.poll:not(#p-dias)').forEach(p => { p.classList.remove('voted'); p.querySelectorAll('button').forEach(b => b.classList.remove('picked')); });
   delete A.venis; delete A.hospedaje; delete A.menu;
+  Q.menu.querySelector('.alg').hidden = $('alg-next').hidden = true; $('f-alg').value = '';
   if (!busFromStory) delete A.bus;
   goQ('venis');
 });
