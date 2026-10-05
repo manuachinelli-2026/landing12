@@ -71,6 +71,7 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .bg-brown  { --bg: #8B4513; --fg: #F2EDE4; }
 .bg-mustard{ --bg: #D4940A; --fg: #1E2D5A; }
 .bg-navy   { --bg: #1E2D5A; --fg: #F2EDE4; }
+.bg-slate  { --bg: #3D5568; --fg: #F2EDE4; }
 
 /* entrada */
 .a { opacity: 0; transform: translateY(18px); }
@@ -488,9 +489,9 @@ S.push({ chapter: 'regalo', bg: 'bg-rust', dur: Infinity, html: `
 
 // — Confirmación: una pregunta por pantalla, con stickers de IG
 const MENU_OTRA = 'Alergia u otra';   // abre un campo para escribir cuál
-S.push({ chapter: 'confirmación', bg: 'bg-terra', dur: Infinity, cls: 'rsvp', html: `
+S.push({ chapter: 'confirmación', bg: 'bg-slate', dur: Infinity, cls: 'rsvp', html: `
   <div class="content no-tap">
-    <div class="q on" data-q="venis" data-bg="bg-terra">
+    <div class="q on" data-q="venis" data-bg="bg-slate">
       <div class="step-n">Reconfirmación</div>
       ${poll('p-venis', '¿Venís?', ['Sí, voy', 'No puedo'], P.terra)}
     </div>
