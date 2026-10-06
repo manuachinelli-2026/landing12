@@ -159,7 +159,6 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .tl-row .clock b { font-size: 46px; padding: 5px 8px 0; }
 .tl-row h3 { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: .95; }
 .tl-row .sticker { margin-top: 6px; font-size: 13px; padding: 6px 10px; }
-.tl-dash { margin-left: 46px; width: 2px; height: 22px; background: repeating-linear-gradient(currentColor 0 4px, transparent 4px 8px); opacity: .7; }
 
 /* dress code: fotos como cubos */
 .photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding-right: 8px; }
@@ -426,7 +425,6 @@ if (invited.includes('s')) {
       <div class="mega a" style="--i:1">EL<br>DÍA</div>
       <div class="tl">
         <div class="tl-row">${clock('16:30', 2)}<div class="a" style="--i:3"><h3>CEREMONIA</h3>${loc('Iglesia Las Marianas', MAPS.marianas, 3)}</div></div>
-        <div class="tl-dash a" style="--i:4"></div>
         <div class="tl-row">${clock('18:30', 5)}<div class="a" style="--i:6"><h3>FIESTA</h3>${loc('Campo El Arbolito', MAPS.arbolito, 6)}</div></div>
       </div>
     </div>` });
