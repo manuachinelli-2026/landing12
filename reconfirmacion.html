@@ -180,6 +180,11 @@ body { font-family: var(--body); color: #fff; display: grid; place-items: center
 .dc-tag { position: absolute; left: 8px; bottom: 8px; z-index: 1; padding: 5px 9px 4px; border-radius: 8px; background: #fff; color: var(--title);
   font-family: var(--cond); font-weight: 700; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
 .no-bw { color: var(--rust); font-size: 15px; }
+.dc-rules { display: flex; flex-wrap: wrap; gap: 8px; }
+.tierra { font-size: 15px; }
+.tierra .sw { display: flex; }
+.tierra .sw i { width: 17px; height: 17px; border-radius: 50%; border: 1.5px solid #fff; margin-left: -3px; }
+.tierra .sw i:first-child { margin-left: 0; }
 /* tarjetas con varias fotos: cartas apiladas + ícono de carrusel tipo IG */
 .dc-stack { isolation: isolate; }
 .dc-stack::after { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--cream); opacity: .85; transform: translate(6px, -6px); }
@@ -432,7 +437,10 @@ if (invited.includes('s')) {
     <div class="content">
       <div class="kicker a" style="--i:0">Dress code · sábado</div>
       <div class="big a" style="--i:1">ELEGANTE<br>RELAJADO</div>
-      <div class="sticker no-bw pop" style="--i:2">Evitá negro y blanco</div>
+      <div class="dc-rules">
+        <div class="sticker tierra pop" style="--i:2"><span class="sw">${[P.green, P.olive, P.brown, P.terra, P.rust, P.mustard].map(c => `<i style="background:${c}"></i>`).join('')}</span>Paleta de colores tierra</div>
+        <div class="sticker no-bw pop" style="--i:3">Evitá negro y blanco</div>
+      </div>
       <div class="dc-board">
         <button class="photo mood dc-hero pop" style="--i:3" data-gal="fiesta" data-idx="0" data-track="dress code fiesta"><img src="${GALLERIES.fiesta[0]}" alt=""></button>
         <div class="dc-side">
