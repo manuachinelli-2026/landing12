@@ -463,6 +463,61 @@
     cursor: pointer;
   }
 
+  /* ── PRIORITY ────────────────────────────────── */
+  .prio {
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    padding: 0;
+    border-radius: 3px;
+    transition: background 0.15s;
+  }
+  .prio:hover { background: rgba(92,72,39,0.12); }
+  .prio svg { display: block; }
+
+  .prio-menu {
+    position: absolute;
+    z-index: 250;
+    background: var(--card);
+    border: 1px solid var(--line-soft);
+    box-shadow: 0 6px 20px rgba(30,20,10,0.18);
+    padding: 4px;
+    min-width: 170px;
+  }
+  .prio-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 7px 8px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13.5px;
+    color: var(--black);
+    cursor: pointer;
+    text-align: left;
+  }
+  .prio-menu button.active { background: rgba(193,101,74,0.12); }
+  .prio-menu button.current { font-weight: 700; }
+  .prio-menu .menu-key {
+    margin-left: auto;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    opacity: 0.4;
+  }
+
+  .row.focused { background: rgba(255,255,255,0.6); box-shadow: inset 2px 0 0 var(--terracotta); }
+  .row.selected.focused { background: rgba(193,101,74,0.18); }
+  .card.focused { outline: 2px solid var(--terracotta); outline-offset: -1px; }
+  .card.selected { background: #FBEDE7; }
+
   .row-title {
     font-family: 'Barlow', sans-serif;
     font-size: 14.5px;
@@ -798,6 +853,16 @@
       </div>
     </div>
     <div class="field">
+      <label>Prioridad</label>
+      <select id="fPriority">
+        <option value="0">Sin prioridad</option>
+        <option value="1">⚠ Urgente</option>
+        <option value="2">Alta</option>
+        <option value="3">Media</option>
+        <option value="4">Baja</option>
+      </select>
+    </div>
+    <div class="field">
       <label style="display:inline-flex; align-items:center; gap:8px; cursor:pointer;">
         <input type="checkbox" id="fLongTerm" class="row-check" style="margin:0;">
         Long-term (ver más adelante)
@@ -885,11 +950,267 @@
   const selectedIds = new Set();
   let draggingId = null;
 
+  // Prioridad estilo Linear: 0 = sin prioridad, 1 = urgente, 2 = alta, 3 = media, 4 = baja
+  const PRIORITIES = [
+    { value: 1, label: 'Urgente' },
+    { value: 2, label: 'Alta' },
+    { value: 3, label: 'Media' },
+    { value: 4, label: 'Baja' },
+    { value: 0, label: 'Sin prioridad' },
+  ];
+  function prioOf(issue) { return issue.priority || 0; }
+  function prioRank(issue) { return prioOf(issue) || 5; }
+
   function itemsInStatus(status, excludeId) {
     return issues
       .filter(i => i.status === status && i.id !== excludeId)
-      .sort((a, b) => (a.position || 0) - (b.position || 0));
+      .sort((a, b) => prioRank(a) - prioRank(b) || (a.position || 0) - (b.position || 0));
   }
+
+  // Al soltar entre dos issues, el arrastrado toma la prioridad del de abajo
+  // (o del de arriba si queda último) y se ubica dentro de esa franja de prioridad.
+  function dropPlacement(groupItems, beforeItem, afterItem, dragged) {
+    const anchor = afterItem || beforeItem;
+    const priority = anchor ? prioOf(anchor) : prioOf(dragged);
+    const peers = groupItems.filter(i => prioOf(i) === priority);
+    let position;
+    if (afterItem) {
+      const idx = peers.indexOf(afterItem);
+      position = positionBetween(peers[idx - 1], afterItem);
+    } else if (beforeItem) {
+      const idx = peers.indexOf(beforeItem);
+      position = positionBetween(beforeItem, peers[idx + 1]);
+    } else {
+      position = 1000;
+    }
+    return { priority, position };
+  }
+
+  function prioIconSvg(p) {
+    if (p === 1) {
+      return `<svg width="16" height="16" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="3" fill="var(--rust)"/><rect x="7" y="4" width="2" height="5.5" rx="1" fill="#fff"/><circle cx="8" cy="11.8" r="1.1" fill="#fff"/></svg>`;
+    }
+    if (!p) {
+      return `<svg width="16" height="16" viewBox="0 0 16 16" fill="var(--black)" opacity="0.4"><rect x="1.5" y="7.25" width="3" height="1.5" rx="0.5"/><rect x="6.5" y="7.25" width="3" height="1.5" rx="0.5"/><rect x="11.5" y="7.25" width="3" height="1.5" rx="0.5"/></svg>`;
+    }
+    const filled = 5 - p; // alta = 3 barras, media = 2, baja = 1
+    const bar = (i, x, h) => `<rect x="${x}" y="${14 - h}" width="3" height="${h}" rx="1" fill="var(--black)" opacity="${i < filled ? 0.9 : 0.22}"/>`;
+    return `<svg width="16" height="16" viewBox="0 0 16 16">${bar(0, 1.5, 6)}${bar(1, 6.5, 9)}${bar(2, 11.5, 12)}</svg>`;
+  }
+
+  function prioButtonHtml(issue) {
+    const p = prioOf(issue);
+    const label = PRIORITIES.find(x => x.value === p).label;
+    return `<button class="prio" title="Prioridad: ${label}">${prioIconSvg(p)}</button>`;
+  }
+
+  // ── Menú flotante (prioridad / status / asignado), navegable con teclado
+  let activeMenu = null;
+
+  function closeMenu() {
+    if (!activeMenu) return;
+    activeMenu.el.remove();
+    activeMenu = null;
+  }
+
+  function setMenuIndex(i) {
+    if (!activeMenu) return;
+    const n = activeMenu.buttons.length;
+    activeMenu.index = (i + n) % n;
+    activeMenu.buttons.forEach((b, j) => b.classList.toggle('active', j === activeMenu.index));
+  }
+
+  function openMenu(anchorEl, options, current, onPick) {
+    closeMenu();
+    const el = document.createElement('div');
+    el.className = 'prio-menu';
+    const buttons = options.map((opt, i) => {
+      const b = document.createElement('button');
+      if (opt.value === current) b.classList.add('current');
+      b.innerHTML = `${opt.icon}<span>${opt.label}</span><span class="menu-key">${i + 1}</span>`;
+      b.addEventListener('click', e => {
+        e.stopPropagation();
+        closeMenu();
+        if (opt.value !== current) onPick(opt.value);
+      });
+      b.addEventListener('mousemove', () => setMenuIndex(i));
+      el.appendChild(b);
+      return b;
+    });
+    document.body.appendChild(el);
+    const r = anchorEl.getBoundingClientRect();
+    el.style.top = (window.scrollY + r.bottom + 4) + 'px';
+    el.style.left = Math.min(window.scrollX + r.left, window.scrollX + window.innerWidth - el.offsetWidth - 8) + 'px';
+    activeMenu = { el, buttons, index: 0 };
+    setMenuIndex(Math.max(0, options.findIndex(o => o.value === current)));
+  }
+
+  // Un solo valor "actual" si todos los targets coinciden; si no, ninguno marcado
+  function sharedValue(ids, get) {
+    const values = new Set(ids.map(id => get(issues.find(i => i.id === id))));
+    return values.size === 1 ? [...values][0] : undefined;
+  }
+
+  async function updateIssues(ids, patchFor) {
+    const patches = ids.map(id => {
+      const issue = issues.find(i => i.id === id);
+      const patch = patchFor(issue);
+      Object.assign(issue, patch);
+      return [id, patch];
+    });
+    render();
+    await Promise.all(patches
+      .filter(([, patch]) => Object.keys(patch).length)
+      .map(([id, patch]) => sb.from('issues').update(patch).eq('id', id)));
+  }
+
+  const STATUS_COLORS = {
+    backlog: 'var(--black)', review: 'var(--burgundy)', todo: 'var(--title)',
+    in_progress: 'var(--mustard)', done: 'var(--green-dark)',
+  };
+
+  function openPriorityMenu(anchorEl, ids) {
+    const options = PRIORITIES.map(p => ({ value: p.value, label: p.label, icon: prioIconSvg(p.value) }));
+    openMenu(anchorEl, options, sharedValue(ids, prioOf),
+      priority => updateIssues(ids, () => ({ priority })));
+  }
+
+  function openStatusMenu(anchorEl, ids) {
+    const options = COLUMNS.map(c => ({
+      value: c.status, label: c.label,
+      icon: `<span class="group-dot" style="background:${STATUS_COLORS[c.status]}"></span>`,
+    }));
+    openMenu(anchorEl, options, sharedValue(ids, i => i.status), status => {
+      let position = nextPositionAtEnd(status);
+      updateIssues(ids, issue => {
+        if (issue.status === status) return {};
+        const patch = { status, position };
+        position += 1000;
+        return patch;
+      });
+    });
+  }
+
+  function openAssigneeMenu(anchorEl, ids) {
+    const options = [
+      { value: '', label: 'Sin asignar', icon: avatarHtml(null) },
+      { value: 'Manu', label: 'Manu', icon: avatarHtml('Manu') },
+      { value: 'Flor', label: 'Flor', icon: avatarHtml('Flor') },
+      { value: 'Ambos', label: 'Los dos', icon: avatarHtml('Ambos') },
+    ];
+    openMenu(anchorEl, options, sharedValue(ids, i => i.assignee || ''),
+      value => updateIssues(ids, () => ({ assignee: value || null })));
+  }
+
+  function wirePrioButton(container, issue) {
+    const btn = container.querySelector('.prio');
+    btn.addEventListener('mousedown', e => e.stopPropagation());
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      openPriorityMenu(btn, [issue.id]);
+    });
+  }
+
+  document.addEventListener('click', closeMenu);
+  window.addEventListener('scroll', closeMenu, true);
+
+  // ── Shortcuts estilo Linear
+  let focusedId = null;
+
+  function viewContainer() {
+    return document.getElementById(viewMode === 'list' ? 'listWrap' : 'board');
+  }
+
+  function visibleIssueEls() {
+    return [...viewContainer().querySelectorAll('[data-id]')].filter(el => el.offsetParent !== null);
+  }
+
+  function focusedEl() {
+    return focusedId ? viewContainer().querySelector(`[data-id="${focusedId}"]`) : null;
+  }
+
+  function setFocus(id, scroll) {
+    focusedId = id;
+    viewContainer().querySelectorAll('.focused').forEach(el => el.classList.remove('focused'));
+    const el = focusedEl();
+    if (!el) return;
+    el.classList.add('focused');
+    if (scroll) el.scrollIntoView({ block: 'nearest' });
+  }
+
+  function moveFocus(delta) {
+    const els = visibleIssueEls();
+    if (!els.length) return;
+    const idx = els.findIndex(el => el.dataset.id === focusedId);
+    const next = idx === -1 ? (delta > 0 ? 0 : els.length - 1) : Math.min(els.length - 1, Math.max(0, idx + delta));
+    setFocus(els[next].dataset.id, true);
+  }
+
+  // Como en Linear: si hay selección, la acción va a todos los seleccionados
+  function shortcutTargets() {
+    if (selectedIds.size) return [...selectedIds];
+    return focusedEl() ? [focusedId] : [];
+  }
+
+  function shortcutAnchor(ids) {
+    return focusedEl() || viewContainer().querySelector(`[data-id="${ids[0]}"]`) || viewContainer();
+  }
+
+  function closeTopOverlay() {
+    if (document.getElementById('issueOverlay').classList.contains('open')) { closeModal(); return true; }
+    if (document.getElementById('structureOverlay').classList.contains('open')) { closeStructureModal(); return true; }
+    const who = document.getElementById('whoOverlay');
+    if (who.classList.contains('open') && getWho()) { who.classList.remove('open'); return true; }
+    return false;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (activeMenu) {
+      const n = activeMenu.buttons.length;
+      if (e.key === 'ArrowDown') setMenuIndex(activeMenu.index + 1);
+      else if (e.key === 'ArrowUp') setMenuIndex(activeMenu.index - 1);
+      else if (e.key === 'Enter') activeMenu.buttons[activeMenu.index].click();
+      else if (e.key === 'Escape') closeMenu();
+      else if (/^[1-9]$/.test(e.key) && Number(e.key) <= n) activeMenu.buttons[Number(e.key) - 1].click();
+      else return;
+      e.preventDefault();
+      return;
+    }
+
+    if (e.key === 'Escape') {
+      if (closeTopOverlay()) return;
+      if (selectedIds.size) clearSelection();
+      return;
+    }
+
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (document.querySelector('.overlay.open')) return;
+    if (e.target.matches('textarea, select, input:not([type="checkbox"])')) return;
+
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (key === 'ArrowDown' || key === 'j') { e.preventDefault(); moveFocus(1); return; }
+    if (key === 'ArrowUp' || key === 'k') { e.preventDefault(); moveFocus(-1); return; }
+    if (key === 'Enter') {
+      if (!focusedEl()) return;
+      e.preventDefault();
+      openEditIssue(focusedId);
+      return;
+    }
+    if (key === 'x') {
+      if (!focusedEl()) return;
+      e.preventDefault();
+      if (selectedIds.has(focusedId)) selectedIds.delete(focusedId); else selectedIds.add(focusedId);
+      render();
+      return;
+    }
+    const menus = { s: openStatusMenu, a: openAssigneeMenu, p: openPriorityMenu };
+    if (menus[key]) {
+      const ids = shortcutTargets();
+      if (!ids.length) return;
+      e.preventDefault();
+      menus[key](shortcutAnchor(ids), ids);
+    }
+  });
   function nextPositionAtEnd(status, excludeId) {
     const items = itemsInStatus(status, excludeId);
     return items.length ? (items[items.length - 1].position || 0) + 1000 : 1000;
@@ -963,11 +1284,13 @@
     const mergedDescription = selected.map(i => i.description).filter(Boolean).join('\n\n');
     const mergedLinks = selected.map(i => i.links).filter(Boolean).join('\n');
     const mergedLongTerm = selected.some(i => i.long_term);
+    const mergedPriority = prioOf(selected.reduce((best, i) => prioRank(i) < prioRank(best) ? i : best));
     await sb.from('issues').update({
       title: mergedTitle,
       description: mergedDescription,
       links: mergedLinks,
       long_term: mergedLongTerm,
+      priority: mergedPriority,
     }).eq('id', target.id);
     await sb.from('issues').delete().in('id', rest.map(i => i.id));
     clearSelection();
@@ -1092,13 +1415,15 @@
       head.addEventListener('drop', async e => {
         e.preventDefault();
         if (!draggingId) return;
-        const newPos = positionAtStart(col.status, draggingId);
         const dragged = issues.find(i => i.id === draggingId);
         if (!dragged) return;
+        const groupItems = itemsInStatus(col.status, draggingId);
+        const { priority, position } = dropPlacement(groupItems, null, groupItems[0], dragged);
         dragged.status = col.status;
-        dragged.position = newPos;
+        dragged.position = position;
+        dragged.priority = priority;
         render();
-        await sb.from('issues').update({ status: col.status, position: newPos }).eq('id', draggingId);
+        await sb.from('issues').update({ status: col.status, position, priority }).eq('id', dragged.id);
       });
 
       const rows = groupEl.querySelector('.group-rows');
@@ -1111,12 +1436,13 @@
       }
       items.forEach(issue => {
         const row = document.createElement('div');
-        row.className = 'row' + (selectedIds.has(issue.id) ? ' selected' : '');
+        row.className = 'row' + (selectedIds.has(issue.id) ? ' selected' : '') + (focusedId === issue.id ? ' focused' : '');
         row.dataset.id = issue.id;
         const upd = updatedInfo(issue);
         row.innerHTML = `
           <span class="drag-handle" draggable="true"></span>
           <input type="checkbox" class="row-check" ${selectedIds.has(issue.id) ? 'checked' : ''}>
+          ${prioButtonHtml(issue)}
           <span class="row-title">${escapeHtml(issue.title)}</span>
           ${newTagHtml(issue)}
           ${longTermTagHtml(issue)}
@@ -1125,6 +1451,8 @@
           <span class="row-date">${fmtDate(issue.created_at)}</span>
         `;
         row.addEventListener('click', () => openEditIssue(issue.id));
+        row.addEventListener('mousemove', () => { if (focusedId !== issue.id) setFocus(issue.id, false); });
+        wirePrioButton(row, issue);
 
         const checkbox = row.querySelector('.row-check');
         checkbox.addEventListener('click', e => e.stopPropagation());
@@ -1172,11 +1500,12 @@
           const idx = groupItems.findIndex(i => i.id === issue.id);
           const beforeItem = before ? groupItems[idx - 1] : groupItems[idx];
           const afterItem = before ? groupItems[idx] : groupItems[idx + 1];
-          const newPos = positionBetween(beforeItem, afterItem);
+          const { priority, position } = dropPlacement(groupItems, beforeItem, afterItem, dragged);
           dragged.status = col.status;
-          dragged.position = newPos;
+          dragged.position = position;
+          dragged.priority = priority;
           render();
-          await sb.from('issues').update({ status: col.status, position: newPos }).eq('id', draggingId);
+          await sb.from('issues').update({ status: col.status, position, priority }).eq('id', dragged.id);
         });
 
         rows.appendChild(row);
@@ -1187,13 +1516,15 @@
         if (e.target !== rows) return;
         e.preventDefault();
         if (!draggingId) return;
-        const newPos = nextPositionAtEnd(col.status, draggingId);
         const dragged = issues.find(i => i.id === draggingId);
         if (!dragged) return;
+        const groupItems = itemsInStatus(col.status, draggingId);
+        const { priority, position } = dropPlacement(groupItems, groupItems[groupItems.length - 1], null, dragged);
         dragged.status = col.status;
-        dragged.position = newPos;
+        dragged.position = position;
+        dragged.priority = priority;
         render();
-        await sb.from('issues').update({ status: col.status, position: newPos }).eq('id', draggingId);
+        await sb.from('issues').update({ status: col.status, position, priority }).eq('id', dragged.id);
       });
 
       wrap.appendChild(groupEl);
@@ -1228,7 +1559,7 @@
       }
       items.forEach(issue => {
         const card = document.createElement('div');
-        card.className = 'card';
+        card.className = 'card' + (selectedIds.has(issue.id) ? ' selected' : '') + (focusedId === issue.id ? ' focused' : '');
         card.draggable = true;
         card.dataset.id = issue.id;
         const upd = updatedInfo(issue);
@@ -1236,11 +1567,16 @@
           <div class="card-title">${escapeHtml(issue.title)}</div>
           ${(issue.long_term || isNew(issue)) ? `<div style="margin-bottom:8px; display:flex; gap:6px;">${newTagHtml(issue)}${longTermTagHtml(issue)}</div>` : ''}
           <div class="card-meta">
-            ${avatarHtml(issue.assignee)}
+            <div style="display:flex; align-items:center; gap:6px;">
+              ${prioButtonHtml(issue)}
+              ${avatarHtml(issue.assignee)}
+            </div>
             <span class="card-updated ${upd.cls}">${upd.text}</span>
           </div>
         `;
         card.addEventListener('click', () => openEditIssue(issue.id));
+        card.addEventListener('mousemove', () => { if (focusedId !== issue.id) setFocus(issue.id, false); });
+        wirePrioButton(card, issue);
         card.addEventListener('dragstart', () => card.classList.add('dragging'));
         card.addEventListener('dragend', () => card.classList.remove('dragging'));
         body.appendChild(card);
@@ -1286,6 +1622,7 @@
     document.getElementById('fStatus').value = status;
     document.getElementById('fAssignee').value = getWho() || '';
     document.getElementById('fLongTerm').checked = false;
+    document.getElementById('fPriority').value = '0';
     document.getElementById('btnDelete').style.display = 'none';
     document.getElementById('issueOverlay').classList.add('open');
   }
@@ -1301,6 +1638,7 @@
     document.getElementById('fStatus').value = issue.status;
     document.getElementById('fAssignee').value = issue.assignee || '';
     document.getElementById('fLongTerm').checked = !!issue.long_term;
+    document.getElementById('fPriority').value = String(prioOf(issue));
     document.getElementById('btnDelete').style.display = 'inline-block';
     document.getElementById('issueOverlay').classList.add('open');
   }
@@ -1319,6 +1657,7 @@
       status: document.getElementById('fStatus').value,
       assignee: document.getElementById('fAssignee').value || null,
       long_term: document.getElementById('fLongTerm').checked,
+      priority: Number(document.getElementById('fPriority').value),
     };
     if (editingId) {
       const prev = issues.find(i => i.id === editingId);
