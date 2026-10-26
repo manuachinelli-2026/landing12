@@ -1183,6 +1183,12 @@
       return;
     }
 
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && document.getElementById('issueOverlay').classList.contains('open')) {
+      e.preventDefault();
+      saveIssue();
+      return;
+    }
+
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (document.querySelector('.overlay.open')) return;
     if (e.target.matches('textarea, select, input:not([type="checkbox"])')) return;
@@ -1194,6 +1200,12 @@
       if (!focusedEl()) return;
       e.preventDefault();
       openEditIssue(focusedId);
+      return;
+    }
+    if (key === 'c') {
+      e.preventDefault();
+      const focused = focusedEl() && issues.find(i => i.id === focusedId);
+      openNewIssue(focused ? focused.status : 'backlog');
       return;
     }
     if (key === 'x') {
@@ -1625,6 +1637,7 @@
     document.getElementById('fPriority').value = '0';
     document.getElementById('btnDelete').style.display = 'none';
     document.getElementById('issueOverlay').classList.add('open');
+    document.getElementById('fTitle').focus();
   }
 
   function openEditIssue(id) {
