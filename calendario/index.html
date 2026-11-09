@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Calendario · 12·12</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream:      #F2EDE4;
+    --card:       #FFFFFF;
+    --black:      #5C4827;
+    --title:      #1E2D5A;
+    --terracotta: #C1654A;
+    --mustard:    #D4940A;
+    --green-dark: #1A4D2E;
+    --green-mid:  #4A5320;
+    --teal:       #1C3D35;
+    --rust:       #9B2F1F;
+    --burgundy:   #954535;
+    --nav-h:      56px;
+    --line:       #A89060;
+    --line-soft:  #D8CBAA;
+  }
+
+  html { overflow-x: hidden; }
+
+  body {
+    background: var(--cream);
+    color: var(--black);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── TOP NAV ─────────────────────────────────── */
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--cream);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--nav-h);
+    padding: 0 32px;
+    gap: 12px;
+  }
+
+  .nav-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--title);
+    white-space: nowrap;
+  }
+
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+
+  .nav-link {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--black);
+    border: 1px solid var(--line-soft);
+    padding: 6px 16px;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+  .nav-link:hover { background: var(--terracotta); color: var(--cream); border-color: var(--terracotta); }
+
+  .who-pill {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: var(--title);
+    color: var(--cream);
+    border: none;
+    padding: 7px 16px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .who-pill:hover { opacity: 0.85; }
+
+  /* ── TOOLBAR ─────────────────────────────────── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 20px 24px 0;
+  }
+
+  .filters { display: flex; border: 1px solid var(--line-soft); }
+  .filters button {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--black);
+    border: none;
+    padding: 7px 14px;
+    cursor: pointer;
+  }
+  .filters button + button { border-left: 1px solid var(--line-soft); }
+  .filters button.active { background: var(--terracotta); color: var(--cream); }
+  .filters button:not(.active):hover { background: rgba(193,101,74,0.12); }
+
+  .hint {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+    opacity: 0.6;
+  }
+
+  /* ── MONTHS ──────────────────────────────────── */
+  .months {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    padding: 18px 24px 24px;
+  }
+
+  .month {
+    background: rgba(255,255,255,0.35);
+    border: 1px solid var(--line-soft);
+    min-width: 0;
+  }
+
+  .month-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .month-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+    color: var(--title);
+  }
+  .month-year {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 2px;
+    opacity: 0.55;
+  }
+
+  .weekdays, .days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+  .weekdays div {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 6px 0;
+    opacity: 0.55;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .day {
+    min-height: 92px;
+    border-right: 1px solid var(--line-soft);
+    border-bottom: 1px solid var(--line-soft);
+    padding: 4px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    position: relative;
+    transition: background 0.12s;
+  }
+  .day:nth-child(7n) { border-right: none; }
+  .day:hover { background: rgba(193,101,74,0.07); }
+  .day.empty { background: rgba(168,144,96,0.06); cursor: default; }
+  .day.weekend:not(.empty) { background: rgba(168,144,96,0.05); }
+  .day.past .day-num { opacity: 0.4; }
+
+  .day-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1;
+    padding: 3px 4px;
+    align-self: flex-start;
+  }
+  .day.today .day-num { background: var(--terracotta); color: var(--cream); }
+  .day.party { background: rgba(212,148,10,0.14); }
+  .day.party .day-num::after { content: ' 💍'; }
+
+  .chip {
+    font-size: 11.5px;
+    line-height: 1.25;
+    padding: 2px 5px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    border-left: 3px solid rgba(0,0,0,0.18);
+  }
+  .chip:hover { filter: brightness(1.08); }
+  .chip .t { font-weight: 600; opacity: 0.9; margin-right: 3px; }
+  .chip.cont { opacity: 0.75; }
+  .more {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11.5px;
+    letter-spacing: 0.5px;
+    opacity: 0.7;
+    padding: 0 4px;
+  }
+
+  .c-terracotta { background: var(--terracotta); }
+  .c-title      { background: var(--title); }
+  .c-green      { background: var(--green-dark); }
+  .c-mustard    { background: var(--mustard); }
+  .c-burgundy   { background: var(--burgundy); }
+  .c-teal       { background: var(--teal); }
+
+  /* ── UPCOMING ────────────────────────────────── */
+  .upcoming { padding: 0 24px 60px; max-width: 760px; }
+  .upcoming h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--title);
+    margin-bottom: 10px;
+  }
+  .up-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: var(--card);
+    border: 1px solid var(--line-soft);
+    margin-bottom: 6px;
+    cursor: pointer;
+  }
+  .up-item:hover { border-color: var(--terracotta); }
+  .up-dot { width: 10px; height: 10px; flex-shrink: 0; }
+  .up-date {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    width: 190px;
+    flex-shrink: 0;
+  }
+  .up-title { flex: 1; min-width: 0; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .up-who { font-size: 13px; opacity: 0.7; white-space: nowrap; }
+  .up-empty { font-size: 14px; opacity: 0.6; }
+
+  /* ── MODAL ───────────────────────────────────── */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,20,10,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px;
+  }
+  .overlay.open { display: flex; }
+
+  .modal {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    width: 100%;
+    max-width: 480px;
+    max-height: 88vh;
+    overflow-y: auto;
+    padding: 28px;
+  }
+  .modal h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--title);
+    margin-bottom: 18px;
+  }
+
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 6px;
+  }
+  .field input, .field textarea, .field select {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--line-soft);
+    padding: 9px 10px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    color: var(--black);
+    resize: vertical;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus { outline: 1px solid var(--terracotta); border-color: var(--terracotta); }
+  .field-row { display: flex; gap: 12px; }
+  .field-row .field { flex: 1; min-width: 0; }
+
+  .swatches { display: flex; gap: 8px; }
+  .swatch {
+    width: 28px; height: 28px;
+    border: 2px solid transparent;
+    cursor: pointer;
+  }
+  .swatch.selected { outline: 2px solid var(--black); outline-offset: 2px; }
+
+  .modal-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 22px;
+    gap: 10px;
+  }
+  .modal-actions .right { display: flex; gap: 10px; margin-left: auto; }
+
+  .btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 2px solid transparent;
+    padding: 9px 20px;
+    cursor: pointer;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary { background: var(--terracotta); color: var(--cream); border-color: var(--terracotta); }
+  .btn-ghost { background: transparent; color: var(--black); border-color: var(--line-soft); }
+  .btn-danger { background: transparent; color: var(--rust); border-color: var(--rust); }
+
+  .meta { font-size: 12px; opacity: 0.55; margin-top: -6px; }
+
+  .who-modal .modal { max-width: 340px; text-align: center; }
+  .who-options { display: flex; gap: 10px; margin-top: 18px; }
+  .who-options button {
+    flex: 1;
+    padding: 16px 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border: 1px solid var(--line-soft);
+    background: var(--card);
+    color: var(--black);
+    cursor: pointer;
+  }
+  .who-options button:hover { background: var(--title); color: var(--cream); border-color: var(--title); }
+
+  /* ── RESPONSIVE ──────────────────────────────── */
+  @media (max-width: 1100px) {
+    .months { grid-template-columns: minmax(0, 1fr); max-width: 760px; }
+  }
+  @media (max-width: 640px) {
+    .topnav { padding: 0 16px; }
+    .nav-title { font-size: 18px; letter-spacing: 2px; }
+    .nav-link { padding: 6px 10px; }
+    .toolbar, .months, .upcoming { padding-left: 16px; padding-right: 16px; }
+    .hint { display: none; }
+    .day { min-height: 64px; padding: 2px; }
+    .chip { font-size: 10px; padding: 1px 3px; border-left-width: 2px; }
+    .chip .t { display: none; }
+    .up-item { flex-wrap: wrap; row-gap: 4px; }
+    .up-date { width: auto; }
+    .up-title { flex-basis: 100%; order: 3; white-space: normal; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="nav-title">Calendario · L12</div>
+  <div class="nav-right">
+    <a class="nav-link" href="/organizacion">Organización</a>
+    <button class="who-pill" id="whoPill" onclick="openWhoModal()">Sos: —</button>
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="filters" id="filters">
+    <button data-f="all" class="active">Todos</button>
+    <button data-f="Manu">🍺 Manu</button>
+    <button data-f="Flor">🍷 Flor</button>
+  </div>
+  <div class="hint">Tocá un día para crear un evento · <b>c</b> crea uno para hoy</div>
+</div>
+
+<div class="months" id="months"></div>
+
+<div class="upcoming">
+  <h3>Próximos eventos</h3>
+  <div id="upcomingList"></div>
+</div>
+
+<!-- Event modal -->
+<div class="overlay" id="eventOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">Nuevo evento</h2>
+    <div class="field">
+      <label for="fTitle">Título</label>
+      <input type="text" id="fTitle" placeholder="Ej: Prueba de vestido" autocomplete="off">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="fDate">Fecha</label>
+        <input type="date" id="fDate">
+      </div>
+      <div class="field">
+        <label for="fEndDate">Hasta (opcional)</label>
+        <input type="date" id="fEndDate">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="fTime">Hora (opcional)</label>
+        <input type="time" id="fTime">
+      </div>
+      <div class="field">
+        <label for="fWho">De quién</label>
+        <select id="fWho">
+          <option value="Ambos">Manu y Flor</option>
+          <option value="Manu">🍺 Manu</option>
+          <option value="Flor">🍷 Flor</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Color</label>
+      <div class="swatches" id="swatches"></div>
+    </div>
+    <div class="field">
+      <label for="fDesc">Notas</label>
+      <textarea id="fDesc" rows="3" placeholder="Dirección, links, lo que haga falta"></textarea>
+    </div>
+    <div class="meta" id="fMeta"></div>
+    <div class="modal-actions">
+      <button class="btn btn-danger" id="btnDelete" onclick="deleteEvent()">Eliminar</button>
+      <div class="right">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" id="btnSave" onclick="saveEvent()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Who am I modal (comparte la elección con /organizacion) -->
+<div class="overlay who-modal" id="whoOverlay">
+  <div class="modal">
+    <h2>¿Quién sos?</h2>
+    <div class="who-options">
+      <button onclick="setWho('Manu')">🍺 Manu</button>
+      <button onclick="setWho('Flor')">🍷 Flor</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://fmnabcmqdanlitzyoyma.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtbmFiY21xZGFubGl0enlveW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDY1NDAsImV4cCI6MjA2OTEyMjU0MH0.hdW4wn29xaHSM6npBWDXY0hRc6g85_r4lkA_eq8zXnU';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Los tres meses que se muestran: noviembre, diciembre y enero (mes 0-indexado)
+  const MONTHS_SHOWN = [[2026, 10], [2026, 11], [2027, 0]];
+  const PARTY_DAY = '2026-12-12';
+  const MONTH_NAMES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const WEEKDAYS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  const COLORS = ['terracotta', 'title', 'green', 'mustard', 'burgundy', 'teal'];
+  const MAX_CHIPS = 3;
+
+  let events = [];
+  let editingId = null;
+  let selectedColor = 'terracotta';
+  let filter = 'all';
+
+  // Las fechas se manejan como strings YYYY-MM-DD para no pelearse con husos horarios
+  const pad = n => String(n).padStart(2, '0');
+  const ymd = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`;
+  function todayStr() { const d = new Date(); return ymd(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function fmtShort(s) {
+    const [y, m, d] = s.split('-').map(Number);
+    const wd = WEEKDAYS[(new Date(y, m - 1, d).getDay() + 6) % 7];
+    return `${wd} ${d} ${MONTH_NAMES[m - 1].slice(0, 3)}`;
+  }
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const timeShort = t => t ? t.slice(0, 5) : '';
+
+  function whoEmoji(name) {
+    if (name === 'Manu') return '🍺 ';
+    if (name === 'Flor') return '🍷 ';
+    if (name === 'Ambos') return '🍺🍷 ';
+    return '';
+  }
+
+  function visibleEvents() {
+    if (filter === 'all') return events;
+    return events.filter(e => e.who === filter || e.who === 'Ambos' || !e.who);
+  }
+
+  function eventsOn(day) {
+    return visibleEvents()
+      .filter(e => e.date <= day && (e.end_date || e.date) >= day)
+      .sort((a, b) => (a.time || '99').localeCompare(b.time || '99') || a.title.localeCompare(b.title));
+  }
+
+  function renderMonths() {
+    const today = todayStr();
+    const html = MONTHS_SHOWN.map(([y, m]) => {
+      const first = new Date(y, m, 1);
+      const offset = (first.getDay() + 6) % 7; // semana arranca el lunes
+      const total = new Date(y, m + 1, 0).getDate();
+      let cells = '';
+      for (let i = 0; i < offset; i++) cells += '<div class="day empty"></div>';
+      for (let d = 1; d <= total; d++) {
+        const day = ymd(y, m, d);
+        const dow = (offset + d - 1) % 7;
+        const list = eventsOn(day);
+        const cls = ['day'];
+        if (dow >= 5) cls.push('weekend');
+        if (day === today) cls.push('today');
+        if (day < today) cls.push('past');
+        if (day === PARTY_DAY) cls.push('party');
+        const chips = list.slice(0, MAX_CHIPS).map(e => {
+          const cont = e.date !== day;
+          return `<div class="chip c-${e.color || 'terracotta'}${cont ? ' cont' : ''}" data-id="${e.id}" title="${esc(e.title)}">${!cont && e.time ? `<span class="t">${timeShort(e.time)}</span>` : ''}${esc(e.title)}</div>`;
+        }).join('');
+        const more = list.length > MAX_CHIPS ? `<div class="more">+${list.length - MAX_CHIPS} más</div>` : '';
+        cells += `<div class="${cls.join(' ')}" data-day="${day}"><div class="day-num">${d}</div>${chips}${more}</div>`;
+      }
+      const trailing = (7 - ((offset + total) % 7)) % 7;
+      for (let i = 0; i < trailing; i++) cells += '<div class="day empty"></div>';
+      return `
+        <section class="month">
+          <div class="month-head"><span class="month-name">${MONTH_NAMES[m]}</span><span class="month-year">${y}</span></div>
+          <div class="weekdays">${WEEKDAYS.map(w => `<div>${w}</div>`).join('')}</div>
+          <div class="days">${cells}</div>
+        </section>`;
+    }).join('');
+    document.getElementById('months').innerHTML = html;
+  }
+
+  function renderUpcoming() {
+    const today = todayStr();
+    const list = visibleEvents()
+      .filter(e => (e.end_date || e.date) >= today)
+      .sort((a, b) => a.date.localeCompare(b.date) || (a.time || '99').localeCompare(b.time || '99'))
+      .slice(0, 12);
+    document.getElementById('upcomingList').innerHTML = list.length
+      ? list.map(e => `
+        <div class="up-item" data-id="${e.id}">
+          <div class="up-dot c-${e.color || 'terracotta'}"></div>
+          <div class="up-date">${fmtShort(e.date)}${e.end_date && e.end_date !== e.date ? ' → ' + fmtShort(e.end_date) : ''}${e.time ? ' · ' + timeShort(e.time) : ''}</div>
+          <div class="up-title">${esc(e.title)}</div>
+          <div class="up-who">${whoEmoji(e.who)}</div>
+        </div>`).join('')
+      : '<div class="up-empty">No hay eventos próximos. Tocá un día del calendario para crear uno.</div>';
+  }
+
+  function render() { renderMonths(); renderUpcoming(); }
+
+  // ── Modal ─────────────────────────────────────
+  function renderSwatches() {
+    document.getElementById('swatches').innerHTML = COLORS
+      .map(c => `<div class="swatch c-${c}${c === selectedColor ? ' selected' : ''}" data-color="${c}"></div>`).join('');
+  }
+
+  function openModal(evt, day) {
+    editingId = evt ? evt.id : null;
+    document.getElementById('modalTitle').textContent = evt ? 'Editar evento' : 'Nuevo evento';
+    document.getElementById('fTitle').value = evt ? evt.title : '';
+    document.getElementById('fDate').value = evt ? evt.date : day;
+    document.getElementById('fEndDate').value = evt?.end_date || '';
+    document.getElementById('fTime').value = evt?.time ? timeShort(evt.time) : '';
+    document.getElementById('fWho').value = evt?.who || 'Ambos';
+    document.getElementById('fDesc').value = evt?.description || '';
+    document.getElementById('btnDelete').style.visibility = evt ? 'visible' : 'hidden';
+    document.getElementById('fMeta').textContent = evt?.created_by ? `Creado por ${evt.created_by}` : '';
+    selectedColor = evt?.color || 'terracotta';
+    renderSwatches();
+    document.getElementById('eventOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('fTitle').focus(), 30);
+  }
+
+  function closeModal() {
+    document.getElementById('eventOverlay').classList.remove('open');
+    editingId = null;
+  }
+
+  async function saveEvent() {
+    const title = document.getElementById('fTitle').value.trim();
+    const date = document.getElementById('fDate').value;
+    let endDate = document.getElementById('fEndDate').value || null;
+    if (!title) { document.getElementById('fTitle').focus(); return; }
+    if (!date) { document.getElementById('fDate').focus(); return; }
+    if (endDate && endDate <= date) endDate = null;
+    const payload = {
+      title,
+      date,
+      end_date: endDate,
+      time: document.getElementById('fTime').value || null,
+      who: document.getElementById('fWho').value,
+      color: selectedColor,
+      description: document.getElementById('fDesc').value.trim(),
+      updated_at: new Date().toISOString(),
+    };
+    const btn = document.getElementById('btnSave');
+    btn.disabled = true;
+    const { error } = editingId
+      ? await sb.from('calendar_events').update(payload).eq('id', editingId)
+      : await sb.from('calendar_events').insert({ ...payload, created_by: getWho() || null });
+    btn.disabled = false;
+    if (error) { alert('No se pudo guardar: ' + error.message); return; }
+    closeModal();
+    loadEvents();
+  }
+
+  async function deleteEvent() {
+    if (!editingId || !confirm('¿Eliminar este evento?')) return;
+    const { error } = await sb.from('calendar_events').delete().eq('id', editingId);
+    if (error) { alert('No se pudo eliminar: ' + error.message); return; }
+    closeModal();
+    loadEvents();
+  }
+
+  // ── Quién soy (misma clave que /organizacion) ─
+  function getWho() { return localStorage.getItem('org_who') || ''; }
+  function setWho(name) {
+    localStorage.setItem('org_who', name);
+    document.getElementById('whoPill').textContent = 'Sos: ' + whoEmoji(name) + name;
+    document.getElementById('whoOverlay').classList.remove('open');
+  }
+  function openWhoModal() { document.getElementById('whoOverlay').classList.add('open'); }
+  function initWho() {
+    const who = getWho();
+    if (who) document.getElementById('whoPill').textContent = 'Sos: ' + whoEmoji(who) + who;
+    else openWhoModal();
+  }
+
+  // ── Eventos de UI ─────────────────────────────
+  document.getElementById('months').addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if (chip) { openModal(events.find(x => x.id === chip.dataset.id)); return; }
+    const day = e.target.closest('.day:not(.empty)');
+    if (day) openModal(null, day.dataset.day);
+  });
+  document.getElementById('upcomingList').addEventListener('click', e => {
+    const item = e.target.closest('.up-item');
+    if (item) openModal(events.find(x => x.id === item.dataset.id));
+  });
+  document.getElementById('swatches').addEventListener('click', e => {
+    const sw = e.target.closest('.swatch');
+    if (!sw) return;
+    selectedColor = sw.dataset.color;
+    renderSwatches();
+  });
+  document.getElementById('filters').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    filter = b.dataset.f;
+    document.querySelectorAll('#filters button').forEach(x => x.classList.toggle('active', x === b));
+    render();
+  });
+  document.getElementById('eventOverlay').addEventListener('click', e => {
+    if (e.target.id === 'eventOverlay') closeModal();
+  });
+  document.addEventListener('keydown', e => {
+    const modalOpen = document.getElementById('eventOverlay').classList.contains('open');
+    if (e.key === 'Escape') {
+      if (modalOpen) closeModal();
+      else if (getWho()) document.getElementById('whoOverlay').classList.remove('open');
+      return;
+    }
+    if (modalOpen && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); saveEvent(); return; }
+    if (modalOpen && e.key === 'Enter' && e.target.id === 'fTitle') { e.preventDefault(); saveEvent(); return; }
+    const typing = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName);
+    if (!modalOpen && !typing && e.key === 'c' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      e.preventDefault();
+      openModal(null, todayStr());
+    }
+  });
+
+  async function loadEvents() {
+    const { data, error } = await sb.from('calendar_events').select('*').order('date', { ascending: true });
+    if (error) { console.error(error); return; }
+    events = data;
+    render();
+  }
+
+  // Si el otro crea o cambia algo, se actualiza solo
+  sb.channel('calendar-events-realtime')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'calendar_events' }, () => loadEvents())
+    .subscribe();
+
+  render();
+  initWho();
+  loadEvents();
+</script>
+
+</body>
+</html>
