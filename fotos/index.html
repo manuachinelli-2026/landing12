@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F2EDE4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Fotos · 12·12</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  /* Layout: single mobile column, Bauhaus color blocks from the 12·12 site, fixed bottom tab bar. Single light look by choice (matches the wedding site). */
+  :root {
+    --cream: #F2EDE4;
+    --paper: #FBF8F2;
+    --ink: #5C4827;
+    --title: #1E2D5A;
+    --terracotta: #C1654A;
+    --rust: #9B2F1F;
+    --mustard: #D4940A;
+    --green: #1A4D2E;
+    --teal: #1C3D35;
+    --line: #A89060;
+    --shadow: #8B5E3C;
+    --display: 'Bebas Neue', 'Arial Narrow', Impact, sans-serif;
+    --cond: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+    --body: 'Barlow', system-ui, sans-serif;
+    --tab-h: 72px;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  :root { padding-top: env(safe-area-inset-top, 0px); }
+  [hidden] { display: none !important; }
+  img { max-width: 100%; }
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--body);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100%;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 0 calc(var(--tab-h) + 24px + env(safe-area-inset-bottom, 0px));
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--terracotta); outline-offset: 2px; }
+
+  .label {
+    font-family: var(--cond); font-weight: 300; font-size: 11px;
+    letter-spacing: 5px; text-transform: uppercase;
+  }
+
+  /* ── Header ── */
+  header.top {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+    background: var(--cream);
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+    margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+    padding-inline: max(16px, env(safe-area-inset-left, 0px));
+  }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--cream); }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .mark { display: grid; grid-template-columns: repeat(2, 12px); grid-template-rows: repeat(2, 12px); }
+  .mark i:nth-child(1) { background: #8B4513 } .mark i:nth-child(2) { background: var(--mustard) }
+  .mark i:nth-child(3) { background: var(--green) } .mark i:nth-child(4) { background: var(--teal) }
+  .brand b { font-family: var(--cond); font-weight: 600; font-size: 15px; letter-spacing: 3px; }
+  .me {
+    font-family: var(--cond); font-weight: 700; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+    background: var(--ink); color: var(--cream); border: 0; padding: 6px 12px;
+  }
+
+  /* ── Hero ── */
+  .hero { padding: 28px 0 8px; display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: end; }
+  .hero h1 { font-family: var(--display); font-weight: 400; color: var(--title); font-size: 64px; line-height: .88; letter-spacing: 2px; margin: 6px 0 0; }
+  .hero .date { font-family: var(--display); color: var(--terracotta); font-size: 44px; line-height: 1; text-align: right; }
+  .hero .date small { display: block; font-family: var(--cond); font-weight: 300; font-size: 10px; letter-spacing: 3px; color: var(--ink); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 3px solid var(--ink); border-bottom: 1px solid var(--line); margin-top: 20px; }
+  .stats div { padding: 10px 0 12px; display: flex; flex-direction: column; gap: 2px; }
+  .stats div + div { border-left: 1px solid var(--line); padding-left: 12px; }
+  .stats strong { font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1; color: var(--title); font-variant-numeric: tabular-nums; }
+
+  /* ── Views ── */
+  .view[hidden] { display: none !important; }
+  .section-head { display: flex; justify-content: space-between; align-items: baseline; margin: 28px 0 14px; }
+  .section-head h2 { font-family: var(--display); font-weight: 400; font-size: 36px; letter-spacing: 2px; color: var(--title); margin: 0; }
+
+  /* Feed: polaroids */
+  .feed { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 14px; }
+  .pola {
+    background: var(--paper); padding: 8px 8px 0; position: relative;
+    box-shadow: 6px 6px 0 rgba(139, 94, 60, .35);
+    border: 0; text-align: left; display: flex; flex-direction: column;
+  }
+  .pola:nth-child(4n+1) { transform: rotate(-1.2deg) } .pola:nth-child(4n+2) { transform: rotate(1deg) }
+  .pola:nth-child(4n+3) { transform: rotate(.6deg) } .pola:nth-child(4n) { transform: rotate(-.8deg) }
+  .pola .ph { position: relative; aspect-ratio: 4/5; overflow: hidden; background: var(--shadow); max-width: 100%; }
+  .pola img, .pola canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vintage img { filter: sepia(.38) saturate(.82) contrast(1.08) brightness(1.04) hue-rotate(-6deg); }
+  .vintage .ph::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(60, 35, 15, .45) 100%);
+    mix-blend-mode: multiply;
+  }
+  .stamp { position: absolute; right: 6px; bottom: 6px; font-family: var(--cond); font-weight: 700; font-size: 10px; letter-spacing: 1px; color: #F6A33A; text-shadow: 0 0 4px rgba(255, 120, 0, .6); }
+  .pola figcaption { display: flex; justify-content: space-between; align-items: center; padding: 8px 2px 10px; gap: 6px; }
+  .pola .who { font-family: var(--cond); font-weight: 600; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .like {
+    border: 0; background: none; padding: 2px 0; display: flex; align-items: center; gap: 4px;
+    font-family: var(--cond); font-weight: 700; font-size: 13px; color: var(--ink); font-variant-numeric: tabular-nums;
+  }
+  .like svg { width: 16px; height: 16px; }
+  .like[aria-pressed="true"] { color: var(--terracotta); }
+  .like[aria-pressed="true"] path { fill: var(--terracotta); }
+  .pola.new { animation: drop .5s ease-out; }
+  @keyframes drop { from { transform: translateY(-14px) rotate(-4deg); opacity: .2 } }
+
+  /* Ranking */
+  .tabs { display: grid; grid-template-columns: 1fr 1fr; border: 2px solid var(--ink); margin-bottom: 18px; }
+  .tabs button { border: 0; background: transparent; padding: 10px; font-family: var(--cond); font-weight: 700; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; }
+  .tabs button[aria-selected="true"] { background: var(--ink); color: var(--cream); }
+  .podium { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: end; gap: 8px; margin-bottom: 18px; }
+  .pod { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; }
+  .pod .nm { font-family: var(--cond); font-weight: 700; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+  .pod .block { width: 100%; position: relative; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; color: #FBF8F2; font-family: var(--display); font-size: 40px; line-height: 1; }
+  .pod .block::before { content: ""; position: absolute; inset: 0; background: var(--shadow); opacity: .5; transform: translate(7px, 7px); z-index: -1; }
+  .pod .ct { font-family: var(--cond); font-weight: 600; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+  .p1 .block { height: 120px; background: var(--terracotta); }
+  .p2 .block { height: 88px; background: var(--green); }
+  .p3 .block { height: 66px; background: var(--mustard); }
+  .rank-list { list-style: none; margin: 0; padding: 0; border-top: 3px solid var(--ink); }
+  .rank-list li { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .rank-list .pos { font-family: var(--display); font-size: 24px; color: var(--title); font-variant-numeric: tabular-nums; }
+  .rank-list .nm { font-family: var(--cond); font-weight: 600; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rank-list .nm em { font-style: normal; font-size: 10px; letter-spacing: 2px; background: var(--terracotta); color: #FBF8F2; padding: 2px 6px; margin-left: 6px; vertical-align: 2px; }
+  .rank-list .bar { grid-column: 2 / 4; height: 4px; background: rgba(168, 144, 96, .25); margin-top: -4px; }
+  .rank-list .bar i { display: block; height: 100%; background: var(--terracotta); }
+  .rank-list .n { font-family: var(--display); font-size: 24px; font-variant-numeric: tabular-nums; }
+  .prize { margin-top: 20px; background: var(--teal); color: var(--cream); padding: 16px; display: flex; gap: 12px; align-items: center; }
+  .prize p { margin: 0; font-family: var(--cond); font-size: 15px; line-height: 1.4; }
+  .prize strong { font-family: var(--display); font-weight: 400; font-size: 22px; letter-spacing: 1px; display: block; color: var(--mustard); }
+
+  /* ── Bottom tab bar ── */
+  nav.bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    background: var(--cream); border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  nav.bar .in { max-width: 480px; margin: 0 auto; height: var(--tab-h); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+  .navbtn { border: 0; background: none; display: flex; flex-direction: column; align-items: center; gap: 4px; font-family: var(--cond); font-weight: 600; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; padding: 8px; }
+  .navbtn svg { width: 22px; height: 22px; }
+  .navbtn[aria-current="page"] { color: var(--terracotta); }
+  .shoot {
+    width: 72px; height: 72px; margin-top: -30px; border: 0; position: relative;
+    background: var(--terracotta); color: #FBF8F2; display: grid; place-items: center;
+    box-shadow: 7px 7px 0 rgba(139, 94, 60, .55);
+  }
+  .shoot:active { transform: translate(3px, 3px); box-shadow: 4px 4px 0 rgba(139, 94, 60, .55); }
+  .shoot svg { width: 30px; height: 30px; }
+  .shoot span { position: absolute; bottom: -18px; font-family: var(--cond); font-weight: 700; font-size: 10px; letter-spacing: 2px; color: var(--ink); white-space: nowrap; }
+
+  /* ── Welcome / name gate ── */
+  .gate {
+    position: fixed; inset: 0; z-index: 60; background: var(--cream); overflow-y: auto;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 32px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 32px);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .gate .in { max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; }
+  .cubes { display: grid; grid-template-columns: repeat(4, 44px); gap: 0; }
+  .cubes i { width: 44px; height: 44px; position: relative; }
+  .cubes i b { position: absolute; inset: 5px; z-index: 2; animation: float 1.2s ease-in-out infinite; }
+  .cubes i s { position: absolute; inset: 5px; background: var(--shadow); opacity: .55; transform: translate(7px, 7px); }
+  @keyframes float { 50% { transform: translateY(-4px) scale(1.03) } }
+  .gate h1 { font-family: var(--display); font-weight: 400; color: var(--title); font-size: 76px; line-height: .88; letter-spacing: 2px; margin: 0; }
+  .gate p { margin: 0; font-family: var(--cond); font-size: 17px; line-height: 1.5; max-width: 32ch; }
+  .gate form { width: 100%; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+  .gate input {
+    width: 100%; padding: 14px; border: 2px solid var(--ink); background: var(--paper); color: var(--ink);
+    font-family: var(--cond); font-weight: 600; font-size: 20px; letter-spacing: 1px; border-radius: 0;
+  }
+  .gate .err { color: var(--rust); font-family: var(--cond); font-size: 14px; min-height: 18px; }
+  .btn {
+    border: 2px solid var(--ink); background: var(--ink); color: var(--cream); padding: 15px 20px;
+    font-family: var(--cond); font-weight: 700; font-size: 14px; letter-spacing: 5px; text-transform: uppercase;
+  }
+  .btn.alt { background: var(--terracotta); border-color: var(--terracotta); }
+  .btn.ghost { background: transparent; color: var(--ink); }
+
+  /* ── Preview sheet after taking a photo ── */
+  .sheet { position: fixed; inset: 0; z-index: 70; background: rgba(30, 22, 12, .72); display: flex; align-items: flex-end; }
+  .sheet .in {
+    width: 100%; max-width: 480px; margin: 0 auto; background: var(--cream);
+    padding: 18px max(16px, env(safe-area-inset-right, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .sheet .pola { transform: rotate(-1deg); align-self: center; width: min(78%, 320px); }
+  .sheet .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .toast {
+    position: fixed; left: 50%; transform: translateX(-50%); z-index: 80;
+    bottom: calc(var(--tab-h) + 26px + env(safe-area-inset-bottom, 0px));
+    background: var(--green); color: var(--cream); padding: 10px 16px;
+    font-family: var(--cond); font-weight: 600; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; white-space: nowrap;
+  }
+  .mock { margin-top: 28px; text-align: center; font-family: var(--cond); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; opacity: .7; }
+  @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="gate" id="gate" hidden>
+  <div class="in">
+    <div class="cubes" id="cubes" aria-hidden="true"></div>
+    <span class="label">Las Marianas · 12·12·2026</span>
+    <h1>FOTOS DEL<br>CASAMIENTO</h1>
+    <p>Sacá fotos durante la fiesta. Todas salen con el filtro de la noche y aparecen al instante para todos.</p>
+    <form id="nameForm" novalidate>
+      <label class="label" for="nameInput">¿Cómo te llamás?</label>
+      <input id="nameInput" autocomplete="given-name" maxlength="24" placeholder="Ej: Tía Marta">
+      <div class="err" id="nameErr" role="alert"></div>
+      <button class="btn alt" type="submit">Entrar a la fiesta</button>
+    </form>
+  </div>
+</div>
+
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><b>12·12</b></div>
+    <button class="me" id="meBtn" type="button" aria-label="Cambiar nombre"></button>
+  </header>
+
+  <section class="view" id="view-feed">
+    <div class="hero">
+      <div><span class="label">Galería en vivo</span><h1>LA NOCHE</h1></div>
+      <div class="date">12·12<small>Diciembre 2026</small></div>
+    </div>
+    <div class="stats">
+      <div><strong id="stPhotos">0</strong><span class="label">Fotos</span></div>
+      <div><strong id="stGuests">0</strong><span class="label">Fotógrafos</span></div>
+      <div><strong id="stMine">0</strong><span class="label">Tuyas</span></div>
+    </div>
+    <div class="section-head"><h2>ÚLTIMAS</h2><span class="label">Tocá ♥ para votar</span></div>
+    <div class="feed" id="feed"></div>
+    <p class="mock">Datos de ejemplo · versión de prueba</p>
+  </section>
+
+  <section class="view" id="view-rank" hidden>
+    <div class="section-head" style="margin-top:28px"><h2>RANKING</h2><span class="label">En vivo</span></div>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tabCount" aria-selected="true" type="button">Más fotos</button>
+      <button role="tab" id="tabLikes" aria-selected="false" type="button">Más ♥</button>
+    </div>
+    <div class="podium" id="podium"></div>
+    <ol class="rank-list" id="rankList"></ol>
+    <div class="prize">
+      <div class="cubes" aria-hidden="true" style="grid-template-columns:repeat(2,20px)"><i style="width:20px;height:20px;background:var(--mustard)"></i><i style="width:20px;height:20px;background:var(--terracotta)"></i><i style="width:20px;height:20px;background:var(--cream)"></i><i style="width:20px;height:20px;background:var(--green)"></i></div>
+      <p><strong>PREMIO A LAS 4 AM</strong>El que más fotos subió se lleva una botella. La foto con más ♥ va al álbum.</p>
+    </div>
+  </section>
+</div>
+
+<nav class="bar" aria-label="Secciones">
+  <div class="in">
+    <button class="navbtn" id="navFeed" type="button" aria-current="page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Fotos
+    </button>
+    <button class="shoot" id="shootBtn" type="button" aria-label="Sacar foto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+      <span>SACAR FOTO</span>
+    </button>
+    <button class="navbtn" id="navRank" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="12" width="5" height="9"/><rect x="9.5" y="5" width="5" height="16"/><rect x="16" y="9" width="5" height="12"/></svg>
+      Ranking
+    </button>
+  </div>
+</nav>
+<input type="file" id="fileInput" accept="image/*" capture="environment" hidden>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="in">
+    <span class="label" style="text-align:center">Así queda tu foto</span>
+    <figure class="pola" style="margin:0"><div class="ph" id="previewWrap"></div><figcaption><span class="who" id="previewWho"></span><span class="label" style="letter-spacing:2px">12·12·26</span></figcaption></figure>
+    <div class="row">
+      <button class="btn ghost" id="retake" type="button">Otra</button>
+      <button class="btn alt" id="upload" type="button">Subir</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(() => {
+  const HEART = '<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+  };
+
+  // Mock data — fictional guests for the prototype
+  const GUESTS = ['Tía Marta', 'Juampi', 'Flor', 'Nico R.', 'Abuela Rosa', 'Lucho', 'Cami', 'Sofi', 'Tomi', 'Pato'];
+  const BASE_COUNTS = { 'Juampi': 23, 'Tía Marta': 19, 'Flor': 17, 'Cami': 12, 'Nico R.': 9, 'Lucho': 7, 'Sofi': 6, 'Abuela Rosa': 4, 'Tomi': 3, 'Pato': 2 };
+  const BASE_LIKES = { 'Flor': 41, 'Juampi': 33, 'Abuela Rosa': 29, 'Tía Marta': 22, 'Cami': 18, 'Sofi': 15, 'Lucho': 9, 'Nico R.': 7, 'Tomi': 4, 'Pato': 1 };
+  const IMGS = ['dc02','fh01','pb01','dc08','fm01','dc04','fh03','pb03','dc10','fm04','dc12','fmix'];
+  const STAMPS = ["'26 12 12 23:41", "'26 12 12 23:38", "'26 12 12 23:30", "'26 12 12 23:22", "'26 12 12 23:15", "'26 12 12 23:02", "'26 12 12 22:55", "'26 12 12 22:47", "'26 12 12 22:31", "'26 12 12 22:20", "'26 12 12 22:04", "'26 12 12 21:48"];
+  const photos = IMGS.map((id, i) => ({
+    id: 'm' + i, src: '../images/' + id + '.jpg', who: GUESTS[[1,0,2,1,3,4,2,0,5,6,7,1][i]],
+    likes: [12, 8, 21, 5, 9, 14, 6, 3, 11, 4, 7, 2][i], liked: false, stamp: STAMPS[i],
+  }));
+  const mine = { count: 0, likes: 0 };
+  let me = store.get('fotos12-name');
+  let rankMode = 'count';
+
+  const $ = id => document.getElementById(id);
+
+  // ── Gate cubes, same pattern language as the site ──
+  const COLORS = ['#8B4513','#C1654A','#9B2F1F','#D4940A','#4A5320','#1A4D2E','#1C3D35','#2C3A47'];
+  const PATTERN = [0,1,null,3, null,2,4,null, 5,null,6,1];
+  PATTERN.forEach((c, i) => {
+    const cell = document.createElement('i');
+    if (c !== null) cell.innerHTML = `<s></s><b style="background:${COLORS[c]};animation-delay:${(i*0.11)%1}s"></b>`;
+    $('cubes').appendChild(cell);
+  });
+
+  function showGate(show) {
+    $('gate').hidden = !show;
+    if (show) { $('nameInput').value = me || ''; setTimeout(() => $('nameInput').focus(), 50); }
+  }
+  $('nameForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const v = $('nameInput').value.trim().replace(/\s+/g, ' ');
+    if (v.length < 2) { $('nameErr').textContent = 'Escribí tu nombre para que sepan de quién es cada foto.'; return; }
+    if (GUESTS.some(g => g.toLowerCase() === v.toLowerCase())) { $('nameErr').textContent = `Ya hay un "${v}". Sumá tu apellido o un apodo.`; return; }
+    $('nameErr').textContent = '';
+    me = v; store.set('fotos12-name', v);
+    showGate(false); render();
+  });
+  $('meBtn').addEventListener('click', () => showGate(true));
+
+  // ── Navigation ──
+  function go(view) {
+    $('view-feed').hidden = view !== 'feed';
+    $('view-rank').hidden = view !== 'rank';
+    $('navFeed').toggleAttribute('aria-current', view === 'feed');
+    $('navRank').toggleAttribute('aria-current', view === 'rank');
+    if (view === 'feed') $('navFeed').setAttribute('aria-current', 'page');
+    if (view === 'rank') $('navRank').setAttribute('aria-current', 'page');
+    window.scrollTo(0, 0);
+  }
+  $('navFeed').addEventListener('click', () => go('feed'));
+  $('navRank').addEventListener('click', () => go('rank'));
+  $('tabCount').addEventListener('click', () => { rankMode = 'count'; renderRank(); });
+  $('tabLikes').addEventListener('click', () => { rankMode = 'likes'; renderRank(); });
+
+  // ── Feed ──
+  function polaroid(p, isNew) {
+    const fig = document.createElement('figure');
+    fig.className = 'pola' + (p.canvas ? '' : ' vintage') + (isNew ? ' new' : '');
+    fig.style.margin = '0';
+    const ph = document.createElement('div'); ph.className = 'ph';
+    if (p.canvas) ph.appendChild(p.canvas);
+    else { const img = new Image(); img.src = p.src; img.alt = 'Foto de ' + p.who; img.loading = 'lazy'; ph.appendChild(img); }
+    const st = document.createElement('span'); st.className = 'stamp'; st.textContent = p.stamp; ph.appendChild(st);
+    const cap = document.createElement('figcaption');
+    cap.innerHTML = `<span class="who"></span><button class="like" type="button" aria-pressed="${p.liked}">${HEART}<span></span></button>`;
+    cap.querySelector('.who').textContent = p.who;
+    cap.querySelector('.like span').textContent = p.likes;
+    cap.querySelector('.like').addEventListener('click', ev => {
+      p.liked = !p.liked; p.likes += p.liked ? 1 : -1;
+      ev.currentTarget.setAttribute('aria-pressed', p.liked);
+      ev.currentTarget.querySelector('span').textContent = p.likes;
+    });
+    fig.append(ph, cap);
+    return fig;
+  }
+  function renderFeed(newId) {
+    const feed = $('feed'); feed.innerHTML = '';
+    photos.forEach(p => feed.appendChild(polaroid(p, p.id === newId)));
+  }
+
+  // ── Ranking ──
+  function rows() {
+    const src = rankMode === 'count' ? BASE_COUNTS : BASE_LIKES;
+    const list = Object.entries(src).map(([name, n]) => ({ name, n }));
+    if (me) list.push({ name: me, n: rankMode === 'count' ? mine.count : mine.likes, me: true });
+    return list.sort((a, b) => b.n - a.n);
+  }
+  function renderRank() {
+    $('tabCount').setAttribute('aria-selected', rankMode === 'count');
+    $('tabLikes').setAttribute('aria-selected', rankMode === 'likes');
+    const r = rows(), unit = rankMode === 'count' ? 'fotos' : '♥';
+    const order = [r[1], r[0], r[2]], cls = ['p2', 'p1', 'p3'], pos = [2, 1, 3];
+    $('podium').innerHTML = '';
+    order.forEach((x, i) => {
+      const d = document.createElement('div'); d.className = 'pod ' + cls[i];
+      d.innerHTML = `<span class="nm"></span><span class="ct">${x.n} ${unit}</span><div class="block">${pos[i]}</div>`;
+      d.querySelector('.nm').textContent = x.name;
+      $('podium').appendChild(d);
+    });
+    const max = r[0].n || 1;
+    $('rankList').innerHTML = '';
+    r.slice(3).forEach((x, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="pos">${i + 4}</span><span class="nm"></span><span class="n">${x.n}</span><span class="bar"><i style="width:${Math.max(2, x.n / max * 100)}%"></i></span>`;
+      li.querySelector('.nm').textContent = x.name;
+      if (x.me) li.querySelector('.nm').insertAdjacentHTML('beforeend', '<em>VOS</em>');
+      $('rankList').appendChild(li);
+    });
+    // highlight "me" if on podium
+    if (me) r.slice(0, 3).forEach((x, i) => { if (x.me) $('podium').children[[1,0,2][i]].querySelector('.nm').insertAdjacentHTML('beforeend', ' ★'); });
+  }
+
+  function renderStats() {
+    const total = Object.values(BASE_COUNTS).reduce((a, b) => a + b, 0) + mine.count;
+    $('stPhotos').textContent = total;
+    $('stGuests').textContent = GUESTS.length + (mine.count ? 1 : 0);
+    $('stMine').textContent = mine.count;
+    $('meBtn').textContent = me ? me : 'Entrar';
+  }
+  function render(newId) { renderFeed(newId); renderRank(); renderStats(); }
+
+  // ── Camera + vintage filter (real, runs on the phone) ──
+  let pending = null;
+  $('shootBtn').addEventListener('click', () => { if (!me) { showGate(true); return; } $('fileInput').click(); });
+  $('fileInput').addEventListener('change', async e => {
+    const f = e.target.files && e.target.files[0]; e.target.value = '';
+    if (!f) return;
+    try {
+      const bmp = await loadImage(f);
+      pending = vintage(bmp);
+      $('previewWrap').innerHTML = ''; $('previewWrap').appendChild(pending);
+      $('previewWho').textContent = me;
+      $('sheet').hidden = false;
+    } catch { toast('No se pudo abrir la foto. Probá con otra.'); }
+  });
+  $('retake').addEventListener('click', () => { $('sheet').hidden = true; $('fileInput').click(); });
+  $('upload').addEventListener('click', () => {
+    const now = new Date();
+    const p = { id: 'u' + Date.now(), canvas: pending, who: me, likes: 0, liked: false,
+      stamp: "'26 12 12 " + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') };
+    photos.unshift(p); mine.count++;
+    $('sheet').hidden = true; go('feed'); render(p.id);
+    const pos = rows().findIndex(x => x.me) + 1;
+    toast(`Subida · vas ${pos}º en el ranking`);
+  });
+
+  function loadImage(file) {
+    return new Promise((res, rej) => {
+      const url = URL.createObjectURL(file); const img = new Image();
+      img.onload = () => { res(img); }; img.onerror = rej; img.src = url;
+    });
+  }
+  function vintage(img) {
+    const MAX = 1400, s = Math.min(1, MAX / Math.max(img.naturalWidth, img.naturalHeight));
+    const w = Math.round(img.naturalWidth * s), h = Math.round(img.naturalHeight * s);
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const ctx = c.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
+    const d = ctx.getImageData(0, 0, w, h), px = d.data, cx = w / 2, cy = h / 2, maxD = Math.hypot(cx, cy);
+    for (let i = 0, y = 0; y < h; y++) for (let x = 0; x < w; x++, i += 4) {
+      let r = px[i], g = px[i + 1], b = px[i + 2];
+      // fade + warm tone + slight sepia
+      const sr = r * .393 + g * .769 + b * .189, sg = r * .349 + g * .686 + b * .168, sb = r * .272 + g * .534 + b * .131;
+      r = r * .62 + sr * .38; g = g * .62 + sg * .38; b = b * .62 + sb * .38;
+      r = r * 1.06 + 12; g = g * 1.0 + 6; b = b * .86 + 18; // lift blacks, warm highlights
+      const v = 1 - Math.pow(Math.hypot(x - cx, y - cy) / maxD, 2.2) * .55; // vignette
+      const n = (Math.random() - .5) * 22; // grain
+      px[i] = r * v + n; px[i + 1] = g * v + n; px[i + 2] = b * v + n;
+    }
+    ctx.putImageData(d, 0, 0);
+    return c;
+  }
+
+  let tt;
+  function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => t.hidden = true, 2600); }
+
+  render();
+  if (!me) showGate(true);
+})();
+</script>
+</body>
+</html>
