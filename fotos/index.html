@@ -215,6 +215,45 @@
     font-family: var(--cond); font-weight: 600; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; white-space: nowrap;
   }
   .mock { margin-top: 28px; text-align: center; font-family: var(--cond); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; opacity: .7; }
+  /* ── Live camera ── */
+  .cam {
+    position: fixed; inset: 0; z-index: 65; background: #1A140C; color: #F2EDE4;
+    display: grid; grid-template-rows: auto 1fr auto;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .cam-top, .cam-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .cam-top { height: 60px; }
+  .cam-bottom { height: 120px; }
+  .cam-tag { font-family: var(--cond); font-weight: 700; font-size: 12px; letter-spacing: 4px; color: var(--mustard); }
+  .cam-icon { width: 46px; height: 46px; border: 0; background: rgba(242, 237, 228, .12); color: #F2EDE4; display: grid; place-items: center; }
+  span.cam-icon { background: transparent; }
+  .cam-icon svg { width: 22px; height: 22px; }
+  .viewfinder { position: relative; overflow: hidden; background: #000; min-height: 0; }
+  .viewfinder video {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    filter: sepia(.4) saturate(.8) contrast(.92) brightness(1.06);
+  }
+  .viewfinder video.mirror { transform: scaleX(-1); }
+  .vf-warm { position: absolute; inset: 0; background: rgba(255, 170, 90, .14); mix-blend-mode: soft-light; pointer-events: none; }
+  .vf-vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 50%, rgba(40, 22, 8, .62) 100%); }
+  .vf-grain {
+    position: absolute; inset: -50%; pointer-events: none; opacity: .22; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain .5s steps(4) infinite;
+  }
+  @keyframes grain { 0% { transform: translate(0, 0) } 25% { transform: translate(-6%, 4%) } 50% { transform: translate(5%, -7%) } 75% { transform: translate(-3%, -4%) } }
+  .vf-stamp { position: absolute; right: 14px; bottom: 12px; font-family: var(--cond); font-weight: 700; font-size: 16px; letter-spacing: 1px; color: #F6A33A; text-shadow: 0 0 6px rgba(255, 120, 0, .7); }
+  .cam-msg { position: absolute; inset: auto 16px 50%; margin: 0; transform: translateY(50%); text-align: center; font-family: var(--cond); font-size: 17px; line-height: 1.4; background: rgba(26, 20, 12, .8); padding: 14px; }
+  .shutter { width: 78px; height: 78px; border-radius: 50%; border: 4px solid #F2EDE4; background: transparent; padding: 5px; }
+  .shutter span { display: block; width: 100%; height: 100%; border-radius: 50%; background: var(--terracotta); transition: transform .1s; }
+  .shutter:active span { transform: scale(.88); }
+  .cam.flash .viewfinder::after { content: ""; position: absolute; inset: 0; background: #FFF6E6; animation: flash .35s ease-out forwards; }
+  @keyframes flash { from { opacity: .9 } to { opacity: 0 } }
   @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } }
 </style>
 </head>
@@ -287,7 +326,34 @@
     </button>
   </div>
 </nav>
-<input type="file" id="fileInput" accept="image/*" capture="environment" hidden>
+<input type="file" id="fileInput" accept="image/*" hidden>
+
+<div class="cam" id="cam" hidden>
+  <div class="cam-top">
+    <button class="cam-icon" id="camClose" type="button" aria-label="Cerrar cámara">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <span class="cam-tag">FILTRO 12·12</span>
+    <button class="cam-icon" id="camFlip" type="button" aria-label="Cambiar cámara">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9a8 8 0 0 1 14-3l2 2M20 15a8 8 0 0 1-14 3l-2-2"/><path d="M20 4v4h-4M4 20v-4h4"/></svg>
+    </button>
+  </div>
+  <div class="viewfinder">
+    <video id="camVideo" playsinline muted autoplay></video>
+    <div class="vf-warm" aria-hidden="true"></div>
+    <div class="vf-grain" aria-hidden="true"></div>
+    <div class="vf-vignette" aria-hidden="true"></div>
+    <span class="vf-stamp" id="vfStamp" aria-hidden="true"></span>
+    <p class="cam-msg" id="camMsg" hidden></p>
+  </div>
+  <div class="cam-bottom">
+    <button class="cam-icon" id="camGallery" type="button" aria-label="Elegir de la galería">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5-5-9 8"/></svg>
+    </button>
+    <button class="shutter" id="camShutter" type="button" aria-label="Sacar foto"><span></span></button>
+    <span class="cam-icon" aria-hidden="true"></span>
+  </div>
+</div>
 
 <div class="sheet" id="sheet" hidden>
   <div class="in">
@@ -433,19 +499,64 @@
 
   // ── Camera + vintage filter (real, runs on the phone) ──
   let pending = null;
-  $('shootBtn').addEventListener('click', () => { if (!me) { showGate(true); return; } $('fileInput').click(); });
+  // Live camera: the preview already shows the vintage look; the shot gets the same filter on canvas.
+  let stream = null, facing = 'environment';
+  const video = $('camVideo');
+  async function startCam() {
+    stopCam();
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: facing }, width: { ideal: 1920 }, height: { ideal: 1440 } }, audio: false,
+      });
+      video.srcObject = stream;
+      video.classList.toggle('mirror', facing === 'user');
+      await video.play();
+      $('camMsg').hidden = true;
+    } catch (err) {
+      $('camMsg').hidden = false;
+      $('camMsg').textContent = err && err.name === 'NotAllowedError'
+        ? 'Necesitamos permiso para usar la cámara. Activalo en los ajustes del navegador o elegí una foto de la galería.'
+        : 'No pudimos abrir la cámara. Elegí una foto de la galería.';
+    }
+  }
+  function stopCam() { if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; } }
+  function openCam() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { $('fileInput').click(); return; }
+    $('cam').hidden = false; document.body.style.overflow = 'hidden'; startCam();
+  }
+  function closeCam() { stopCam(); $('cam').hidden = true; document.body.style.overflow = ''; }
+  $('camClose').addEventListener('click', closeCam);
+  $('camFlip').addEventListener('click', () => { facing = facing === 'user' ? 'environment' : 'user'; startCam(); });
+  $('camGallery').addEventListener('click', () => { $('fileInput').removeAttribute('capture'); $('fileInput').click(); });
+  $('camShutter').addEventListener('click', () => {
+    if (!stream || !video.videoWidth) return;
+    $('cam').classList.remove('flash'); void $('cam').offsetWidth; $('cam').classList.add('flash');
+    pending = vintage(video, video.videoWidth, video.videoHeight, facing === 'user');
+    setTimeout(() => { closeCam(); showPreview(); }, 260);
+  });
+  setInterval(() => {
+    if ($('cam').hidden) return;
+    const n = new Date();
+    $('vfStamp').textContent = "'26 12 12 " + String(n.getHours()).padStart(2, '0') + ':' + String(n.getMinutes()).padStart(2, '0');
+  }, 1000);
+  function showPreview() {
+    $('previewWrap').innerHTML = ''; $('previewWrap').appendChild(pending);
+    $('previewWho').textContent = me;
+    $('sheet').hidden = false;
+  }
+  $('shootBtn').addEventListener('click', () => { if (!me) { showGate(true); return; } openCam(); });
   $('fileInput').addEventListener('change', async e => {
     const f = e.target.files && e.target.files[0]; e.target.value = '';
     if (!f) return;
     try {
       const bmp = await loadImage(f);
+      closeCam();
       pending = vintage(bmp);
-      $('previewWrap').innerHTML = ''; $('previewWrap').appendChild(pending);
-      $('previewWho').textContent = me;
-      $('sheet').hidden = false;
+      showPreview();
     } catch { toast('No se pudo abrir la foto. Probá con otra.'); }
   });
-  $('retake').addEventListener('click', () => { $('sheet').hidden = true; $('fileInput').click(); });
+  $('retake').addEventListener('click', () => { $('sheet').hidden = true; openCam(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stopCam(); else if (!$('cam').hidden) startCam(); });
   $('upload').addEventListener('click', () => {
     const now = new Date();
     const p = { id: 'u' + Date.now(), canvas: pending, who: me, likes: 0, liked: false,
@@ -462,11 +573,15 @@
       img.onload = () => { res(img); }; img.onerror = rej; img.src = url;
     });
   }
-  function vintage(img) {
-    const MAX = 1400, s = Math.min(1, MAX / Math.max(img.naturalWidth, img.naturalHeight));
-    const w = Math.round(img.naturalWidth * s), h = Math.round(img.naturalHeight * s);
+  function vintage(img, srcW, srcH, mirror) {
+    srcW = srcW || img.naturalWidth; srcH = srcH || img.naturalHeight;
+    const MAX = 1400, s = Math.min(1, MAX / Math.max(srcW, srcH));
+    const w = Math.round(srcW * s), h = Math.round(srcH * s);
     const c = document.createElement('canvas'); c.width = w; c.height = h;
-    const ctx = c.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
+    const ctx = c.getContext('2d');
+    if (mirror) { ctx.translate(w, 0); ctx.scale(-1, 1); }
+    ctx.drawImage(img, 0, 0, w, h);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     const d = ctx.getImageData(0, 0, w, h), px = d.data, cx = w / 2, cy = h / 2, maxD = Math.hypot(cx, cy);
     for (let i = 0, y = 0; y < h; y++) for (let x = 0; x < w; x++, i += 4) {
       let r = px[i], g = px[i + 1], b = px[i + 2];
